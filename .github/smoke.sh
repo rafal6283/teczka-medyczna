@@ -3,11 +3,28 @@
 set -u
 APK=$1
 adb install -r "$APK" || { echo "::error::Instalacja APK nie powiodła się"; exit 1; }
+# emulator po starcie bywa przeciążony – zamknij systemowe okna "nie odpowiada"
+dismiss() {
+  adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1
+  adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1; adb shell cat /sdcard/ui.xml > ui.xml 2>/dev/null
+  python3 - <<'PY'
+import re,subprocess
+x=open('ui.xml',encoding='utf-8',errors='ignore').read()
+if "isn't responding" in x or 'nie odpowiada' in x:
+    m=re.search(r'text="(?:Wait|Czekaj)"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"',x)
+    if m:
+        a,b,c,d=map(int,m.groups()); subprocess.run(['adb','shell','input','tap',str((a+c)//2),str((b+d)//2)])
+        print('zamknięto okno ANR')
+PY
+}
+sleep 20
+dismiss
 adb logcat -c
 adb shell am start -W -n pl.teczka.zdrowie/pl.teczka.teczka_zdrowia.MainActivity
 ok=0
-for i in $(seq 1 12); do
+for i in $(seq 1 18); do
   sleep 5
+  dismiss
   adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1
   adb shell cat /sdcard/ui.xml > ui.xml 2>/dev/null
   if grep -q "Witaj w Teczce Zdrowia\|Dodaj pierwszą osobę\|Nie udało się uruchomić" ui.xml; then ok=1; break; fi
