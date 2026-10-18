@@ -14,6 +14,7 @@ for i in $(seq 1 12); do
 done
 adb logcat -d > logcat.txt
 grep -E "flutter|AndroidRuntime|FATAL|Exception" logcat.txt | tail -60 > logcat_err.txt
+grep -E "flutter|AndroidRuntime|FATAL|Exception" logcat.txt | tail -60 > logcat_err.txt
 echo "--- UI:"; grep -o 'text="[^"]*"' ui.xml | head -30
 if grep -q "Nie udało się uruchomić" ui.xml; then
   echo "::error::Aplikacja pokazała błąd startu:%0A$(grep -o 'text="[^"]*"' ui.xml | head -20 | sed ':a;N;$!ba;s/\n/%0A/g')"

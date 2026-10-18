@@ -139,7 +139,17 @@ jobs:
           arch: x86_64
           target: google_apis
           disable-animations: true
-          script: bash .github/smoke.sh build/app/outputs/flutter-apk/app-release.apk
+          script: bash .github/smoke.sh build/app/outputs/flutter-apk/app-release.apk > smoke.log 2>&1; echo $? > smoke.rc; true
+      - name: Wynik testu na emulatorze
+        if: always()
+        run: |
+          echo "rc=$(cat smoke.rc 2>/dev/null)"
+          cat smoke.log 2>/dev/null | tail -150
+          grep -h "::" smoke.log 2>/dev/null | head -10 || true
+          { echo "SMOKE rc=$(cat smoke.rc 2>/dev/null)"; tail -60 smoke.log 2>/dev/null; } | sed 's/%/%25/g' | cut -c1-300 > s.txt
+          echo "::notice::$(head -60 s.txt | sed ':a;N;$!ba;s/\n/%0A/g')"
+          test -f logcat_err.txt && echo "::notice::LOGCAT%0A$(tail -40 logcat_err.txt | sed 's/%/%25/g' | cut -c1-300 | sed ':a;N;$!ba;s/\n/%0A/g')"
+          [ "$(cat smoke.rc 2>/dev/null)" = "0" ]
 
   release:
     needs: [android, ios, smoke]
