@@ -62,7 +62,7 @@ jobs:
       - name: Testy parsera
         run: |
           set -o pipefail
-          flutter test test/parser_test.dart test/report_test.dart test/figures_test.dart test/quality_test.dart 2>&1 | tee test.log
+          flutter test test/parser_test.dart test/report_test.dart test/figures_test.dart test/quality_test.dart test/lock_test.dart test/fixtures_test.dart 2>&1 | tee test.log
       - name: Build APK
         run: |
           set -o pipefail

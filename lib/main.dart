@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:local_auth/local_auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'data/db.dart';
+import 'security/lock.dart';
+import 'ui/lock_screen.dart';
 import 'ui/common.dart';
 import 'ui/home.dart';
 
@@ -86,38 +86,34 @@ class TeczkaApp extends StatelessWidget {
   }
 }
 
-/// Blokada aplikacji odciskiem palca / twarzą / kodem telefonu (opcjonalna).
+/// Logowanie do aplikacji (PIN, wzór, blokada telefonu, biometria).
 class LockGate extends StatefulWidget {
   final Widget child;
   const LockGate({super.key, required this.child});
-
-  static Future<bool> isEnabled() async => (await SharedPreferences.getInstance()).getBool('lock') ?? false;
-  static Future<void> setEnabled(bool v) async => (await SharedPreferences.getInstance()).setBool('lock', v);
-
-  static Future<bool> authenticate() async {
-    final auth = LocalAuthentication();
-    try {
-      if (!await auth.isDeviceSupported()) return true;
-      return await auth.authenticate(localizedReason: 'Odblokuj Teczkę Zdrowia');
-    } catch (_) {
-      return false;
-    }
-  }
 
   @override
   State<LockGate> createState() => _LockGateState();
 }
 
 class _LockGateState extends State<LockGate> with WidgetsBindingObserver {
+  LockConfig? config;
   bool locked = true;
-  bool checking = false;
   DateTime? pausedAt;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _check();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final c = await Lock.load();
+    if (!mounted) return;
+    setState(() {
+      config = c;
+      locked = c.method != LockMethod.none;
+    });
   }
 
   @override
@@ -126,49 +122,31 @@ class _LockGateState extends State<LockGate> with WidgetsBindingObserver {
     super.dispose();
   }
 
-  Future<void> _check() async {
-    if (!await LockGate.isEnabled()) {
-      setState(() => locked = false);
-      return;
-    }
-    if (checking) return;
-    checking = true;
-    final ok = await LockGate.authenticate();
-    checking = false;
-    if (mounted) setState(() => locked = !ok);
-  }
-
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) pausedAt = DateTime.now();
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.hidden) pausedAt ??= DateTime.now();
     if (state == AppLifecycleState.resumed && pausedAt != null) {
       final away = DateTime.now().difference(pausedAt!);
       pausedAt = null;
-      // krótkie wyjścia (np. wybór pliku, aparat) nie blokują
-      if (away.inSeconds > 90) {
-        LockGate.isEnabled().then((on) {
-          if (on && mounted) {
-            setState(() => locked = true);
-            _check();
-          }
-        });
-      }
+      Lock.load().then((c) {
+        if (!mounted) return;
+        // krótkie wyjścia (wybór pliku, aparat, logowanie biometrią) nie blokują
+        final limit = c.timeoutSec < 15 ? 15 : c.timeoutSec;
+        if (c.method != LockMethod.none && away.inSeconds >= limit) {
+          setState(() {
+            config = c;
+            locked = true;
+          });
+        }
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final c = config;
+    if (c == null) return const Scaffold(body: SizedBox());
     if (!locked) return widget.child;
-    return Scaffold(
-      body: Center(
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Icon(Icons.lock_outline, size: 64, color: Theme.of(context).colorScheme.primary),
-          const SizedBox(height: 16),
-          Text('Teczka Zdrowia', style: Theme.of(context).textTheme.headlineSmall),
-          const SizedBox(height: 24),
-          FilledButton.icon(onPressed: _check, icon: const Icon(Icons.fingerprint), label: const Text('Odblokuj')),
-        ]),
-      ),
-    );
+    return LockScreen(config: c, onUnlocked: () => setState(() => locked = false));
   }
 }
