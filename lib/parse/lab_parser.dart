@@ -316,7 +316,7 @@ class LabParser {
     }
     String category;
     String title;
-    if (out.where((r) => r.known).length >= 1) {
+    if (out.any((r) => r.known)) {
       category = DocCategories.lab;
       final sorted = cats.entries.toList()..sort((a, b) => b.value.compareTo(a.value));
       title = sorted.take(3).map((e) => e.key).join(', ');

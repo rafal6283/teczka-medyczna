@@ -42,6 +42,7 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("teczka")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         debug {
             signingConfig = signingConfigs.getByName("teczka")
