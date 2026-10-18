@@ -11,6 +11,7 @@ import '../data/storage.dart';
 import '../parse/extractor.dart';
 import '../parse/figures.dart';
 import '../parse/lab_parser.dart';
+import '../parse/report_parser.dart';
 import 'common.dart';
 import 'review.dart';
 
@@ -145,7 +146,13 @@ class _ProcessingScreenState extends State<ProcessingScreen> {
       done++;
     }
     final text = texts.join('\n');
-    final parsed = LabParser.parse(text);
+    var parsed = LabParser.parse(text);
+    final report = ReportParser.parse(text, docDate: parsed.date);
+    // opisowe badanie (endoskopia, Holter, obrazowe…) – kategoria i tytuł z rodzaju badania
+    final labCount = parsed.results.where((r) => r.known && !r.key.startsWith('HR_') && r.key != 'SVE' && r.key != 'VE' && !r.key.startsWith('PAUSE')).length;
+    if (report.examType != null && labCount < 5) {
+      parsed = ParseOutput(parsed.results, parsed.date, parsed.facility, categoryForExam(report.examType!), report.examName ?? parsed.suggestedTitle);
+    }
     if (!mounted) return;
     Navigator.pushReplacement(
       context,
@@ -158,6 +165,7 @@ class _ProcessingScreenState extends State<ProcessingScreen> {
           usedOcr: ocr,
           figures: figures,
           existing: widget.existing,
+          report: report,
         ),
       ),
     );
@@ -182,6 +190,29 @@ class _ProcessingScreenState extends State<ProcessingScreen> {
         ),
       ),
     );
+  }
+}
+
+String categoryForExam(String key) {
+  switch (key) {
+    case 'COLONO':
+    case 'GASTRO':
+      return DocCategories.endoscopy;
+    case 'HOLTER_EKG':
+    case 'ABPM':
+    case 'EKG':
+    case 'ERGO':
+    case 'SPIRO':
+    case 'ECHO':
+      return DocCategories.functional;
+    case 'HIST':
+    case 'CYTO':
+      return DocCategories.histo;
+    case 'WYPIS':
+    case 'KONS':
+      return DocCategories.visit;
+    default:
+      return DocCategories.imaging;
   }
 }
 

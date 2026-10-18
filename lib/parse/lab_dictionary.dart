@@ -85,9 +85,10 @@ class LabDictionary {
   static const zap = 'Stan zapalny';
   static const krz = 'Krzepnięcie';
   static const moc = 'Mocz';
+  static const ekg = 'EKG i Holter';
   static const inne = 'Inne';
 
-  static const categoryOrder = [morf, bio, lip, wat, ner, tar, hor, zel, zap, krz, moc, inne];
+  static const categoryOrder = [morf, bio, lip, wat, ner, tar, hor, zel, zap, krz, moc, ekg, inne];
 
   static final Map<String, LabParam> byKey = {};
 
@@ -388,6 +389,26 @@ class LabDictionary {
     _p('U_ERY', 'Mocz: erytrocyty w osadzie', moc, 'wpw', null, 2.0).a(['erytrocyty w osadzie', 'erytrocyty wpw', 'erytrocyty świeże', 'erytrocyty wyługowane']);
     _p('U_NAB', 'Mocz: nabłonki płaskie', moc, 'wpw', null, 5.0).a(['nabłonki płaskie', 'komórki nabłonka płaskiego']);
     _p('UACR', 'Albumina/kreatynina w moczu (ACR)', moc, 'mg/g', null, 30.0).a(['acr', 'wskaźnik albumina kreatynina', 'albumina kreatynina w moczu', 'uacr']);
+
+    // ---------- Holter EKG ----------
+    _p('HR_MIN', 'Holter: tętno minimalne', ekg, '/min', null, null)
+        .a(['minimalna czestosc rytmu', 'czestosc minimalna', 'hr min', 'min hr', 'minimalne tetno', 'tetno minimalne', 'najnizsza czestosc rytmu', 'czestosc rytmu minimalna', 'minimalna czestosc akcji serca'])
+        .c('ud/min', 1)
+        .c('bpm', 1);
+    _p('HR_AVG', 'Holter: tętno średnie', ekg, '/min', null, null)
+        .a(['srednia czestosc rytmu', 'czestosc srednia', 'hr srednie', 'sredni hr', 'srednie tetno', 'tetno srednie', 'srednia czestosc akcji serca', 'czestosc rytmu srednia', 'hr sredni'])
+        .c('ud/min', 1)
+        .c('bpm', 1);
+    _p('HR_MAX', 'Holter: tętno maksymalne', ekg, '/min', null, null)
+        .a(['maksymalna czestosc rytmu', 'czestosc maksymalna', 'hr max', 'max hr', 'maksymalne tetno', 'tetno maksymalne', 'najwyzsza czestosc rytmu', 'czestosc rytmu maksymalna', 'maksymalna czestosc akcji serca'])
+        .c('ud/min', 1)
+        .c('bpm', 1);
+    _p('SVE', 'Holter: pobudzenia nadkomorowe', ekg, '', null, null)
+        .a(['pobudzenia nadkomorowe', 'pobudzen nadkomorowych', 'svpb', 'svpc', 'ekstrasystolie nadkomorowe', 'liczba pobudzen nadkomorowych', 'pobudzenia przedwczesne nadkomorowe', 'sve']);
+    _p('VE', 'Holter: pobudzenia komorowe', ekg, '', null, null)
+        .a(['pobudzenia komorowe', 'pobudzen komorowych', 'vpb', 'pvc', 'ekstrasystolie komorowe', 'liczba pobudzen komorowych', 'pobudzenia przedwczesne komorowe', 'ves']);
+    _p('PAUSE', 'Holter: pauzy > 2 s', ekg, '', null, 0.0).a(['pauzy', 'pauzy powyzej 2 s', 'pauzy 2 s', 'liczba pauz', 'pauzy dluzsze niz 2 s', 'pauzy 2s']);
+    _p('PAUSE_MAX', 'Holter: najdłuższa pauza', ekg, 's', null, 2.0).a(['najdluzsza pauza', 'najdluzszy odstep rr', 'max rr', 'najdluzszy rr']).c('ms', 0.001).c('sek', 1);
 
     for (final x in byKey.values) {
       for (final al in x.aliases) {

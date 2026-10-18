@@ -7,6 +7,7 @@ import '../data/models.dart';
 import '../data/storage.dart';
 import '../parse/lab_dictionary.dart';
 import '../parse/lab_parser.dart';
+import '../parse/report_parser.dart';
 import '../parse/text_utils.dart';
 import 'common.dart';
 import 'import_flow.dart';
@@ -28,6 +29,10 @@ IconData categoryIcon(String c) {
       return Icons.receipt_long_outlined;
     case DocCategories.vaccine:
       return Icons.vaccines_outlined;
+    case DocCategories.endoscopy:
+      return Icons.troubleshoot;
+    case DocCategories.histo:
+      return Icons.biotech_outlined;
     default:
       return Icons.description_outlined;
   }
@@ -226,6 +231,7 @@ class DocumentScreen extends StatelessWidget {
           usedOcr: false,
           figures: const [],
           existing: doc,
+          report: DoctorReport.fromJson(doc.report),
         ),
       ),
     );
@@ -292,6 +298,7 @@ class DocumentScreen extends StatelessWidget {
                 if (doc.notes != null) ...[const SizedBox(height: 6), Text(doc.notes!)],
               ]),
             ),
+            if (DoctorReport.fromJson(doc.report) != null || doc.followUp != null) ReportCard(doc: doc),
             if (sources.isNotEmpty) ...[
               const SectionTitle('Pliki'),
               for (final f in sources)
@@ -397,4 +404,88 @@ class ResultTile extends StatelessWidget {
 Future<List<PickedFile>> pickAnyFiles() async {
   final r = await pickFilesRaw();
   return r;
+}
+
+
+String followUpLabel(DateTime d) {
+  final days = DateTime(d.year, d.month, d.day).difference(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day)).inDays;
+  if (days < 0) return 'zaległa od ${fmtDate(d)} (${-days} dni)';
+  if (days == 0) return 'dzisiaj';
+  if (days <= 60) return '${fmtDate(d)} (za $days dni)';
+  return '${fmtDate(d)} (za ${(days / 30.4).round()} mies.)';
+}
+
+class ReportCard extends StatefulWidget {
+  final MedDocument doc;
+  const ReportCard({super.key, required this.doc});
+  @override
+  State<ReportCard> createState() => _ReportCardState();
+}
+
+class _ReportCardState extends State<ReportCard> {
+  bool full = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final r = DoctorReport.fromJson(widget.doc.report);
+    final fu = widget.doc.followUp;
+    final cs = Theme.of(context).colorScheme;
+    final abn = r?.abnormal ?? [];
+    final overdue = fu != null && fu.isBefore(DateTime.now());
+    Widget block(String title, String text, {bool bold = false}) => Padding(
+          padding: const EdgeInsets.only(top: 10),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(title, style: Theme.of(context).textTheme.labelLarge?.copyWith(color: cs.primary)),
+            const SizedBox(height: 2),
+            SelectableText(text, style: bold ? const TextStyle(fontWeight: FontWeight.w600) : null),
+          ]),
+        );
+    return InfoCard(
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          Icon(Icons.notes, size: 20, color: cs.primary),
+          const SizedBox(width: 8),
+          Expanded(child: Text(r?.examName == null ? 'Opis lekarza' : 'Opis lekarza – ${r!.examName}', style: Theme.of(context).textTheme.titleSmall)),
+        ]),
+        if (abn.isNotEmpty) ...[
+          const SizedBox(height: 8),
+          for (final f in abn.take(full ? 20 : 4))
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Icon(Icons.priority_high, size: 16, color: StatusColors.warn(context)),
+                const SizedBox(width: 6),
+                Expanded(child: Text(f.sentence)),
+              ]),
+            ),
+        ] else if (r != null && !r.isEmpty)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Row(children: [
+              Icon(Icons.check_circle_outline, size: 16, color: StatusColors.ok(context)),
+              const SizedBox(width: 6),
+              const Expanded(child: Text('W opisie nie wykryto zapisów o nieprawidłowościach.')),
+            ]),
+          ),
+        if (r != null && r.conclusions.isNotEmpty) block('Wnioski / rozpoznanie', r.conclusions, bold: true),
+        if (r != null && r.recommendations.isNotEmpty) block('Zalecenia', r.recommendations),
+        if (fu != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: Row(children: [
+              Icon(Icons.event_repeat, size: 18, color: overdue ? StatusColors.high(context) : cs.primary),
+              const SizedBox(width: 6),
+              Expanded(child: Text('Kontrola: ${followUpLabel(fu)}', style: TextStyle(fontWeight: FontWeight.w600, color: overdue ? StatusColors.high(context) : null))),
+            ]),
+          ),
+        if (r != null && r.description.isNotEmpty) ...[
+          if (full) block('Opis badania', r.description),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton(onPressed: () => setState(() => full = !full), child: Text(full ? 'Zwiń' : 'Pokaż pełny opis')),
+          ),
+        ],
+      ]),
+    );
+  }
 }

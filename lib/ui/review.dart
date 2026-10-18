@@ -6,6 +6,7 @@ import '../data/storage.dart';
 import '../parse/figures.dart';
 import '../parse/lab_dictionary.dart';
 import '../parse/lab_parser.dart';
+import '../parse/report_parser.dart';
 import '../parse/text_utils.dart';
 import 'common.dart';
 import 'documents.dart';
@@ -32,6 +33,7 @@ class ReviewScreen extends StatefulWidget {
   final bool usedOcr;
   final List<FigureCrop> figures;
   final MedDocument? existing;
+  final DoctorReport? report;
   const ReviewScreen({
     super.key,
     required this.profile,
@@ -41,6 +43,7 @@ class ReviewScreen extends StatefulWidget {
     required this.usedOcr,
     required this.figures,
     this.existing,
+    this.report,
   });
 
   @override
@@ -57,6 +60,26 @@ class _ReviewScreenState extends State<ReviewScreen> {
   late final List<ParsedResult> results = List.of(widget.parsed.results);
   late final List<bool> figSel = List.filled(widget.figures.length, true);
   bool saving = false;
+  late final DoctorReport? _rep = widget.report ?? DoctorReport.fromJson(widget.existing?.report);
+  late final conc = TextEditingController(text: _rep?.conclusions ?? '');
+  late final desc = TextEditingController(text: _rep?.description ?? '');
+  late final recs = TextEditingController(text: _rep?.recommendations ?? '');
+  late DateTime? followUp = _rep?.followUp ?? widget.existing?.followUp;
+  late bool showReport = _rep != null && (_rep?.isEmpty == false || _rep?.examType != null || category != DocCategories.lab);
+
+  DoctorReport? _buildReport() {
+    if (conc.text.trim().isEmpty && desc.text.trim().isEmpty && recs.text.trim().isEmpty) return null;
+    final r = DoctorReport(
+      examType: _rep?.examType,
+      description: desc.text.trim(),
+      conclusions: conc.text.trim(),
+      recommendations: recs.text.trim(),
+      followUp: followUp,
+      followUpText: _rep?.followUpText,
+    );
+    r.reanalyze();
+    return r;
+  }
 
   Future<void> _save() async {
     if (title.text.trim().isEmpty) {
@@ -78,6 +101,8 @@ class _ReviewScreenState extends State<ReviewScreen> {
       extractedText: widget.text.trim().isEmpty ? ex?.extractedText : widget.text,
       created: ex?.created ?? DateTime.now(),
       favorite: ex?.favorite ?? false,
+      report: _buildReport()?.toJson(),
+      followUp: followUp,
     );
     final id = await db.saveDocument(doc);
     if (ex == null) {
@@ -198,6 +223,15 @@ class _ReviewScreenState extends State<ReviewScreen> {
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ),
+        if (showReport) ..._reportSection(context) else
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8, 4, 16, 0),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                  onPressed: () => setState(() => showReport = true), icon: const Icon(Icons.notes, size: 18), label: const Text('Dodaj opis lekarza')),
+            ),
+          ),
         if (widget.figures.isNotEmpty) ...[
           SectionTitle('Wykryte grafiki (${figSel.where((e) => e).length}/${widget.figures.length})'),
           SizedBox(
@@ -262,6 +296,53 @@ class _ReviewScreenState extends State<ReviewScreen> {
           ),
       ]),
     );
+  }
+
+  List<Widget> _reportSection(BuildContext context) {
+    final abn = (_rep?.findings ?? []).where((f) => f.abnormal).toList();
+    const gap = SizedBox(height: 12);
+    return [
+      SectionTitle(_rep?.examName == null ? 'Opis lekarza' : 'Opis lekarza – ${_rep!.examName}'),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          if (_rep?.isEmpty == true)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text('Nie udało się wydzielić opisu – możesz go wpisać lub wkleić z „Rozpoznanego tekstu” poniżej.',
+                  style: Theme.of(context).textTheme.bodySmall),
+            ),
+          TextField(controller: conc, maxLines: null, decoration: const InputDecoration(labelText: 'Wnioski / rozpoznanie')),
+          gap,
+          TextField(controller: desc, maxLines: null, minLines: 2, decoration: const InputDecoration(labelText: 'Opis badania')),
+          gap,
+          TextField(controller: recs, maxLines: null, decoration: const InputDecoration(labelText: 'Zalecenia')),
+          gap,
+          Row(children: [
+            Expanded(child: DateField(label: 'Zalecona kontrola do', value: followUp, onChanged: (d) => setState(() => followUp = d))),
+            if (followUp != null) IconButton(onPressed: () => setState(() => followUp = null), icon: const Icon(Icons.clear), tooltip: 'Bez terminu'),
+          ]),
+          if (_rep?.followUpText != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 4, left: 4),
+              child: Text('Na podstawie: „${_rep!.followUpText}”', style: Theme.of(context).textTheme.bodySmall),
+            ),
+          if (abn.isNotEmpty) ...[
+            gap,
+            Text('Wykryte istotne zapisy (${abn.length}):', style: Theme.of(context).textTheme.labelLarge),
+            for (final f in abn.take(6))
+              Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Icon(Icons.priority_high, size: 16, color: StatusColors.warn(context)),
+                  const SizedBox(width: 6),
+                  Expanded(child: Text(f.sentence, style: Theme.of(context).textTheme.bodySmall)),
+                ]),
+              ),
+          ],
+        ]),
+      ),
+    ];
   }
 
   Widget _row(int i) {

@@ -47,8 +47,14 @@ class AppDb extends ChangeNotifier {
   Future<void> _open() async {
     _db = await openDatabase(
       dbPath,
-      version: 1,
+      version: 2,
       onConfigure: (d) async => d.execute('PRAGMA foreign_keys = ON'),
+      onUpgrade: (d, from, to) async {
+        if (from < 2) {
+          await d.execute('ALTER TABLE documents ADD COLUMN report TEXT');
+          await d.execute('ALTER TABLE documents ADD COLUMN follow_up INTEGER');
+        }
+      },
       onCreate: (d, v) async {
         await d.execute('''CREATE TABLE profiles(
           id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, birth_date INTEGER, sex TEXT, height_cm REAL,
@@ -59,7 +65,7 @@ class AppDb extends ChangeNotifier {
         await d.execute('''CREATE TABLE documents(
           id INTEGER PRIMARY KEY AUTOINCREMENT, profile_id INTEGER NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
           date INTEGER NOT NULL, title TEXT NOT NULL, category TEXT NOT NULL, facility TEXT, doctor TEXT, notes TEXT,
-          extracted_text TEXT, created INTEGER NOT NULL, favorite INTEGER DEFAULT 0)''');
+          extracted_text TEXT, created INTEGER NOT NULL, favorite INTEGER DEFAULT 0, report TEXT, follow_up INTEGER)''');
         await d.execute('''CREATE TABLE doc_files(
           id INTEGER PRIMARY KEY AUTOINCREMENT, document_id INTEGER NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
           path TEXT NOT NULL, name TEXT NOT NULL, mime TEXT NOT NULL, size INTEGER, kind TEXT DEFAULT 'source')''');
@@ -270,8 +276,8 @@ class AppDb extends ChangeNotifier {
   Future<List<MedDocument>> searchDocuments(int profileId, String q) async {
     final like = '%${q.replaceAll('%', '')}%';
     final r = await db.query('documents',
-        where: 'profile_id=? AND (title LIKE ? OR facility LIKE ? OR doctor LIKE ? OR notes LIKE ? OR extracted_text LIKE ? OR category LIKE ?)',
-        whereArgs: [profileId, like, like, like, like, like, like],
+        where: 'profile_id=? AND (title LIKE ? OR facility LIKE ? OR doctor LIKE ? OR notes LIKE ? OR extracted_text LIKE ? OR category LIKE ? OR report LIKE ?)',
+        whereArgs: [profileId, like, like, like, like, like, like, like],
         orderBy: 'date DESC');
     return r.map(MedDocument.fromMap).toList();
   }

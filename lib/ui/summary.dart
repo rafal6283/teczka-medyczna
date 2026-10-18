@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../analysis/stats.dart';
 import '../data/db.dart';
 import '../data/models.dart';
+import '../parse/report_parser.dart';
 import '../parse/text_utils.dart';
 import 'common.dart';
 import 'documents.dart';
@@ -105,6 +106,8 @@ class SummaryTab extends StatelessWidget {
               ]),
             ),
           ],
+          ..._followUps(context, d.docs),
+          ..._reportNotes(context, d.docs),
           if (bp != null) ...[
             const SectionTitle('Ciśnienie – ostatnie 30 dni'),
             InfoCard(
@@ -201,6 +204,77 @@ class SummaryTab extends StatelessWidget {
           ),
       ]),
     );
+  }
+
+  /// Zalecone kontrole: zaległe i w ciągu 4 miesięcy (pomijamy, jeśli później wykonano takie samo badanie).
+  List<Widget> _followUps(BuildContext context, List<MedDocument> docs) {
+    final now = DateTime.now();
+    final items = <(MedDocument, DateTime)>[];
+    for (final d in docs) {
+      final fu = d.followUp;
+      if (fu == null) continue;
+      final type = DoctorReport.fromJson(d.report)?.examType;
+      final redone = docs.any((o) =>
+          o.id != d.id &&
+          o.date.isAfter(d.date.add(const Duration(days: 30))) &&
+          (type != null ? DoctorReport.fromJson(o.report)?.examType == type : o.title == d.title));
+      if (redone) continue;
+      if (fu.isBefore(now.add(const Duration(days: 120)))) items.add((d, fu));
+    }
+    if (items.isEmpty) return [];
+    items.sort((a, b) => a.$2.compareTo(b.$2));
+    return [
+      const SectionTitle('Zalecane kontrole'),
+      for (final it in items)
+        InfoCard(
+          padding: const EdgeInsets.all(14),
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => DocumentScreen(documentId: it.$1.id!, profile: profile))),
+          child: Row(children: [
+            Icon(Icons.event_repeat, color: it.$2.isBefore(now) ? StatusColors.high(context) : StatusColors.warn(context)),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(it.$1.title, style: const TextStyle(fontWeight: FontWeight.w600)),
+                Text('Kontrola: ${followUpLabel(it.$2)} • zalecona po badaniu z ${fmtDate(it.$1.date)}', style: Theme.of(context).textTheme.bodySmall),
+              ]),
+            ),
+          ]),
+        ),
+    ];
+  }
+
+  /// Najważniejsze zapisy z ostatniego opisu każdego rodzaju badania.
+  List<Widget> _reportNotes(BuildContext context, List<MedDocument> docs) {
+    final seen = <String>{};
+    final cards = <Widget>[];
+    for (final d in docs) {
+      final r = DoctorReport.fromJson(d.report);
+      if (r == null) continue;
+      final k = r.examType ?? d.title;
+      if (seen.contains(k)) continue;
+      seen.add(k);
+      final abn = r.abnormal;
+      if (abn.isEmpty && r.conclusions.isEmpty) continue;
+      cards.add(InfoCard(
+        padding: const EdgeInsets.all(14),
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => DocumentScreen(documentId: d.id!, profile: profile))),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(children: [
+            Icon(abn.isEmpty ? Icons.check_circle_outline : Icons.priority_high, size: 18, color: abn.isEmpty ? StatusColors.ok(context) : StatusColors.warn(context)),
+            const SizedBox(width: 8),
+            Expanded(child: Text('${r.examName ?? d.title} • ${fmtDate(d.date)}', style: const TextStyle(fontWeight: FontWeight.w600))),
+          ]),
+          const SizedBox(height: 4),
+          if (r.conclusions.isNotEmpty)
+            Text(r.conclusions, maxLines: 3, overflow: TextOverflow.ellipsis)
+          else
+            for (final f in abn.take(2)) Text('• ${f.sentence}', maxLines: 2, overflow: TextOverflow.ellipsis),
+        ]),
+      ));
+      if (cards.length >= 6) break;
+    }
+    if (cards.isEmpty) return [];
+    return [const SectionTitle('Z opisów badań'), ...cards];
   }
 
   Widget _line(BuildContext context, IconData i, String t, Color? c) => Padding(

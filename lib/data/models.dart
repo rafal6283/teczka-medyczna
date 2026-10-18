@@ -131,6 +131,8 @@ class MedDocument {
   final String? extractedText;
   final DateTime created;
   final bool favorite;
+  final String? report; // JSON opisu lekarza (DoctorReport)
+  final DateTime? followUp; // zalecony termin kontroli
 
   const MedDocument({
     this.id,
@@ -144,6 +146,8 @@ class MedDocument {
     this.extractedText,
     required this.created,
     this.favorite = false,
+    this.report,
+    this.followUp,
   });
 
   Map<String, Object?> toMap() => {
@@ -158,6 +162,8 @@ class MedDocument {
         'extracted_text': extractedText,
         'created': _ms(created),
         'favorite': favorite ? 1 : 0,
+        'report': report,
+        'follow_up': _ms(followUp),
       };
 
   static MedDocument fromMap(Map<String, Object?> m) => MedDocument(
@@ -172,9 +178,11 @@ class MedDocument {
         extractedText: m['extracted_text'] as String?,
         created: _d(m['created'])!,
         favorite: (m['favorite'] as int? ?? 0) == 1,
+        report: m['report'] as String?,
+        followUp: _d(m['follow_up']),
       );
 
-  MedDocument copyWith({DateTime? date, String? title, String? category, String? facility, String? doctor, String? notes, String? extractedText, bool? favorite}) =>
+  MedDocument copyWith({DateTime? date, String? title, String? category, String? facility, String? doctor, String? notes, String? extractedText, bool? favorite, String? report, DateTime? followUp, bool clearFollowUp = false}) =>
       MedDocument(
         id: id,
         profileId: profileId,
@@ -187,6 +195,8 @@ class MedDocument {
         extractedText: extractedText ?? this.extractedText,
         created: created,
         favorite: favorite ?? this.favorite,
+        report: report ?? this.report,
+        followUp: clearFollowUp ? null : (followUp ?? this.followUp),
       );
 }
 

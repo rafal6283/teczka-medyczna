@@ -54,6 +54,7 @@ class LabParser {
     r'|mm\s?/\s?(?:1\s?)?(?:h|godz\.?)'
     r'|[munpµμ]?(?:g|mol|iu|ui|u|j|eq|kat)\s?/\s?(?:d?l|ml|l|g|dl)'
     r'|[munpµμ]?(?:iu|ui|u|j)\s?/\s?(?:ml|l)'
+    r'|ud\.?\s?/\s?min|/\s?min|bpm|ms'
     r'|g/ml|l/l|fl|pg|%|‰|sek\.?|s|wpw\.?|ratio|indeks'
     r')(?![\p{L}\d])',
     caseSensitive: false,
@@ -448,6 +449,8 @@ class DocCategories {
   static const visit = 'Wizyty i wypisy';
   static const prescription = 'Recepty i skierowania';
   static const vaccine = 'Szczepienia';
+  static const endoscopy = 'Endoskopia';
+  static const histo = 'Histopatologia i cytologia';
   static const other = 'Inne';
-  static const all = [lab, imaging, functional, visit, prescription, vaccine, other];
+  static const all = [lab, imaging, endoscopy, functional, histo, visit, prescription, vaccine, other];
 }
