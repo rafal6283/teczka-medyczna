@@ -42,6 +42,9 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("teczka")
+            // R8 potrafi usunąć klasy wtyczek wywoływane z Fluttera – wyłączone dla pewności
+            isMinifyEnabled = false
+            isShrinkResources = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         debug {

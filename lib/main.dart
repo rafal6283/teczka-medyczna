@@ -7,10 +7,50 @@ import 'data/db.dart';
 import 'ui/common.dart';
 import 'ui/home.dart';
 
-Future<void> main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  await AppDb.I.init();
   runApp(const TeczkaApp());
+}
+
+/// Start bazy danych z widocznym ekranem i komunikatem błędu (zamiast zawieszenia na logo).
+class StartupGate extends StatefulWidget {
+  const StartupGate({super.key});
+  @override
+  State<StartupGate> createState() => _StartupGateState();
+}
+
+class _StartupGateState extends State<StartupGate> {
+  late Future<void> _init = _start();
+
+  Future<void> _start() => AppDb.I.init().timeout(const Duration(seconds: 25));
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<void>(
+      future: _init,
+      builder: (context, snap) {
+        if (snap.connectionState != ConnectionState.done) {
+          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        }
+        if (snap.hasError) {
+          return Scaffold(
+            body: SafeArea(
+              child: ListView(padding: const EdgeInsets.all(24), children: [
+                const Icon(Icons.error_outline, size: 48),
+                const SizedBox(height: 12),
+                const Text('Nie udało się uruchomić aplikacji', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+                const SizedBox(height: 12),
+                SelectableText('${snap.error}\n\n${snap.stackTrace ?? ''}', style: const TextStyle(fontFamily: 'monospace', fontSize: 11)),
+                const SizedBox(height: 16),
+                FilledButton(onPressed: () => setState(() => _init = _start()), child: const Text('Spróbuj ponownie')),
+              ]),
+            ),
+          );
+        }
+        return const LockGate(child: HomeScreen());
+      },
+    );
+  }
 }
 
 class TeczkaApp extends StatelessWidget {
@@ -41,7 +81,7 @@ class TeczkaApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      home: const LockGate(child: HomeScreen()),
+      home: const StartupGate(),
     );
   }
 }

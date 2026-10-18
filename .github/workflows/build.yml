@@ -107,9 +107,43 @@ jobs:
           name: ipa
           path: teczka-zdrowia.ipa
 
+  smoke:
+    # Uruchamia zbudowaną wersję release na emulatorze Androida i sprawdza start aplikacji.
+    needs: bootstrap
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Build APK x86_64 (dla emulatora)
+        run: |
+          flutter pub get
+          flutter build apk --release --target-platform android-x64
+      - name: KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Test na emulatorze
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          disable-animations: true
+          script: bash .github/smoke.sh build/app/outputs/flutter-apk/app-release.apk
+
   release:
-    needs: [android, ios]
-    if: always() && needs.android.result == 'success'
+    needs: [android, ios, smoke]
+    if: always() && needs.android.result == 'success' && needs.smoke.result == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
