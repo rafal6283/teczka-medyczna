@@ -149,7 +149,7 @@ class _ProcessingScreenState extends State<ProcessingScreen> {
     var parsed = LabParser.parse(text);
     final report = ReportParser.parse(text, docDate: parsed.date);
     // opisowe badanie (endoskopia, Holter, obrazowe…) – kategoria i tytuł z rodzaju badania
-    final labCount = parsed.results.where((r) => r.known && !r.key.startsWith('HR_') && r.key != 'SVE' && r.key != 'VE' && !r.key.startsWith('PAUSE')).length;
+    final labCount = parsed.results.where((r) => r.known && !r.key.startsWith('HR_') && !r.key.startsWith('EYE_') && r.key != 'SVE' && r.key != 'VE' && !r.key.startsWith('PAUSE')).length;
     if (report.examType != null && labCount < 5) {
       parsed = ParseOutput(parsed.results, parsed.date, parsed.facility, categoryForExam(report.examType!), report.examName ?? parsed.suggestedTitle);
     }
@@ -211,6 +211,8 @@ String categoryForExam(String key) {
     case 'WYPIS':
     case 'KONS':
       return DocCategories.visit;
+    case 'EYE':
+      return DocCategories.eye;
     default:
       return DocCategories.imaging;
   }

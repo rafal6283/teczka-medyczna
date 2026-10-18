@@ -1,5 +1,6 @@
 // Parser tekstu wyników badań (z PDF lub OCR) -> lista parametrów z wartościami i normami.
 
+import 'eye_parser.dart';
 import 'lab_dictionary.dart';
 import 'text_utils.dart';
 
@@ -50,7 +51,7 @@ enum Section { none, urine, sediment }
 class LabParser {
   static const _num = r'\d+(?:[.,]\d+)?';
 
-  static final RegExp _numRe = RegExp(r'(?<![\p{L}\d.,/^])([<>≤≥]=?\s*)?(\d+(?:[.,]\d+)?)(?![\d])', unicode: true);
+  static final RegExp _numRe = RegExp(r'(?<![\p{L}\d.,/^])([<>≤≥‹›«»]=?\s*)?(\d+(?:[.,]\d+)?)(?![\d])', unicode: true);
 
   // Jednostki – z tolerancją na typowe błędy OCR: µ→u/p, l→1/I, mln→min, IU→lU/TU.
   static final RegExp _unitRe = RegExp(
@@ -61,7 +62,7 @@ class LabParser {
     r'|[uµμp][il1t|]u\s?/\s?m[l1]'
     r'|[munpµμ]?(?:g|mol|iu|ui|u|j|eq|kat)\s?/\s?(?:d?[l1i]|m[l1]|g|mol)'
     r'|ud\.?\s?/\s?min|/\s?min|bpm|ms'
-    r'|(?:au|ru|eu|ai|k?iu|ku)\s?/\s?(?:m[l1]|l)|s/co|coi'
+    r'|(?:au|ru|eu|ai|k?iu|ku)\s?/\s?(?:m[l1i]|l)|s/co|coi'
     r'|/\s?[uµμp][l1]'
     r'|g/ml|l/l|fl|pg|%|‰|sek\.?|s|wpw\.?|ratio|indeks'
     r')(?![\p{L}\d])',
@@ -228,6 +229,28 @@ class LabParser {
           return (a.value, map[len - 1] + 1, al.length);
         }
       }
+      // całe nazwy z krótkimi członami ("anty 1tg lga" → "anty ttg iga")
+      for (final st in starts) {
+        if (st >= cs.length) continue;
+        (LabParam, int, int)? best;
+        var bestD = 99;
+        for (final a in list) {
+          final al = a.key;
+          if (al.length < 8 || al[0] != cs[st]) continue;
+          final maxD = al.length >= 15 ? 2 : 1;
+          for (var len = al.length - maxD; len <= al.length + maxD; len++) {
+            final end = st + len;
+            if (end > cs.length || end <= st) continue;
+            if (end != cs.length && cs[end] != ' ') continue;
+            final d = _lev(cs.substring(st, end), al, maxD);
+            if (d <= maxD && d < bestD) {
+              bestD = d;
+              best = (a.value, map[end - 1] + 1, al.length);
+            }
+          }
+        }
+        if (best != null) return best;
+      }
     }
     return null;
   }
@@ -365,7 +388,8 @@ class LabParser {
       if (flag == 'H' || flag == '↑') f = 'H';
       if (flag == 'L' || flag == '↓') f = 'L';
     }
-    final vt = (cmp != null && cmp.isNotEmpty) ? '$cmp${best.group(2)}' : null;
+    final cmpN = cmp?.replaceAll('‹', '<').replaceAll('«', '<').replaceAll('›', '>').replaceAll('»', '>');
+    final vt = (cmpN != null && cmpN.isNotEmpty) ? '$cmpN${best.group(2)}' : null;
     return ParsedResult(
         key: k, name: nm, value: value, valueText: vt, unit: unit.trim(), refLow: lo, refHigh: hi, refText: refText, flag: f, known: known, rawLine: raw);
   }
@@ -461,6 +485,17 @@ class LabParser {
       }
       i += skip ? 2 : 1;
     }
+    // Badanie wzroku – osobny parser (oko prawe / lewe)
+    var eyeCount = 0;
+    if (EyeParser.looksLikeEye(text)) {
+      for (final e in EyeParser.parse(text)) {
+        out.removeWhere((r) => r.key == e.key);
+        out.add(e);
+        eyeCount++;
+      }
+      // fałszywe trafienia ogólnego parsera w wierszach z oznaczeniem oka
+      out.removeWhere((r) => !r.key.startsWith('EYE_') && RegExp(r'(?<![\p{L}])(OP|OL|OD|OS)(?![\p{L}])', unicode: true).hasMatch(r.rawLine));
+    }
     // Norma w kolejnych wierszach: "< 20 AU/ml wynik negatywny", ">=90 prawidłowa wartość eGFR"
     final negRe = RegExp('(<|≤|<=|poniżej|ponizej|do)\\s*($_num)[^\\n]{0,25}(negatyw|ujemn|prawid|w normie|brak)', caseSensitive: false);
     final posRe = RegExp('(≥|>=|>|powyżej|powyzej|od)\\s*($_num)[^\\n]{0,25}(pozytyw|dodatn)', caseSensitive: false);
@@ -508,7 +543,11 @@ class LabParser {
     }
     String category;
     String title;
-    if (out.any((r) => r.known) || headers.isNotEmpty) {
+    final nonEye = out.where((r) => r.known && !r.key.startsWith('EYE_')).length;
+    if (eyeCount >= 2 && nonEye < 3) {
+      category = DocCategories.eye;
+      title = 'Badanie wzroku';
+    } else if (out.any((r) => r.known) || headers.isNotEmpty) {
       category = DocCategories.lab;
       final sorted = cats.entries.toList()..sort((a, b) => b.value.compareTo(a.value));
       title = headers.isNotEmpty ? _shortTitle(headers) : sorted.take(3).map((e) => e.key).join(', ');
@@ -644,6 +683,7 @@ class DocCategories {
   static const vaccine = 'Szczepienia';
   static const endoscopy = 'Endoskopia';
   static const histo = 'Histopatologia i cytologia';
+  static const eye = 'Okulistyka';
   static const other = 'Inne';
-  static const all = [lab, imaging, endoscopy, functional, histo, visit, prescription, vaccine, other];
+  static const all = [lab, imaging, endoscopy, functional, histo, eye, visit, prescription, vaccine, other];
 }

@@ -116,11 +116,11 @@ void main() {
   });
 
   test('Nieznany parametr z jednostką i normą', () {
-    final out = LabParser.parse('Cynk 82 µg/dl 70 - 120\nWiek 45 lat');
+    final out = LabParser.parse('Mangan 1,2 µg/l 0,4 - 2,0\nWiek 45 lat');
     expect(out.results.length, 1);
     expect(out.results.first.known, false);
-    expect(out.results.first.name, 'Cynk');
-    expect(out.results.first.refHigh, 120);
+    expect(out.results.first.name, 'Mangan');
+    expect(out.results.first.refHigh, 2.0);
   });
 
   test('Tekst z OCR – u zamiast µ, µmol/l, przecinki i flagi', () {
@@ -241,5 +241,110 @@ Data/godz. wykonania: 2026-08-28 13:01:00
     expect(g.valueText, '<2');
     expect(g.refHigh, 20);
     expect(r.length, 2, reason: r.map((e) => e.rawLine).join(' / '));
+  });
+
+  test('anty-tTG – warianty przekłamań OCR z telefonu', () {
+    for (final t in [
+      'P/c. anty-tTG IgA: <2 AU/ml -\n< 20 AU/ml wynik negatywny',
+      'P/c. anty-tTG lgA: <2 AU/ml -\n< 20 AU/ml wynik negatywny',
+      'Pic. anty-1TG IgA: ‹2 AU/mI -\n< 20 AU/ml wynik negatywny',
+      'P/c. anty-tTG IgA:\n<2   AU/ml   -\n< 20 AU/ml wynik negatywny',
+      'P/c. anty-tTG IgA <2 AU/ml',
+      'Przeciwciała przeciw transglutaminazie tkankowej IgA <2 AU/ml < 20',
+    ]) {
+      final r = LabParser.parse(t).results.where((x) => x.key == 'TTG_IGA').firstOrNull;
+      expect(r, isNotNull, reason: t);
+      expect(r!.value, 2, reason: t);
+    }
+  });
+
+  test('Badanie wzroku – zapis z etykietami', () {
+    const t = """
+Gabinet Okulistyczny
+Badanie okulistyczne  12.06.2025
+Ostrość wzroku do dali bez korekcji: OP 0,5  OL 0,6
+Visus z korekcją: OP 1,0  OL 5/5
+Refrakcja (autorefraktometr):
+OP: sph -1,25 cyl -0,50 ax 180
+OL: sph -1,00 cyl -0,75 ax 5
+Tonometria: OP 16 mmHg, OL 18 mmHg
+Długość osiowa: OP 24,12 mm OL 24,05 mm
+Pachymetria: OP 545 µm OL 552 µm
+PD 63 mm
+Rozpoznanie: Krótkowzroczność z astygmatyzmem obu oczu.
+Zalecenia: kontrola okulistyczna za 12 miesięcy.
+""";
+    final out = LabParser.parse(t);
+    double? v(String k) => out.results.where((x) => x.key == k).firstOrNull?.value;
+    expect(out.suggestedCategory, DocCategories.eye);
+    expect(out.date, DateTime(2025, 6, 12));
+    expect(v('EYE_VA_R'), 0.5);
+    expect(v('EYE_VA_L'), 0.6);
+    expect(v('EYE_VACC_R'), 1.0);
+    expect(v('EYE_VACC_L'), 1.0);
+    expect(v('EYE_SPH_R'), -1.25);
+    expect(v('EYE_CYL_R'), -0.5);
+    expect(v('EYE_AX_R'), 180);
+    expect(v('EYE_SPH_L'), -1.0);
+    expect(v('EYE_AX_L'), 5);
+    expect(v('EYE_SE_R'), -1.5);
+    expect(v('EYE_IOP_R'), 16);
+    expect(v('EYE_IOP_L'), 18);
+    expect(v('EYE_AL_R'), 24.12);
+    expect(v('EYE_AL_L'), 24.05);
+    expect(v('EYE_CCT_R'), 545);
+    expect(v('EYE_PD'), 63);
+  });
+
+  test('Badanie wzroku – tabela SPH/CYL/AX (recepta na okulary)', () {
+    const t = """
+RECEPTA NA OKULARY   data 03.02.2026
+            SPH     CYL     AX     ADD
+OP         -2,25   -0,75    170    +1,50
+OL         -2,00   -0,50     10    +1,50
+Ostrość wzroku
+OP 1,0
+OL 0,9
+""";
+    final out = LabParser.parse(t);
+    double? v(String k) => out.results.where((x) => x.key == k).firstOrNull?.value;
+    expect(v('EYE_SPH_R'), -2.25);
+    expect(v('EYE_CYL_R'), -0.75);
+    expect(v('EYE_AX_R'), 170);
+    expect(v('EYE_ADD_R'), 1.5);
+    expect(v('EYE_SPH_L'), -2.0);
+    expect(v('EYE_AX_L'), 10);
+    expect(v('EYE_VA_R'), 1.0);
+    expect(v('EYE_VA_L'), 0.9);
+  });
+
+  test('Rozszerzona biblioteka – przykłady', () {
+    const t = """
+CEA 2,1 ng/ml < 5,0
+CA 19-9 12,4 U/ml < 37
+CA 125 18 U/ml 0 - 35
+Anty-HBs 125 mIU/ml > 10
+HBsAg niereaktywny
+Peptyd C 2,3 ng/ml 1,1 - 4,4
+Glukoza po 120 min 132 mg/dl < 140
+Cynk 85 µg/dl 70 - 120
+pCO2 41 mmHg 35 - 45
+Apolipoproteina B 95 mg/dl < 100
+Cystatyna C 0,85 mg/l 0,6 - 1,0
+""";
+    final r = LabParser.parse(t).results;
+    double? v(String k) => r.where((x) => x.key == k).firstOrNull?.value;
+    expect(v('CEA'), 2.1);
+    expect(v('CA199'), 12.4);
+    expect(v('CA125'), 18);
+    expect(v('AHBS'), 125);
+    expect(r.where((x) => x.key == 'HBSAG').first.valueText, 'niereaktywny');
+    expect(v('CPEP'), 2.3);
+    expect(v('GLU120'), 132);
+    expect(v('ZN'), 85);
+    expect(v('PCO2'), 41);
+    expect(v('APOB'), 95);
+    expect(v('CYSC'), 0.85);
+    expect(r.where((x) => !x.known), isEmpty);
   });
 }

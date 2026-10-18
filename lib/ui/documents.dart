@@ -33,6 +33,8 @@ IconData categoryIcon(String c) {
       return Icons.troubleshoot;
     case DocCategories.histo:
       return Icons.biotech_outlined;
+    case DocCategories.eye:
+      return Icons.visibility_outlined;
     default:
       return Icons.description_outlined;
   }

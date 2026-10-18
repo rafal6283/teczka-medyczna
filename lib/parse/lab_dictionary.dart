@@ -97,9 +97,14 @@ class LabDictionary {
   static const imm = 'Immunologia i serologia';
   static const kal = 'Kał';
   static const serce = 'Serce';
+  static const onko = 'Markery nowotworowe';
+  static const inf = 'Infekcje';
+  static const gaz = 'Gazometria';
+  static const leki = 'Leki (stężenia)';
+  static const eye = 'Wzrok';
   static const inne = 'Inne';
 
-  static const categoryOrder = [morf, bio, lip, wat, ner, tar, hor, zel, zap, imm, serce, krz, moc, kal, ekg, inne];
+  static const categoryOrder = [morf, bio, lip, wat, ner, tar, hor, zel, zap, imm, inf, onko, serce, krz, gaz, moc, kal, ekg, eye, leki, inne];
 
   static final Map<String, LabParam> byKey = {};
 
@@ -492,6 +497,8 @@ class LabDictionary {
     _p('PAUSE', 'Holter: pauzy > 2 s', ekg, '', null, 0.0).a(['pauzy', 'pauzy powyzej 2 s', 'pauzy 2 s', 'liczba pauz', 'pauzy dluzsze niz 2 s', 'pauzy 2s']);
     _p('PAUSE_MAX', 'Holter: najdłuższa pauza', ekg, 's', null, 2.0).a(['najdluzsza pauza', 'najdluzszy odstep rr', 'max rr', 'najdluzszy rr']).c('ms', 0.001).c('sek', 1);
 
+    _extended();
+
     for (final x in byKey.values) {
       for (final al in x.aliases) {
         aliases.add(MapEntry(al, x));
@@ -500,5 +507,239 @@ class LabDictionary {
     aliases.sort((a, b) => b.key.length.compareTo(a.key.length));
     urineAliases.sort((a, b) => b.key.length.compareTo(a.key.length));
     sedimentAliases.sort((a, b) => b.key.length.compareTo(a.key.length));
+  }
+
+  // ======================= Rozszerzona biblioteka =======================
+  static void _x(String key, String name, String cat, String unit, double? lo, double? hi, List<String> al, [Map<String, double> conv = const {}]) {
+    final p = _p(key, name, cat, unit, lo, hi).a(al);
+    conv.forEach((u, f) => p.c(u, f));
+  }
+
+  static void _extended() {
+    const mgdlMmol = 18.016;
+    // ---------- Morfologia – dodatkowe ----------
+    _x('RET_ABS', 'Retikulocyty (bezwzględnie)', morf, 'tys/µl', 25, 100, ['retikulocyty bezwzgledne', 'ret abs', 'retikulocyty liczba bezwzgledna'], {'10^9/l': 1, '10^3/ul': 1});
+    _x('RETHE', 'RET-He (hemoglobina retikulocytów)', morf, 'pg', 28, 36, ['ret he', 'hemoglobina retikulocytow', 'ret hgb']);
+    _x('ESR1H', 'Rozmaz: limfocyty atypowe', morf, '%', null, 0, ['limfocyty atypowe', 'limfocyty odczynowe']);
+    _x('BANDS', 'Rozmaz: neutrofile pałeczkowate', morf, '%', 0, 5, ['palki', 'neutrofile paleczkowate', 'granulocyty paleczkowate']);
+    _x('SEGS', 'Rozmaz: neutrofile segmentowane', morf, '%', 40, 70, ['segmenty', 'granulocyty segmentowane']);
+
+    // ---------- Biochemia / cukrzyca ----------
+    _x('CHE', 'Cholinesteraza', bio, 'U/l', 5300, 12900, ['cholinesteraza', 'cholinoesteraza', 'pseudocholinesteraza', 'che'], {'iu/l': 1, 'kU/l': 1000});
+    _x('CERU', 'Ceruloplazmina', bio, 'mg/dl', 20, 60, ['ceruloplazmina'], {'g/l': 100});
+    _x('NH3', 'Amoniak', bio, 'µmol/l', 11, 51, ['amoniak', 'amoniak we krwi'], {'ug/dl': 0.587});
+    _x('LAC', 'Mleczany', bio, 'mmol/l', 0.5, 2.2, ['mleczany', 'kwas mlekowy', 'laktat', 'mleczan'], {'mg/dl': 0.111});
+    _x('OSM', 'Osmolalność surowicy', bio, 'mOsm/kg', 275, 295, ['osmolalnosc', 'osmolalnosc surowicy', 'osmolarnosc']);
+    _x('GLOB', 'Globuliny', bio, 'g/dl', 2.0, 3.5, ['globuliny', 'globuliny calkowite'], {'g/l': 0.1});
+    _x('PEL_ALB', 'Proteinogram: albuminy', bio, '%', 55.8, 66.1, ['albuminy proteinogram', 'frakcja albumin', 'albuminy w proteinogramie']);
+    _x('PEL_A1', 'Proteinogram: alfa-1-globuliny', bio, '%', 2.9, 4.9, ['alfa 1 globuliny', 'alfa1 globuliny', 'globuliny alfa 1']);
+    _x('PEL_A2', 'Proteinogram: alfa-2-globuliny', bio, '%', 7.1, 11.8, ['alfa 2 globuliny', 'alfa2 globuliny', 'globuliny alfa 2']);
+    _x('PEL_B', 'Proteinogram: beta-globuliny', bio, '%', 8.4, 13.1, ['beta globuliny', 'globuliny beta']);
+    _x('PEL_B1', 'Proteinogram: beta-1-globuliny', bio, '%', 4.7, 7.2, ['beta 1 globuliny', 'beta1 globuliny']);
+    _x('PEL_B2', 'Proteinogram: beta-2-globuliny', bio, '%', 3.2, 6.5, ['beta 2 globuliny', 'beta2 globuliny']);
+    _x('PEL_G', 'Proteinogram: gamma-globuliny', bio, '%', 11.1, 18.8, ['gamma globuliny', 'globuliny gamma']);
+    _x('AG_RATIO', 'Stosunek albumin do globulin', bio, '', 1.0, 2.0, ['stosunek albumin globulin', 'wskaznik albuminy globuliny', 'stosunek a g']);
+    _x('FRUCT', 'Fruktozamina', bio, 'µmol/l', 205, 285, ['fruktozamina']);
+    _x('CPEP', 'Peptyd C', bio, 'ng/ml', 1.1, 4.4, ['peptyd c', 'c peptyd', 'peptyd c na czczo'], {'nmol/l': 3.02, 'pmol/l': 0.00302});
+    _x('GLU60', 'Glukoza po 60 min (OGTT)', bio, 'mg/dl', null, 180, ['glukoza po 60 min', 'glukoza 60 min', 'glukoza po 1 godz', 'glukoza po 1 h', 'glukoza 1 h', 'glukoza w 60 minucie', 'ogtt 60 min'], {'mmol/l': mgdlMmol});
+    _x('GLU120', 'Glukoza po 120 min (OGTT)', bio, 'mg/dl', null, 140, ['glukoza po 120 min', 'glukoza 120 min', 'glukoza po 2 godz', 'glukoza po 2 h', 'glukoza 2 h', 'glukoza w 120 minucie', 'ogtt 120 min'], {'mmol/l': mgdlMmol});
+    _x('INS60', 'Insulina po 60 min (OGTT)', bio, 'µIU/ml', null, null, ['insulina po 60 min', 'insulina 60 min', 'insulina po 1 godz', 'insulina w 60 minucie'], {'mu/l': 1, 'miu/l': 1, 'uu/ml': 1});
+    _x('INS120', 'Insulina po 120 min (OGTT)', bio, 'µIU/ml', null, null, ['insulina po 120 min', 'insulina 120 min', 'insulina po 2 godz', 'insulina w 120 minucie'], {'mu/l': 1, 'miu/l': 1, 'uu/ml': 1});
+    _x('BHB', 'Beta-hydroksymaślan', bio, 'mmol/l', null, 0.3, ['beta hydroksymaslan', 'kwas beta hydroksymaslowy', 'ketony we krwi']);
+    _x('ACE', 'Konwertaza angiotensyny (ACE)', bio, 'U/l', 8, 52, ['konwertaza angiotensyny', 'ace', 'enzym konwertujacy angiotensyne']);
+
+    // ---------- Lipidy ----------
+    _x('APOA1', 'Apolipoproteina A1', lip, 'mg/dl', 110, 205, ['apolipoproteina a1', 'apolipoproteina a 1', 'apo a1', 'apoa1', 'apo a 1'], {'g/l': 100});
+    _x('APOB', 'Apolipoproteina B', lip, 'mg/dl', null, 100, ['apolipoproteina b', 'apo b', 'apob', 'apolipoproteina b100'], {'g/l': 100});
+    _x('SDLDL', 'Małe gęste LDL (sdLDL)', lip, 'mg/dl', null, 35, ['sdldl', 'male geste ldl', 'sd ldl'], {'mmol/l': 38.67});
+    _x('LDL_D', 'Cholesterol LDL bezpośredni', lip, 'mg/dl', null, 115, ['ldl bezposredni', 'cholesterol ldl bezposredni', 'ldl oznaczany bezposrednio'], {'mmol/l': 38.67});
+
+    // ---------- Wątroba / trzustka ----------
+    _x('BILI', 'Bilirubina pośrednia', wat, 'mg/dl', 0.2, 0.8, ['bilirubina posrednia', 'bilirubina wolna', 'bilirubina niesprzezona'], {'umol/l': 0.0585});
+    _x('GLDH', 'GLDH', wat, 'U/l', null, 7, ['gldh', 'dehydrogenaza glutaminianowa']);
+    _x('ELAST_K', 'Elastaza trzustkowa w kale', kal, 'µg/g', 200, null, ['elastaza trzustkowa', 'elastaza 1', 'elastaza w kale', 'elastaza trzustkowa w kale']);
+    _x('AMY_U', 'Amylaza w moczu', moc, 'U/l', null, 460, ['amylaza w moczu', 'diastaza', 'diastaza w moczu']);
+
+    // ---------- Nerki / elektrolity / mocz dobowy ----------
+    _x('CYSC', 'Cystatyna C', ner, 'mg/l', 0.6, 1.0, ['cystatyna c', 'cystatyna']);
+    _x('EGFR_CYS', 'eGFR (cystatyna C)', ner, 'ml/min/1,73m²', 90, null, ['egfr cystatyna', 'egfr wg cystatyny c', 'egfr cystatyna c', 'egfr ckd epi cystatyna']);
+    _x('B2M', 'Beta-2-mikroglobulina', ner, 'mg/l', 0.8, 2.2, ['beta 2 mikroglobulina', 'b2 mikroglobulina', 'beta2 mikroglobulina', 'b 2 mikroglobulina']);
+    _x('CAJ', 'Wapń zjonizowany', ner, 'mmol/l', 1.15, 1.35, ['wapn zjonizowany', 'ca zjonizowany', 'ca2', 'wapn zjonizowany ca2']);
+    _x('U24_PROT', 'Białko w dobowej zbiórce moczu', moc, 'g/24h', null, 0.15, ['bialkomocz dobowy', 'bialko w dobowej zbiorce moczu', 'dobowa utrata bialka', 'bialko w moczu dobowym', 'bialko calkowite w dobowej zbiorce moczu'], {'mg/24h': 0.001});
+    _x('U_ALB', 'Albumina w moczu', moc, 'mg/l', null, 20, ['albumina w moczu', 'mikroalbuminuria', 'mikroalbumina w moczu']);
+    _x('U_CREA', 'Kreatynina w moczu', moc, 'mg/dl', null, null, ['kreatynina w moczu', 'kreatynina w moczu jednorazowym'], {'mmol/l': 11.31, 'umol/l': 0.01131});
+    _x('CRCL', 'Klirens kreatyniny', ner, 'ml/min', 90, 140, ['klirens kreatyniny', 'klirens kreatyniny endogennej']);
+    _x('U_NA', 'Sód w moczu', moc, 'mmol/l', null, null, ['sod w moczu', 'sod w dobowej zbiorce moczu']);
+    _x('U_K', 'Potas w moczu', moc, 'mmol/l', null, null, ['potas w moczu', 'potas w dobowej zbiorce moczu']);
+    _x('U_CA', 'Wapń w moczu', moc, 'mg/24h', null, 300, ['wapn w moczu', 'wapn w dobowej zbiorce moczu', 'kalciuria']);
+    _x('U_UA', 'Kwas moczowy w moczu', moc, 'mg/24h', null, 800, ['kwas moczowy w moczu', 'kwas moczowy w dobowej zbiorce moczu']);
+    _x('U_VOL', 'Objętość dobowej zbiórki moczu', moc, 'ml', 800, 2500, ['objetosc moczu', 'diureza', 'objetosc zbiorki', 'diureza dobowa']);
+
+    // ---------- Tarczyca ----------
+    _x('THYRO', 'Tyreoglobulina', tar, 'ng/ml', 3.5, 77, ['tyreoglobulina', 'tyreoglobulina tg']);
+    _x('CALCIT', 'Kalcytonina', tar, 'pg/ml', null, 10, ['kalcytonina']);
+    _x('TT4', 'Tyroksyna całkowita (T4)', tar, 'µg/dl', 5.1, 14.1, ['tyroksyna calkowita', 'tt4', 't4 calkowita', 't4'], {'nmol/l': 0.0777});
+    _x('TT3', 'Trójjodotyronina całkowita (T3)', tar, 'ng/dl', 80, 200, ['trojjodotyronina calkowita', 'tt3', 't3 calkowita', 't3'], {'nmol/l': 65.1});
+    _x('RT3', 'Odwrotna T3 (rT3)', tar, 'ng/dl', 10, 24, ['rt3', 'odwrotna t3', 'reverse t3']);
+
+    // ---------- Hormony ----------
+    _x('ACTH', 'ACTH', hor, 'pg/ml', 7.2, 63.3, ['acth', 'kortykotropina', 'hormon adrenokortykotropowy']);
+    _x('GH', 'Hormon wzrostu (GH)', hor, 'ng/ml', null, null, ['hormon wzrostu', 'gh', 'somatotropina', 'hgh']);
+    _x('IGF1', 'IGF-1', hor, 'ng/ml', null, null, ['igf 1', 'igf1', 'somatomedyna c', 'insulinopodobny czynnik wzrostu 1']);
+    _x('ALDO', 'Aldosteron', hor, 'pg/ml', null, null, ['aldosteron'], {'ng/dl': 10, 'pmol/l': 0.3605});
+    _x('RENIN', 'Renina', hor, 'µIU/ml', null, null, ['renina', 'renina bezposrednia', 'aktywnosc reninowa osocza']);
+    _x('ANDRO', 'Androstendion', hor, 'ng/ml', null, null, ['androstendion', 'androstenedion'], {'nmol/l': 0.2865});
+    _x('OHP17', '17-OH-progesteron', hor, 'ng/ml', null, null, ['17 oh progesteron', '17 hydroksyprogesteron', '17 ohp', '17 oh p'], {'nmol/l': 0.3305});
+    _x('DHT', 'Dihydrotestosteron', hor, 'pg/ml', null, null, ['dihydrotestosteron', 'dht']);
+    _x('HCG', 'Beta-hCG', hor, 'mIU/ml', null, 5, ['beta hcg', 'b hcg', 'hcg', 'gonadotropina kosmowkowa', 'beta hcg ilosciowo', 'hcg calkowite'], {'iu/l': 1, 'miu/ml': 1});
+    _x('VITD125', 'Witamina D 1,25(OH)₂', zel, 'pg/ml', 19.9, 79.3, ['1 25 oh 2 d', '1 25 dihydroksywitamina d', 'witamina d 1 25 oh 2', '1 25 oh 2 witamina d', 'kalcytriol']);
+    _x('ESTRON', 'Estron', hor, 'pg/ml', null, null, ['estron']);
+    _x('MPRL', 'Makroprolaktyna', hor, '%', null, null, ['makroprolaktyna', 'prolaktyna po peg']);
+    _x('INHB', 'Inhibina B', hor, 'pg/ml', null, null, ['inhibina b']);
+    _x('METAN', 'Metoksykatecholaminy', hor, 'µg/24h', null, null, ['metoksykatecholaminy', 'metanefryny', 'normetanefryny']);
+    _x('CORT_U', 'Kortyzol w dobowej zbiórce moczu', hor, 'µg/24h', null, null, ['kortyzol w moczu', 'wolny kortyzol w moczu', 'kortyzol w dobowej zbiorce moczu']);
+    _x('CORT_S', 'Kortyzol w ślinie', hor, 'nmol/l', null, null, ['kortyzol w slinie', 'kortyzol slina']);
+
+    // ---------- Witaminy i mikroelementy ----------
+    _x('VITA', 'Witamina A', zel, 'mg/l', 0.3, 0.8, ['witamina a', 'retinol'], {'ug/dl': 0.01, 'umol/l': 0.2865});
+    _x('VITE', 'Witamina E', zel, 'mg/l', 5, 18, ['witamina e', 'alfa tokoferol', 'tokoferol'], {'umol/l': 0.4307});
+    _x('VITB1', 'Witamina B1', zel, 'µg/l', 28, 85, ['witamina b1', 'tiamina']);
+    _x('VITB6', 'Witamina B6', zel, 'µg/l', 5, 50, ['witamina b6', 'pirydoksyna', 'fosforan pirydoksalu']);
+    _x('VITC', 'Witamina C', zel, 'mg/dl', 0.4, 2.0, ['witamina c', 'kwas askorbinowy']);
+    _x('VITK', 'Witamina K', zel, 'ng/ml', 0.1, 2.2, ['witamina k', 'witamina k1', 'filochinon']);
+    _x('ZN', 'Cynk', zel, 'µg/dl', 70, 120, ['cynk', 'cynk w surowicy'], {'umol/l': 6.54});
+    _x('CU', 'Miedź', zel, 'µg/dl', 70, 140, ['miedz', 'miedz w surowicy'], {'umol/l': 6.355});
+    _x('SE', 'Selen', zel, 'µg/l', 70, 150, ['selen', 'selen w surowicy']);
+    _x('STFR', 'Rozpuszczalny receptor transferyny', zel, 'mg/l', 0.76, 1.76, ['rozpuszczalny receptor transferyny', 'stfr']);
+    _x('HOLOTC', 'Holotranskobalamina (aktywna B12)', zel, 'pmol/l', 35, null, ['holotranskobalamina', 'aktywna witamina b12', 'holo tc', 'holotc']);
+    _x('MMA', 'Kwas metylomalonowy', zel, 'µmol/l', null, 0.4, ['kwas metylomalonowy', 'mma']);
+    _x('OMEGA3', 'Indeks omega-3', zel, '%', 8, null, ['indeks omega 3', 'omega 3 index']);
+
+    // ---------- Stan zapalny ----------
+    _x('IL6', 'Interleukina 6', zap, 'pg/ml', null, 7, ['interleukina 6', 'il 6', 'il6']);
+    _x('SAA', 'Białko amyloidu A (SAA)', zap, 'mg/l', null, 6.4, ['saa', 'bialko amyloidu a', 'amyloid a']);
+
+    // ---------- Krzepnięcie ----------
+    _x('TT', 'Czas trombinowy (TT)', krz, 's', 14, 21, ['czas trombinowy', 'tt', 'czas trombinowy tt']);
+    _x('PTI', 'Wskaźnik protrombinowy', krz, '%', 70, 130, ['wskaznik protrombinowy', 'wskaznik quicka', 'wskaznik pt']);
+    _x('AT3', 'Antytrombina III', krz, '%', 80, 120, ['antytrombina iii', 'antytrombina', 'at iii', 'at3']);
+    _x('PROTC', 'Białko C (aktywność)', krz, '%', 70, 140, ['bialko c aktywnosc', 'bialko c', 'aktywnosc bialka c']);
+    _x('PROTS', 'Białko S (wolne)', krz, '%', 60, 140, ['bialko s', 'wolne bialko s', 'bialko s wolne']);
+    _x('F8', 'Czynnik VIII', krz, '%', 50, 150, ['czynnik viii', 'aktywnosc czynnika viii']);
+    _x('LA', 'Antykoagulant tocznia', krz, '', null, null, ['antykoagulant tocznia', 'antykoagulant toczniowy', 'la']);
+
+    // ---------- Immunologia ----------
+    _x('ANA', 'Przeciwciała przeciwjądrowe (ANA)', imm, '', null, null, ['ana', 'przeciwciala przeciwjadrowe', 'ana screen', 'ana1', 'ana hep 2', 'przeciwciala przeciwjadrowe ana']);
+    _x('ANCA', 'ANCA', imm, '', null, null, ['anca', 'p anca', 'c anca', 'przeciwciala anca']);
+    _x('DSDNA', 'Anty-dsDNA', imm, 'IU/ml', null, 10, ['anty dsdna', 'przeciwciala przeciw dsdna', 'ds dna']);
+    _x('C3', 'Dopełniacz C3', imm, 'g/l', 0.9, 1.8, ['c3', 'dopelniacz c3', 'skladowa c3', 'c3c'], {'mg/dl': 0.01});
+    _x('C4', 'Dopełniacz C4', imm, 'g/l', 0.1, 0.4, ['c4', 'dopelniacz c4', 'skladowa c4'], {'mg/dl': 0.01});
+    _x('TRYPT', 'Tryptaza', imm, 'µg/l', null, 11.4, ['tryptaza']);
+    _x('ECP', 'Eozynofilowe białko kationowe (ECP)', imm, 'µg/l', null, 24, ['ecp', 'eozynofilowe bialko kationowe']);
+    _x('ASCA', 'ASCA', imm, '', null, null, ['asca', 'przeciwciala asca']);
+    _x('AGA_IGA', 'Przeciwciała antygliadynowe IgA', imm, 'U/ml', null, null, ['aga iga', 'przeciwciala antygliadynowe iga', 'anty gliadyna iga']);
+    _x('AGA_IGG', 'Przeciwciała antygliadynowe IgG', imm, 'U/ml', null, null, ['aga igg', 'przeciwciala antygliadynowe igg', 'anty gliadyna igg']);
+
+    // ---------- Infekcje ----------
+    _x('HBSAG', 'HBsAg (WZW B)', inf, '', null, null, ['hbsag', 'antygen hbs', 'hbs ag', 'hbs antygen']);
+    _x('AHBS', 'Anty-HBs (odporność WZW B)', inf, 'mIU/ml', 10, null, ['anty hbs', 'przeciwciala anty hbs', 'anty hbs ilosciowo'], {'iu/l': 1});
+    _x('AHBC', 'Anty-HBc total', inf, '', null, null, ['anty hbc', 'anty hbc total', 'anty hbc calkowite']);
+    _x('HCV', 'Anty-HCV (WZW C)', inf, '', null, null, ['anty hcv', 'przeciwciala anty hcv', 'hcv ab']);
+    _x('HAV', 'Anty-HAV IgG (WZW A)', inf, '', null, null, ['anty hav igg', 'anty hav total', 'anty hav']);
+    _x('HIV', 'HIV Ag/Ab', inf, '', null, null, ['hiv ag ab', 'hiv combo', 'hiv 1 2', 'hiv 1 2 ag ab', 'hiv', 'antygen p24 i przeciwciala anty hiv']);
+    _x('VDRL', 'Kiła (VDRL/RPR)', inf, '', null, null, ['vdrl', 'kila vdrl', 'rpr', 'odczyn vdrl', 'usr']);
+    _x('TPHA', 'Kiła (TPHA)', inf, '', null, null, ['tpha', 'treponema pallidum', 'kila tpha']);
+    _x('TOXO_G', 'Toksoplazmoza IgG', inf, 'IU/ml', null, null, ['toksoplazmoza igg', 'toxoplasma gondii igg', 'toxoplasma igg', 'toxo igg']);
+    _x('TOXO_M', 'Toksoplazmoza IgM', inf, '', null, null, ['toksoplazmoza igm', 'toxoplasma gondii igm', 'toxoplasma igm', 'toxo igm']);
+    _x('CMV_G', 'CMV IgG', inf, 'U/ml', null, null, ['cmv igg', 'cytomegalia igg', 'cytomegalovirus igg']);
+    _x('CMV_M', 'CMV IgM', inf, '', null, null, ['cmv igm', 'cytomegalia igm', 'cytomegalovirus igm']);
+    _x('EBV_VCAM', 'EBV VCA IgM', inf, '', null, null, ['ebv vca igm', 'ebv igm']);
+    _x('EBV_VCAG', 'EBV VCA IgG', inf, '', null, null, ['ebv vca igg', 'ebv igg']);
+    _x('EBV_EBNA', 'EBV EBNA IgG', inf, '', null, null, ['ebv ebna igg', 'ebna igg', 'ebna 1 igg']);
+    _x('BORR_G', 'Borelioza IgG', inf, '', null, null, ['borelioza igg', 'borrelia igg', 'borrelia burgdorferi igg', 'borelioza igg elisa']);
+    _x('BORR_M', 'Borelioza IgM', inf, '', null, null, ['borelioza igm', 'borrelia igm', 'borrelia burgdorferi igm', 'borelioza igm elisa']);
+    _x('RUB_G', 'Różyczka IgG', inf, 'IU/ml', 10, null, ['rozyczka igg', 'rubella igg', 'wirus rozyczki igg']);
+    _x('RUB_M', 'Różyczka IgM', inf, '', null, null, ['rozyczka igm', 'rubella igm']);
+    _x('VZV_G', 'Ospa wietrzna (VZV) IgG', inf, '', null, null, ['vzv igg', 'ospa wietrzna igg', 'varicella zoster igg']);
+    _x('COVID', 'SARS-CoV-2', inf, '', null, null, ['sars cov 2', 'covid 19', 'sars cov 2 antygen', 'sars cov 2 rt pcr', 'koronawirus sars cov 2']);
+    _x('COVID_IGG', 'SARS-CoV-2 IgG', inf, '', null, null, ['sars cov 2 igg', 'przeciwciala sars cov 2 igg', 'covid 19 igg']);
+    _x('FLU', 'Grypa A/B (antygen)', inf, '', null, null, ['grypa a b', 'grypa antygen', 'influenza a b', 'wirus grypy']);
+    _x('STREP', 'Paciorkowiec (strep test)', inf, '', null, null, ['strep a', 'paciorkowce grupy a', 'streptococcus pyogenes', 'szybki test paciorkowcowy']);
+    _x('CHLAM', 'Chlamydia trachomatis', inf, '', null, null, ['chlamydia trachomatis', 'chlamydia']);
+    _x('MYCO_M', 'Mycoplasma pneumoniae IgM', inf, '', null, null, ['mycoplasma pneumoniae igm', 'mykoplazma igm']);
+    _x('QUANT', 'Test IGRA (gruźlica)', inf, '', null, null, ['quantiferon', 'quantiferon tb', 'igra', 'test igra']);
+
+    // ---------- Kał ----------
+    _x('PARAS', 'Pasożyty w kale', kal, '', null, null, ['jaja pasozytow', 'pasozyty jelitowe', 'badanie kalu na pasozyty', 'pasozyty', 'jaja i cysty pasozytow']);
+    _x('CDIFF', 'Clostridioides difficile', kal, '', null, null, ['clostridioides difficile', 'clostridium difficile', 'toksyna a b clostridium', 'c difficile toksyna', 'gdh clostridium']);
+    _x('ROTA', 'Rotawirusy w kale', kal, '', null, null, ['rotawirusy', 'rotawirus', 'rotawirusy antygen']);
+    _x('ADENO', 'Adenowirusy w kale', kal, '', null, null, ['adenowirusy', 'adenowirus']);
+    _x('NORO', 'Norowirusy w kale', kal, '', null, null, ['norowirusy', 'norowirus']);
+    _x('LACTOF', 'Laktoferyna w kale', kal, '', null, null, ['laktoferyna', 'laktoferyna w kale']);
+    _x('FIT', 'Krew utajona w kale (ilościowo, FIT)', kal, 'µg/g', null, 20, ['fit', 'krew utajona ilosciowo', 'hemoglobina w kale', 'test immunochemiczny fit']);
+
+    // ---------- Serce ----------
+    _x('CKMB', 'CK-MB', serce, 'U/l', null, 25, ['ck mb', 'kinaza kreatynowa mb', 'izoenzym ck mb'], {'iu/l': 1});
+    _x('CKMB_M', 'CK-MB masa', serce, 'ng/ml', null, 5, ['ck mb masa', 'ck mb mass']);
+    _x('MYO', 'Mioglobina', serce, 'ng/ml', 25, 72, ['mioglobina']);
+    _x('BNP', 'BNP', serce, 'pg/ml', null, 100, ['bnp', 'peptyd natriuretyczny typu b']);
+
+    // ---------- Markery nowotworowe ----------
+    _x('CEA', 'CEA', onko, 'ng/ml', null, 5, ['cea', 'antygen karcynoembrionalny']);
+    _x('AFP', 'AFP', onko, 'ng/ml', null, 7, ['afp', 'alfa fetoproteina', 'alfa 1 fetoproteina'], {'iu/ml': 1.21});
+    _x('CA125', 'CA 125', onko, 'U/ml', null, 35, ['ca 125', 'ca125', 'ca 125 ii']);
+    _x('CA199', 'CA 19-9', onko, 'U/ml', null, 37, ['ca 19 9', 'ca19 9', 'ca 199']);
+    _x('CA153', 'CA 15-3', onko, 'U/ml', null, 25, ['ca 15 3', 'ca15 3', 'ca 153']);
+    _x('CA724', 'CA 72-4', onko, 'U/ml', null, 6.9, ['ca 72 4', 'ca72 4']);
+    _x('HE4', 'HE4', onko, 'pmol/l', null, 140, ['he4', 'he 4']);
+    _x('ROMA', 'Algorytm ROMA', onko, '%', null, null, ['roma', 'algorytm roma', 'wskaznik roma']);
+    _x('NSE', 'NSE', onko, 'ng/ml', null, 16.3, ['nse', 'enolaza neuronowo swoista']);
+    _x('SCC', 'SCC', onko, 'ng/ml', null, 1.5, ['scc', 'scc ag', 'antygen raka plaskonablonkowego']);
+    _x('CYFRA', 'CYFRA 21-1', onko, 'ng/ml', null, 3.3, ['cyfra 21 1', 'cyfra']);
+    _x('CGA', 'Chromogranina A', onko, 'ng/ml', null, 100, ['chromogranina a', 'chromogranina']);
+    _x('PSA_RATIO', 'Stosunek PSA wolny/całkowity', onko, '%', 25, null, ['wskaznik fpsa tpsa', 'stosunek psa wolny calkowity', 'fpsa tpsa', 'stosunek fpsa tpsa', 'psa wolny psa calkowity']);
+    _x('S100', 'Białko S100', onko, 'µg/l', null, 0.105, ['bialko s100', 's100']);
+    _x('PROGRP', 'ProGRP', onko, 'pg/ml', null, 63, ['progrp', 'pro grp']);
+
+    // ---------- Gazometria ----------
+    _x('BG_PH', 'Gazometria: pH', gaz, '', 7.35, 7.45, ['ph krwi', 'ph gazometria', 'ph', 'ph krwi tetniczej', 'ph krwi zylnej', 'ph krwi wlosniczkowej']);
+    _x('PCO2', 'Gazometria: pCO₂', gaz, 'mmHg', 35, 45, ['pco2', 'pco 2', 'cisnienie parcjalne co2', 'pco2 t'], {'kpa': 7.50});
+    _x('PO2', 'Gazometria: pO₂', gaz, 'mmHg', 75, 100, ['po2', 'po 2', 'cisnienie parcjalne o2', 'po2 t'], {'kpa': 7.50});
+    _x('HCO3', 'Gazometria: HCO₃⁻', gaz, 'mmol/l', 22, 26, ['hco3', 'hco3 akt', 'hco3 std', 'wodoroweglany', 'hco3 aktualne', 'hco3 standardowe', 'sbc']);
+    _x('BE', 'Gazometria: nadmiar zasad (BE)', gaz, 'mmol/l', -2.5, 2.5, ['be', 'nadmiar zasad', 'be ecf', 'be b', 'abe', 'sbe', 'be ecf c']);
+    _x('SO2', 'Gazometria: saturacja O₂', gaz, '%', 95, 99, ['so2', 'sat o2', 'sao2', 'so2 c', 'wysycenie tlenem']);
+    _x('TCO2', 'Gazometria: ctCO₂', gaz, 'mmol/l', 23, 29, ['tco2', 'ctco2', 'calkowity co2']);
+
+    // ---------- Leki (stężenia) ----------
+    _x('DIGOX', 'Digoksyna', leki, 'ng/ml', 0.8, 2.0, ['digoksyna']);
+    _x('LITH', 'Lit', leki, 'mmol/l', 0.6, 1.2, ['lit', 'lit w surowicy']);
+    _x('VALP', 'Kwas walproinowy', leki, 'µg/ml', 50, 100, ['kwas walproinowy', 'walproiniany', 'walproinian']);
+    _x('CARB', 'Karbamazepina', leki, 'µg/ml', 4, 12, ['karbamazepina']);
+    _x('VANCO', 'Wankomycyna', leki, 'µg/ml', 10, 20, ['wankomycyna']);
+    _x('TACRO', 'Takrolimus', leki, 'ng/ml', 5, 15, ['takrolimus', 'tacrolimus']);
+    _x('PHENY', 'Fenytoina', leki, 'µg/ml', 10, 20, ['fenytoina']);
+
+    // ---------- Wzrok (badanie okulistyczne) – także z parsera badań wzroku ----------
+    for (final side in const [('R', 'OP (prawe)'), ('L', 'OL (lewe)')]) {
+      final s = side.$1, nm = side.$2;
+      _p('EYE_VA_$s', 'Ostrość wzroku bez korekcji $nm', eye, '', 0.8, null);
+      _p('EYE_VACC_$s', 'Ostrość wzroku z korekcją $nm', eye, '', 0.8, null);
+      _p('EYE_VAN_$s', 'Ostrość wzroku do bliży $nm', eye, '', null, null);
+      _p('EYE_SPH_$s', 'Sfera (SPH) $nm', eye, 'dpt', null, null);
+      _p('EYE_CYL_$s', 'Cylinder (CYL) $nm', eye, 'dpt', null, null);
+      _p('EYE_AX_$s', 'Oś cylindra $nm', eye, '°', null, null);
+      _p('EYE_ADD_$s', 'Addycja (ADD) $nm', eye, 'dpt', null, null);
+      _p('EYE_SE_$s', 'Ekwiwalent sferyczny $nm', eye, 'dpt', null, null);
+      _p('EYE_IOP_$s', 'Ciśnienie wewnątrzgałkowe $nm', eye, 'mmHg', 10, 21);
+      _p('EYE_AL_$s', 'Długość osiowa gałki $nm', eye, 'mm', null, null);
+      _p('EYE_CCT_$s', 'Grubość rogówki (pachymetria) $nm', eye, 'µm', null, null);
+      _p('EYE_K1_$s', 'Keratometria K1 $nm', eye, 'D', null, null);
+      _p('EYE_K2_$s', 'Keratometria K2 $nm', eye, 'D', null, null);
+      _p('EYE_RNFL_$s', 'OCT: średnia grubość RNFL $nm', eye, 'µm', 80, null);
+      _p('EYE_CMT_$s', 'OCT: grubość centralna siatkówki $nm', eye, 'µm', null, null);
+      _p('EYE_MD_$s', 'Pole widzenia MD $nm', eye, 'dB', -2.0, null);
+      _p('EYE_CD_$s', 'Stosunek C/D tarczy nerwu $nm', eye, '', null, 0.6);
+    }
+    _p('EYE_PD', 'Rozstaw źrenic (PD)', eye, 'mm', null, null).a(['rozstaw zrenic', 'pd', 'odleglosc miedzyzreniczna']);
   }
 }

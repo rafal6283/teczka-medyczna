@@ -82,6 +82,11 @@ class DoctorReport {
 
 class ReportParser {
   static const types = [
+    ExamType('EYE', 'Badanie okulistyczne', [
+      'badanie okulistyczne', 'konsultacja okulistyczna', 'okulistyczn', 'refrakcj', 'autorefraktometr', 'ostrosc wzroku', 'visus', 'tonometri',
+      'cisnienie wewnatrzgalkowe', 'pole widzenia', 'perymetri', 'keratometri', 'biometria oka', 'pachymetri', 'badanie dna oka', 'oct plamki',
+      'oct tarczy', 'oct nerwu', 'recepta na okulary', 'dobor okularow'
+    ]),
     ExamType('COLONO', 'Kolonoskopia', ['kolonoskopi', 'rektoskopi', 'sigmoidoskopi', 'endoskopia dolnego']),
     ExamType('GASTRO', 'Gastroskopia', ['gastroskopi', 'gastroduodenoskopi', 'ezofagogastroduodenoskopi', 'endoskopia gornego']),
     ExamType('HOLTER_EKG', 'Holter EKG', ['holter ekg', 'holtera ekg', 'badanie holterowskie', 'holter', 'ekg metoda holtera', '24 godzinne monitorowanie ekg']),
@@ -228,7 +233,8 @@ class ReportParser {
     'metaplazj', 'barrett', 'refluks', 'przepuklin', 'hemoroid', 'guzki krwawnicze', 'krwawien', 'zmiana ogniskowa', 'zmiany ogniskowe',
     'zmiana', 'zmiany', 'patologi', 'nieprawidlow', 'hipokinez', 'akinez', 'niedokrwien', 'zawal', 'arytmi', 'ekstrasystol', 'pobudzenia komorowe',
     'pobudzen komorowych', 'salw', 'bigemin', 'osteopor', 'osteopeni', 'zwyrodnien', 'dyskopati', 'wysiek', 'plyn w', 'plynu w', 'zrost', 'bliznow', 'atrofi', 'zanik',
-    'nadcisnien', 'guzek', 'guzki', 'mikrozwapnien', 'birads 3', 'birads 4', 'birads 5', 'bi rads 3', 'bi rads 4', 'bi rads 5', 'tirads 4', 'tirads 5',
+    'nadcisnien', 'guzek', 'guzki', 'zacm', 'jaskr', 'retinopati', 'zwyrodnienie plamki', 'odwarstwien', 'druzy', 'obrzek plamki',
+    'zmetnieni', 'neowaskulary', 'krwotok', 'zakrzep zyly siatkowki', 'ubytki w polu widzenia', 'ubytek w polu widzenia', 'mikrozwapnien', 'birads 3', 'birads 4', 'birads 5', 'bi rads 3', 'bi rads 4', 'bi rads 5', 'tirads 4', 'tirads 5',
   ];
 
   static const _negations = [
