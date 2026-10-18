@@ -133,23 +133,19 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
       - name: Test na emulatorze
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 34
-          arch: x86_64
-          target: google_apis
-          disable-animations: true
-          script: bash .github/smoke.sh build/app/outputs/flutter-apk/app-release.apk > smoke.log 2>&1; echo $? > smoke.rc; true
-      - name: Wynik testu na emulatorze
+        run: |
+          bash .github/emulator.sh build/app/outputs/flutter-apk/app-release.apk > smoke.log 2>&1; echo $? > smoke.rc
+          tail -80 smoke.log
+      - name: Zapisz logi testu (gałąź ci-logs)
         if: always()
         run: |
-          echo "rc=$(cat smoke.rc 2>/dev/null)"
-          cat smoke.log 2>/dev/null | tail -150
-          grep -h "::" smoke.log 2>/dev/null | head -10 || true
-          { echo "SMOKE rc=$(cat smoke.rc 2>/dev/null)"; tail -60 smoke.log 2>/dev/null; } | sed 's/%/%25/g' | cut -c1-300 > s.txt
-          echo "::notice::$(head -60 s.txt | sed ':a;N;$!ba;s/\n/%0A/g')"
-          test -f logcat_err.txt && echo "::notice::LOGCAT%0A$(tail -40 logcat_err.txt | sed 's/%/%25/g' | cut -c1-300 | sed ':a;N;$!ba;s/\n/%0A/g')"
-          [ "$(cat smoke.rc 2>/dev/null)" = "0" ]
+          mkdir -p /tmp/l && cp smoke.log smoke.rc logcat.txt logcat_err.txt ui.xml screen.png emu.log sdk.log /tmp/l/ 2>/dev/null || true
+          cd /tmp/l && git init -q && git checkout -q -b ci-logs
+          git config user.name "github-actions"; git config user.email "github-actions@users.noreply.github.com"
+          git add -A && git commit -qm "logi testu ${{ github.run_number }}"
+          git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" ci-logs
+      - name: Wynik
+        run: '[ "$(cat smoke.rc)" = "0" ]'
 
   release:
     needs: [android, ios, smoke]
