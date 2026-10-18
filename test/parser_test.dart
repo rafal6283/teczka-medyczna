@@ -122,4 +122,27 @@ void main() {
     expect(out.results.first.name, 'Cynk');
     expect(out.results.first.refHigh, 120);
   });
+
+  test('Tekst z OCR – u zamiast µ, µmol/l, przecinki i flagi', () {
+    const t = """
+Data pobrania 03.02.2023
+Hemoglobina   14,2 g/dL   12,0-16,0
+TSH 2,15 uIU/ml 0,27 - 4,20
+Kreatynina 78 umol/l 62-106
+Glukoza 112 * mg/dl 70 - 99
+Cholesterol całkowity 6,1 mmol/l <5,0
+""";
+    final out = LabParser.parse(t);
+    final r = out.results;
+    expect(out.date, DateTime(2023, 2, 3));
+    expect(find(r, 'HGB')!.value, 14.2);
+    expect(find(r, 'TSH')!.unit, 'uIU/ml');
+    final crea = find(r, 'CREA')!;
+    expect(LabDictionary.get('CREA')!.toBase(crea.value!, crea.unit)!, closeTo(0.88, 0.01));
+    expect(find(r, 'GLU')!.value, 112);
+    expect(find(r, 'GLU')!.refHigh, 99);
+    final chol = find(r, 'CHOL')!;
+    expect(chol.refHigh, 5.0);
+    expect(LabDictionary.get('CHOL')!.toBase(chol.value!, chol.unit)!, closeTo(235.9, 0.5));
+  });
 }
