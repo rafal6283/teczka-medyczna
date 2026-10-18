@@ -35,6 +35,17 @@ if m:
     a,b,c,d=map(int,m.groups()); subprocess.run(['adb','shell','input','tap',str((a+c)//2),str((b+d)//2)])
 PY
 sleep 4
+adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1; adb shell cat /sdcard/ui.xml > ui.xml
+python3 - <<'PY'
+import re,subprocess
+x=open('ui.xml',encoding='utf-8').read()
+m=re.search(r'class="android.widget.EditText"[^>]*bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"',x)
+if m:
+    a,b,c,d=map(int,m.groups()); subprocess.run(['adb','shell','input','tap',str((a+c)//2),str((b+d)//2)])
+else:
+    print("brak pola EditText")
+PY
+sleep 2
 adb shell input text "Test"
 sleep 1
 adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1; adb shell cat /sdcard/ui.xml > ui.xml
