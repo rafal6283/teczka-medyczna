@@ -55,6 +55,7 @@ class LabParser {
     r'|[munpµμ]?(?:g|mol|iu|ui|u|j|eq|kat)\s?/\s?(?:d?l|ml|l|g|dl)'
     r'|[munpµμ]?(?:iu|ui|u|j)\s?/\s?(?:ml|l)'
     r'|ud\.?\s?/\s?min|/\s?min|bpm|ms'
+    r'|(?:au|ru|eu|ai|k?iu|ku)\s?/\s?(?:ml|l)|s/co|coi'
     r'|g/ml|l/l|fl|pg|%|‰|sek\.?|s|wpw\.?|ratio|indeks'
     r')(?![\p{L}\d])',
     caseSensitive: false,
@@ -279,7 +280,7 @@ class LabParser {
     return _parseUnknown(l);
   }
 
-  static final RegExp _unknownRe = RegExp(r'^\s*([\p{L}][\p{L}\d \-\(\),./%#]{1,60}?)\s+(?=[<>≤≥]?=?\s*\d)', unicode: true);
+  static final RegExp _unknownRe = RegExp(r'^\s*([\p{L}][\p{L}\d \-\(\),./%#]{1,60}?)\s*:?\s+(?=[<>≤≥]?=?\s*\d)', unicode: true);
 
   static ParsedResult? _parseUnknown(String l) {
     final m = _unknownRe.firstMatch(l);
@@ -303,6 +304,7 @@ class LabParser {
     final lines = text.split(RegExp(r'\r?\n'));
     final out = <ParsedResult>[];
     final seen = <String>{};
+    final lineOf = Map<ParsedResult, int>.identity();
     var i = 0;
     while (i < lines.length) {
       var skip = false;
@@ -310,8 +312,41 @@ class LabParser {
       if (r != null && !seen.contains(r.key)) {
         seen.add(r.key);
         out.add(r);
+        lineOf[r] = skip ? i + 1 : i;
       }
       i += skip ? 2 : 1;
+    }
+    // Norma w kolejnych wierszach: "< 20 AU/ml wynik negatywny", "≥ 20 AU/ml wynik pozytywny"
+    final negRe = RegExp('(<|≤|<=|poniżej|ponizej|do)\\s*($_num)[^\\n]{0,25}(negatyw|ujemn|prawid|w normie|brak)', caseSensitive: false);
+    final posRe = RegExp('(≥|>=|>|powyżej|powyzej|od)\\s*($_num)[^\\n]{0,25}(pozytyw|dodatn)', caseSensitive: false);
+    for (final r in out) {
+      if (r.refLow != null || r.refHigh != null) continue;
+      final k = lineOf[r];
+      if (k == null) continue;
+      for (var j = k + 1; j < lines.length && j <= k + 3; j++) {
+        if (normText(lines[j]).isEmpty) continue;
+        final neg = negRe.firstMatch(lines[j]);
+        final pos = posRe.firstMatch(lines[j]);
+        if (neg != null) {
+          r.refHigh = parseNum(neg.group(2)!);
+          break;
+        }
+        if (pos != null) {
+          r.refHigh = parseNum(pos.group(2)!);
+          break;
+        }
+        // kolejny parametr – przestajemy szukać
+        if (_matchAlias(lines[j]) != null) break;
+      }
+    }
+    // Nazwy badań z nagłówków laboratorium: "Morfologia krwi (ICD-9: C55)"
+    final headers = <String>[];
+    for (final l in lines) {
+      final m = RegExp(r'^\s*(.{3,120}?)\s*\(\s*ICD-?\s*9\s*:?\s*[A-Z]\d{2}\s*\)', caseSensitive: false).firstMatch(l);
+      if (m == null) continue;
+      var h = m.group(1)!.trim();
+      h = h.replaceAll(RegExp(r'\s+met\.?\s+\S+$', caseSensitive: false), '').trim();
+      if (h.length > 2 && !headers.contains(h)) headers.add(h);
     }
     final date = findDate(text);
     final fac = findFacility(text);
@@ -322,15 +357,22 @@ class LabParser {
     }
     String category;
     String title;
-    if (out.any((r) => r.known)) {
+    if (out.any((r) => r.known) || headers.isNotEmpty) {
       category = DocCategories.lab;
       final sorted = cats.entries.toList()..sort((a, b) => b.value.compareTo(a.value));
-      title = sorted.take(3).map((e) => e.key).join(', ');
+      title = headers.isNotEmpty ? _shortTitle(headers) : sorted.take(3).map((e) => e.key).join(', ');
     } else {
       category = guessCategory(text);
       title = guessTitle(text, category);
     }
     return ParseOutput(out, date, fac, category, title);
+  }
+
+  static String _shortTitle(List<String> h) {
+    var t = h.take(3).join(', ');
+    if (h.length > 3) t += ' i inne';
+    if (t.length > 90) t = '${t.substring(0, 88)}…';
+    return t;
   }
 
   static DateTime? findDate(String text) {

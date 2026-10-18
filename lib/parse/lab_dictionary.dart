@@ -22,7 +22,15 @@ class LabParam {
 
   LabParam a(List<String> al) {
     for (final s in al) {
-      aliases.add(normText(s));
+      final n = normText(s);
+      aliases.add(n);
+      // "P/c. anty-tTG", "Przeciwciała anty-…" – ten sam parametr
+      if (n.startsWith('anty ')) {
+        aliases.add('p c $n');
+        aliases.add('pc $n');
+        aliases.add('przeciwciala $n');
+        aliases.add('p c p $n');
+      }
     }
     return this;
   }
@@ -86,9 +94,10 @@ class LabDictionary {
   static const krz = 'Krzepnięcie';
   static const moc = 'Mocz';
   static const ekg = 'EKG i Holter';
+  static const imm = 'Immunologia i serologia';
   static const inne = 'Inne';
 
-  static const categoryOrder = [morf, bio, lip, wat, ner, tar, hor, zel, zap, krz, moc, ekg, inne];
+  static const categoryOrder = [morf, bio, lip, wat, ner, tar, hor, zel, zap, imm, krz, moc, ekg, inne];
 
   static final Map<String, LabParam> byKey = {};
 
@@ -389,6 +398,37 @@ class LabDictionary {
     _p('U_ERY', 'Mocz: erytrocyty w osadzie', moc, 'wpw', null, 2.0).a(['erytrocyty w osadzie', 'erytrocyty wpw', 'erytrocyty świeże', 'erytrocyty wyługowane']);
     _p('U_NAB', 'Mocz: nabłonki płaskie', moc, 'wpw', null, 5.0).a(['nabłonki płaskie', 'komórki nabłonka płaskiego']);
     _p('UACR', 'Albumina/kreatynina w moczu (ACR)', moc, 'mg/g', null, 30.0).a(['acr', 'wskaźnik albumina kreatynina', 'albumina kreatynina w moczu', 'uacr']);
+
+    // ---------- Immunologia / celiakia / immunoglobuliny ----------
+    LabParam ab(LabParam p) => p.c('u/ml', 1).c('ru/ml', 1).c('eu/ml', 1).c('j/ml', 1);
+    ab(_p('TTG_IGA', 'Anty-tTG IgA (celiakia)', imm, 'AU/ml', null, 20.0).a([
+      'anty ttg iga',
+      'anty ttg w klasie iga',
+      'ttg iga',
+      'przeciwciala przeciw transglutaminazie tkankowej iga',
+      'przeciwciala przeciwko transglutaminazie tkankowej w klasie iga',
+      'p c p transglutaminazie tkankowej iga',
+      'anty transglutaminaza iga',
+      'anty tg2 iga'
+    ]));
+    ab(_p('TTG_IGG', 'Anty-tTG IgG (celiakia)', imm, 'AU/ml', null, 20.0).a([
+      'anty ttg igg',
+      'anty ttg w klasie igg',
+      'ttg igg',
+      'przeciwciala przeciw transglutaminazie tkankowej igg',
+      'przeciwciala przeciwko transglutaminazie tkankowej w klasie igg',
+      'p c p transglutaminazie tkankowej igg',
+      'anty transglutaminaza igg',
+      'anty tg2 igg'
+    ]));
+    ab(_p('DGP_IGA', 'Anty-DGP IgA (celiakia)', imm, 'U/ml', null, 20.0).a(['anty dgp iga', 'dgp iga', 'przeciwciala przeciw deamidowanym peptydom gliadyny iga']));
+    ab(_p('DGP_IGG', 'Anty-DGP IgG (celiakia)', imm, 'U/ml', null, 20.0).a(['anty dgp igg', 'dgp igg', 'przeciwciala przeciw deamidowanym peptydom gliadyny igg']));
+    _p('EMA_IGA', 'Anty-EMA IgA (celiakia)', imm, '', null, null).a(['anty ema iga', 'ema iga', 'przeciwciala przeciw endomysium iga', 'przeciwciala przeciwendomyzjalne iga']);
+    _p('IGA', 'IgA całkowite', imm, 'g/l', 0.7, 4.0).a(['iga calkowite', 'immunoglobulina a', 'iga w surowicy', 'iga total']).c('mg/dl', 0.01);
+    _p('IGG', 'IgG całkowite', imm, 'g/l', 7.0, 16.0).a(['igg calkowite', 'immunoglobulina g', 'igg w surowicy']).c('mg/dl', 0.01);
+    _p('IGM', 'IgM całkowite', imm, 'g/l', 0.4, 2.3).a(['igm calkowite', 'immunoglobulina m', 'igm w surowicy']).c('mg/dl', 0.01);
+    _p('IGE', 'IgE całkowite', imm, 'IU/ml', null, 100.0).a(['ige calkowite', 'ige total', 'immunoglobulina e', 'ige w surowicy']).c('kiu/l', 1).c('ku/l', 1);
+    ab(_p('CCP', 'Anty-CCP', imm, 'U/ml', null, 17.0).a(['anty ccp', 'przeciwciala przeciw cyklicznemu cytrulinowanemu peptydowi', 'acpa']));
 
     // ---------- Holter EKG ----------
     _p('HR_MIN', 'Holter: tętno minimalne', ekg, '/min', null, null)

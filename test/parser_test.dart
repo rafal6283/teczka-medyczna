@@ -209,4 +209,37 @@ Triglicerydy   226,80   mg/dl   -
     expect(find(r, 'TG')!.value, 226.8);
     expect(r.where((x) => !x.known), isEmpty, reason: r.where((x) => !x.known).map((e) => e.rawLine).join(' / '));
   });
+
+  test('Diagnostyka (OCR) – przeciwciała anty-tTG z wynikiem "<2" i normą w kolejnym wierszu', () {
+    const t = """
+Data rejestracji: 2026-08-27
+Data/godz. pobrania: 2026-08-27 08:42
+Data urodzenia: 1983-10-21
+Badanie   Wynik   Jedn.   Zakres referencyjny   LIW
+P/c. p. transglutaminazie tkankowej (anty-tTG) w kl. IgG i IgA met. CLIA (ICD-9: N79) 1
+P/c. anty-tTG IgA:   <2   AU/ml   -
+< 20 AU/ml wynik negatywny
+≥ 20 AU/ml wynik pozytywny
+Badanie wykonano testem MAGLUMI Anti-tissue transglutaminase IgA firmy Snibe, metodą CLIA na aparacie Maglumi X8.
+Uwaga! Zmiana metody wykonywania badania. Zmiana zakresów referencyjnych.
+P/c. anty-tTG IgG:   <2   AU/ml   -
+< 20 AU/ml wynik negatywny
+≥ 20 AU/ml wynik pozytywny
+Data/godz. wykonania: 2026-08-28 13:01:00
+""";
+    final out = LabParser.parse(t);
+    final r = out.results;
+    expect(out.date, DateTime(2026, 8, 27));
+    expect(out.suggestedCategory, DocCategories.lab);
+    expect(out.suggestedTitle, 'P/c. p. transglutaminazie tkankowej (anty-tTG) w kl. IgG i IgA');
+    final a = find(r, 'TTG_IGA')!;
+    expect(a.valueText, '<2');
+    expect(a.value, 2);
+    expect(a.unit, 'AU/ml');
+    expect(a.refHigh, 20);
+    final g = find(r, 'TTG_IGG')!;
+    expect(g.valueText, '<2');
+    expect(g.refHigh, 20);
+    expect(r.length, 2, reason: r.map((e) => e.rawLine).join(' / '));
+  });
 }
