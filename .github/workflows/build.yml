@@ -92,14 +92,16 @@ jobs:
         run: |
           set -o pipefail
           flutter pub get
-          flutter build ios --release --no-codesign --build-name=1.0.${{ github.run_number }} --build-number=${{ github.run_number }} 2>&1 | tee build.log
+          flutter build ios --release --no-codesign --verbose --build-name=1.0.${{ github.run_number }} --build-number=${{ github.run_number }} 2>&1 | tee build.log
           mkdir -p Payload
           cp -R build/ios/iphoneos/Runner.app Payload/
           zip -qr teczka-zdrowia.ipa Payload
       - name: Zgłoś błędy
         if: failure()
         run: |
-          bash .github/report.sh build.log
+          grep -E "error:|\*\* BUILD FAILED|Signing|requires a development team|provisioning" build.log | grep -v "^\[" | head -40 > ios_err.log || true
+          grep -E "error:|requires a development team|Signing for" build.log | head -40 >> ios_err.log || true
+          bash .github/report.sh ios_err.log
       - uses: actions/upload-artifact@v4
         with:
           name: ipa

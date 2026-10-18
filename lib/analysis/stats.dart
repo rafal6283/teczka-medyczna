@@ -388,6 +388,6 @@ class MeasureStats {
       return l.last.value - older.last.value;
     }
 
-    return MeasureStats(v.last, v.reduce(min), v.reduce(max), v.reduce((a, b) => a + b) / v.length, changeSince(30), changeSince(90));
+    return MeasureStats(v.last, v.reduce((a, b) => a < b ? a : b), v.reduce((a, b) => a > b ? a : b), v.reduce((a, b) => a + b) / v.length, changeSince(30), changeSince(90));
   }
 }
