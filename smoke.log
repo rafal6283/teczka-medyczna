@@ -1,0 +1,170 @@
++ APK=/tmp/smoke.apk
++ SDK=/usr/local/lib/android/sdk
++ SM=/usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager
++ AM=/usr/local/lib/android/sdk/cmdline-tools/latest/bin/avdmanager
++ IMG='system-images;android-34;google_apis;x86_64'
++ yes
++ /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager --licenses
+yes: standard output: Broken pipe
++ /usr/local/lib/android/sdk/cmdline-tools/latest/bin/sdkmanager 'system-images;android-34;google_apis;x86_64' emulator platform-tools
++ export ANDROID_AVD_HOME=/home/runner/.android/avd
++ ANDROID_AVD_HOME=/home/runner/.android/avd
++ mkdir -p /home/runner/.android/avd/smoke.avd
++ cat
++ cat
++ ls /usr/local/lib/android/sdk/system-images/android-34/google_apis/x86_64/
++ head
+NOTICE.txt
+VerifiedBootParams.textproto
+advancedFeatures.ini
+build.prop
+data
+encryptionkey.img
+kernel-ranchu
+package.xml
+ramdisk.img
+source.properties
++ export PATH=/usr/local/lib/android/sdk/platform-tools:/usr/local/lib/android/sdk/emulator:/home/runner/.pub-cache/bin:/opt/hostedtoolcache/flutter/stable-3.47.7-x64/flutter/bin/cache/dart-sdk/bin:/opt/hostedtoolcache/flutter/stable-3.47.7-x64/flutter/bin:/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64/bin:/snap/bin:/home/runner/.local/bin:/opt/pipx_bin:/home/runner/.cargo/bin:/home/runner/.config/composer/vendor/bin:/usr/local/.ghcup/bin:/home/runner/.dotnet/tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
++ PATH=/usr/local/lib/android/sdk/platform-tools:/usr/local/lib/android/sdk/emulator:/home/runner/.pub-cache/bin:/opt/hostedtoolcache/flutter/stable-3.47.7-x64/flutter/bin/cache/dart-sdk/bin:/opt/hostedtoolcache/flutter/stable-3.47.7-x64/flutter/bin:/opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64/bin:/snap/bin:/home/runner/.local/bin:/opt/pipx_bin:/home/runner/.cargo/bin:/home/runner/.config/composer/vendor/bin:/usr/local/.ghcup/bin:/home/runner/.dotnet/tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
++ timeout 300 adb wait-for-device
++ nohup emulator -avd smoke -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot -memory 3072
+* daemon not running; starting now at tcp:5037
+* daemon started successfully
+++ seq 1 90
++ for i in $(seq 1 90)
+++ tr -d '\r'
+++ adb shell getprop sys.boot_completed
++ '[' '' = 1 ']'
++ sleep 5
++ for i in $(seq 1 90)
+++ adb shell getprop sys.boot_completed
+++ tr -d '\r'
++ '[' '' = 1 ']'
++ sleep 5
++ for i in $(seq 1 90)
+++ tr -d '\r'
+++ adb shell getprop sys.boot_completed
++ '[' '' = 1 ']'
++ sleep 5
++ for i in $(seq 1 90)
+++ adb shell getprop sys.boot_completed
+++ tr -d '\r'
++ '[' '' = 1 ']'
++ sleep 5
++ for i in $(seq 1 90)
+++ adb shell getprop sys.boot_completed
+++ tr -d '\r'
++ '[' '' = 1 ']'
++ sleep 5
++ for i in $(seq 1 90)
+++ adb shell getprop sys.boot_completed
+++ tr -d '\r'
++ '[' '' = 1 ']'
++ sleep 5
++ for i in $(seq 1 90)
+++ adb shell getprop sys.boot_completed
+++ tr -d '\r'
++ '[' '' = 1 ']'
++ sleep 5
++ for i in $(seq 1 90)
+++ adb shell getprop sys.boot_completed
+++ tr -d '\r'
++ '[' '' = 1 ']'
++ sleep 5
++ for i in $(seq 1 90)
+++ adb shell getprop sys.boot_completed
+++ tr -d '\r'
++ '[' '' = 1 ']'
++ sleep 5
++ for i in $(seq 1 90)
+++ adb shell getprop sys.boot_completed
+++ tr -d '\r'
++ '[' '' = 1 ']'
++ sleep 5
++ for i in $(seq 1 90)
+++ adb shell getprop sys.boot_completed
+++ tr -d '\r'
++ '[' '' = 1 ']'
++ sleep 5
++ for i in $(seq 1 90)
+++ adb shell getprop sys.boot_completed
+++ tr -d '\r'
++ '[' '' = 1 ']'
++ sleep 5
++ for i in $(seq 1 90)
+++ adb shell getprop sys.boot_completed
+++ tr -d '\r'
++ '[' '' = 1 ']'
++ sleep 5
++ for i in $(seq 1 90)
+++ adb shell getprop sys.boot_completed
+++ tr -d '\r'
++ '[' '' = 1 ']'
++ sleep 5
++ for i in $(seq 1 90)
+++ adb shell getprop sys.boot_completed
+++ tr -d '\r'
++ '[' 1 = 1 ']'
++ break
++ adb shell getprop sys.boot_completed
+1
++ adb shell settings put global window_animation_scale 0
++ adb shell settings put global transition_animation_scale 0
++ adb shell settings put global animator_duration_scale 0
++ adb shell input keyevent 82
++ timeout 400 bash .github/smoke.sh /tmp/smoke.apk
+Performing Streamed Install
+Success
+Starting: Intent { cmp=pl.teczka.zdrowie/pl.teczka.teczka_zdrowia.MainActivity }
+Status: timeout
+LaunchState: UNKNOWN (-1)
+Activity: pl.teczka.zdrowie/pl.teczka.teczka_zdrowia.MainActivity
+WaitTime: 11704
+Complete
+--- UI:
+text=""
+text=""
+text=""
+text=""
+text=""
+text=""
+text=""
+text=""
+text=""
+text=""
+text=""
+text=""
+text=""
+--- UI po utworzeniu profilu:
+text=""
+content-desc=""
+text=""
+content-desc=""
+text=""
+content-desc=""
+text=""
+content-desc=""
+text=""
+content-desc=""
+text=""
+content-desc=""
+text="System UI isn't responding"
+content-desc=""
+text=""
+content-desc=""
+text=""
+content-desc=""
+text=""
+content-desc=""
+text="Close app"
+content-desc=""
+text="Wait"
+content-desc=""
+::warning::Po utworzeniu profilu nie widać ekranu głównego%0Atext=""%0Acontent-desc=""%0Atext=""%0Acontent-desc=""%0Atext=""%0Acontent-desc=""%0Atext=""%0Acontent-desc=""%0Atext=""%0Acontent-desc=""%0Atext=""%0Acontent-desc=""%0Atext="System UI isn't responding"%0Acontent-desc=""%0Atext=""%0Acontent-desc=""%0Atext=""%0Acontent-desc=""%0Atext=""%0Acontent-desc=""
+::error::10-18 16:03:54.254  2295  2691 E ErrorLoggingExecutor: Caused by: android.os.DeadObjectException%0A10-18 16:03:54.255  2295  2691 E ErrorLoggingExecutor: java.io.IOException: Error on service connection.%0A10-18 16:03:54.255  2295  2691 E ErrorLoggingExecutor: Caused by: android.os.DeadObjectException%0A10-18 16:03:54.397  2295  2616 E kch     : 	at aven.setException(PG:3)%0A10-18 16:03:54.400  2295  2616 E kch     : 	at aven.setException(PG:3)%0A10-18 16:03:54.400  2295  2616 E kch     : 	at aven.setException(PG:3)%0A10-18 16:03:54.453  1651  3046 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed%0A10-18 16:03:54.464  2033  2742 W MobStoreFlagStore: java.util.concurrent.ExecutionException: com.google.android.libraries.phenotype.client.a.h: 20: 20: The connection to Google Play services was lost due to service disconnection.%0A10-18 16:03:54.612  1651  3227 W ChimeraConfigurator: Error syncing flags: zgv: SYNC_ERROR, java.util.concurrent.ExecutionException: aard: 20: The connection to Google Play services was lost due to service disconnection.%0A10-18 16:03:54.612  1651  3227 I GmsDebugLogger: [79] SYNC_ERROR, java.util.concurrent.ExecutionException: aard: 20: The connection to Google Play services was lost due to service disconnection.%0A10-18 16:03:54.657  1651  3482 W MobStoreFlagStore: java.util.concurrent.ExecutionException: cvev: 20: 20: The connection to Google Play services was lost due to service disconnection.%0A10-18 16:03:54.657  1651  3482 W MobStoreFlagStore: java.util.concurrent.ExecutionException: cvev: 20: 20: The connection to Google Play services was lost due to service disconnection.%0A10-18 16:03:54.658  1651  3482 W MobStoreFlagStore: java.util.concurrent.ExecutionException: cvev: 20: 20: The connection to Google Play services was lost due to service disconnection.%0A10-18 16:03:54.817  2987  3171 W FontsProvider: android.os.DeadObjectException%0A10-18 16:03:55.090  1651  3046 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed%0A10-18 16:03:56.426  2946  3083 W MobStoreFlagStore: java.util.concurrent.ExecutionException: qaw: 20: 20: The connection to Google Play services was lost due to service disconnection.%0A10-18 16:03:56.465  2946  3083 W MobStoreFlagStore: java.util.concurrent.ExecutionException: qaw: 20: 20: The connection to Google Play services was lost due to service disconnection.%0A10-18 16:03:56.480  2946  3083 W MobStoreFlagStore: java.util.concurrent.ExecutionException: qaw: 20: 20: The connection to Google Play services was lost due to service disconnection.%0A10-18 16:03:56.778  1436  1480 W WellbeingSettingsProvid: java.util.concurrent.TimeoutException: Waited 5000 milliseconds (plus 246378 nanoseconds delay) for lki@6b5aecc[status=PENDING, info=[inputFuture=[lkh@465c515[status=PENDING, setFuture=[ljp@49f802a[status=PENDING, info=[inputFuture=[lki@b728e%0A10-18 16:03:57.263  1078  1078 W Telephony: registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1%0A10-18 16:03:57.272  1078  1078 W Telephony: registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1%0A10-18 16:03:57.410  1078  1078 W Telephony: registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1%0A10-18 16:03:57.572  1078  1078 W Telephony: registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1%0A10-18 16:03:58.001  1027  1052 E SystemServiceRegistry: android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet%0A10-18 16:03:58.373  4003  4003 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<%0A10-18 16:03:58.508  4003  4003 I AndroidRuntime: Using default boot image%0A10-18 16:03:58.508  4003  4003 I AndroidRuntime: Leaving lock profiling enabled%0A10-18 16:03:59.262  4003  4003 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher%0A
+::error::10-18 16:03:59.676  1651  4097 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed%0A10-18 16:04:00.133  1651  2916 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task%0A10-18 16:04:00.285   552   638 E RoleControllerManager: java.util.concurrent.TimeoutException%0A10-18 16:04:00.663  1651  2916 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task%0A10-18 16:04:01.500   552   638 E RoleControllerManager: java.util.concurrent.TimeoutException%0A10-18 16:04:01.695  4003  4003 D AndroidRuntime: Shutting down VM%0A10-18 16:04:02.090   552   638 E RoleControllerManager: java.util.concurrent.TimeoutException%0A10-18 16:04:02.544  1651  4097 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed%0A10-18 16:04:03.984  2344  4212 E TaskWorkerFactory: java.lang.NoSuchMethodException: com.android.devicelockcontroller.provision.worker.DeviceCheckInWorker.<init> [class android.content.Context, class androidx.work.WorkerParameters, interface com.google.common.util.concurrent.ListeningExecutorService%0A10-18 16:04:04.114   552   638 E RoleControllerManager: java.util.concurrent.TimeoutException%0A10-18 16:04:05.129   552   638 E RoleControllerManager: java.util.concurrent.TimeoutException%0A10-18 16:04:05.398  3702  3702 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.%0A10-18 16:04:06.335   868   955 E KeyguardUpdateMonitorLog: java.lang.Exception: Called by%0A10-18 16:04:06.823   868   955 E KeyguardUpdateMonitorLog: java.lang.Exception: Called by%0A10-18 16:04:07.436  3902  4147 W AsyncOperation: OperationException[Status{statusCode=unknown status code: 29503, resolution=null}]%0A10-18 16:04:07.838  1651  2871 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task%0A10-18 16:04:08.339  1651  2871 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task%0A10-18 16:04:08.650  2033  2033 W SnapshotHandler: java.io.FileNotFoundException: /data/user/0/com.google.android.googlequicksearchbox/files/phenotype/shared/com.google.android.libraries.notifications#com.google.android.googlequicksearchbox.pb: open failed: ENOENT (No such file or directory)%0A10-18 16:04:08.650  2033  2033 W SnapshotHandler: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)%0A10-18 16:04:08.727   552   638 E RoleControllerManager: java.util.concurrent.TimeoutException%0A10-18 16:04:08.809  2033  2730 W SnapshotHandler: java.io.FileNotFoundException: /data/user/0/com.google.android.googlequicksearchbox/files/phenotype/shared/com.google.android.libraries.notifications.platform#com.google.android.googlequicksearchbox.pb: open failed: ENOENT (No such file or directory)%0A10-18 16:04:08.809  2033  2730 W SnapshotHandler: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)%0A10-18 16:04:09.123  4474  4474 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<%0A10-18 16:04:09.146  4474  4474 I AndroidRuntime: Using default boot image%0A10-18 16:04:09.146  4474  4474 I AndroidRuntime: Leaving lock profiling enabled%0A10-18 16:04:09.884  4474  4474 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher%0A10-18 16:04:10.019   552   638 E RoleControllerManager: java.util.concurrent.TimeoutException%0A10-18 16:04:10.230  1651  2871 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task%0A
+::error::10-18 16:04:10.730  1651  2871 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task%0A10-18 16:04:11.655  4474  4474 D AndroidRuntime: Shutting down VM%0A10-18 16:04:12.210  1651  2871 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task%0A10-18 16:04:12.718  1651  2871 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task%0A
+::error::TAIL logcat_err.txt%0A10-18 16:04:02.544  1651  4097 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed%0A10-18 16:04:03.984  2344  4212 E TaskWorkerFactory: java.lang.NoSuchMethodException: com.android.devicelockcontroller.provision.worker.DeviceCheckInWorker.<init> [class android.content.Context, class androidx.work.WorkerParameters, interface com.goog%0A10-18 16:04:04.114   552   638 E RoleControllerManager: java.util.concurrent.TimeoutException%0A10-18 16:04:05.129   552   638 E RoleControllerManager: java.util.concurrent.TimeoutException%0A10-18 16:04:05.398  3702  3702 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.%0A10-18 16:04:06.335   868   955 E KeyguardUpdateMonitorLog: java.lang.Exception: Called by%0A10-18 16:04:06.823   868   955 E KeyguardUpdateMonitorLog: java.lang.Exception: Called by%0A10-18 16:04:07.436  3902  4147 W AsyncOperation: OperationException[Status{statusCode=unknown status code: 29503, resolution=null}]%0A10-18 16:04:07.838  1651  2871 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task%0A10-18 16:04:08.339  1651  2871 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task%0A10-18 16:04:08.650  2033  2033 W SnapshotHandler: java.io.FileNotFoundException: /data/user/0/com.google.android.googlequicksearchbox/files/phenotype/shared/com.google.android.libraries.notifications#com.google.android.googlequicksearchbox.pb: open f%0A10-18 16:04:08.650  2033  2033 W SnapshotHandler: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)%0A10-18 16:04:08.727   552   638 E RoleControllerManager: java.util.concurrent.TimeoutException%0A10-18 16:04:08.809  2033  2730 W SnapshotHandler: java.io.FileNotFoundException: /data/user/0/com.google.android.googlequicksearchbox/files/phenotype/shared/com.google.android.libraries.notifications.platform#com.google.android.googlequicksearchbox.p%0A10-18 16:04:08.809  2033  2730 W SnapshotHandler: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)%0A10-18 16:04:09.123  4474  4474 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<%0A10-18 16:04:09.146  4474  4474 I AndroidRuntime: Using default boot image%0A10-18 16:04:09.146  4474  4474 I AndroidRuntime: Leaving lock profiling enabled%0A10-18 16:04:09.884  4474  4474 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher%0A10-18 16:04:10.019   552   638 E RoleControllerManager: java.util.concurrent.TimeoutException%0A10-18 16:04:10.230  1651  2871 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task%0A10-18 16:04:10.730  1651  2871 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task%0A10-18 16:04:11.655  4474  4474 D AndroidRuntime: Shutting down VM%0A10-18 16:04:12.210  1651  2871 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task%0A10-18 16:04:12.718  1651  2871 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task
++ rc=1
++ adb exec-out screencap -p
++ exit 1

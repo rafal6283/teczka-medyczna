@@ -1,0 +1,60 @@
+10-18 16:03:54.254  2295  2691 E ErrorLoggingExecutor: Caused by: android.os.DeadObjectException
+10-18 16:03:54.255  2295  2691 E ErrorLoggingExecutor: java.io.IOException: Error on service connection.
+10-18 16:03:54.255  2295  2691 E ErrorLoggingExecutor: Caused by: android.os.DeadObjectException
+10-18 16:03:54.397  2295  2616 E kch     : 	at aven.setException(PG:3)
+10-18 16:03:54.400  2295  2616 E kch     : 	at aven.setException(PG:3)
+10-18 16:03:54.400  2295  2616 E kch     : 	at aven.setException(PG:3)
+10-18 16:03:54.453  1651  3046 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+10-18 16:03:54.464  2033  2742 W MobStoreFlagStore: java.util.concurrent.ExecutionException: com.google.android.libraries.phenotype.client.a.h: 20: 20: The connection to Google Play services was lost due to service disconnection.
+10-18 16:03:54.612  1651  3227 W ChimeraConfigurator: Error syncing flags: zgv: SYNC_ERROR, java.util.concurrent.ExecutionException: aard: 20: The connection to Google Play services was lost due to service disconnection.
+10-18 16:03:54.612  1651  3227 I GmsDebugLogger: [79] SYNC_ERROR, java.util.concurrent.ExecutionException: aard: 20: The connection to Google Play services was lost due to service disconnection.
+10-18 16:03:54.657  1651  3482 W MobStoreFlagStore: java.util.concurrent.ExecutionException: cvev: 20: 20: The connection to Google Play services was lost due to service disconnection.
+10-18 16:03:54.657  1651  3482 W MobStoreFlagStore: java.util.concurrent.ExecutionException: cvev: 20: 20: The connection to Google Play services was lost due to service disconnection.
+10-18 16:03:54.658  1651  3482 W MobStoreFlagStore: java.util.concurrent.ExecutionException: cvev: 20: 20: The connection to Google Play services was lost due to service disconnection.
+10-18 16:03:54.817  2987  3171 W FontsProvider: android.os.DeadObjectException
+10-18 16:03:55.090  1651  3046 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+10-18 16:03:56.426  2946  3083 W MobStoreFlagStore: java.util.concurrent.ExecutionException: qaw: 20: 20: The connection to Google Play services was lost due to service disconnection.
+10-18 16:03:56.465  2946  3083 W MobStoreFlagStore: java.util.concurrent.ExecutionException: qaw: 20: 20: The connection to Google Play services was lost due to service disconnection.
+10-18 16:03:56.480  2946  3083 W MobStoreFlagStore: java.util.concurrent.ExecutionException: qaw: 20: 20: The connection to Google Play services was lost due to service disconnection.
+10-18 16:03:56.778  1436  1480 W WellbeingSettingsProvid: java.util.concurrent.TimeoutException: Waited 5000 milliseconds (plus 246378 nanoseconds delay) for lki@6b5aecc[status=PENDING, info=[inputFuture=[lkh@465c515[status=PENDING, setFuture=[ljp@49f802a[status=PENDING, info=[inputFuture=[lki@b728e1b[status=PENDING, info=[inputFuture=[lki@af4ebb8[status=PENDING, info=[inputFuture=[lld@26a9d91[status=PENDING, info=[futures=[lki@28d74f6[status=PENDING, info=[inputFuture=[lki@c21f0f7[status=PENDING, info=[inputFuture=[lmb@7e90b64[status=PENDING, info=[delegate=[lng@30a81cd[status=PENDING, info=[task=[running=[NOT STARTED YET], propagating=[bwh@93ea82]]]]]]]], function=[propagating=[bvr@2faa593]]]]], function=[propagating=[cur@5dd79d0]]]]]]]], function=[propagating=[dce@6d08f60]]]]], function=[propagating=[bvq@14a6dc9]]]]], exceptionType=[class java.lang.Throwable], fallback=[propagating=[bwc@66a4de]]]]]]], function=[propagating=[bvq@c9a2cce]]]]
+10-18 16:03:57.263  1078  1078 W Telephony: registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+10-18 16:03:57.272  1078  1078 W Telephony: registerImsRegistrationCallback: registration failed, no ImsService available. Exception: code: 1
+10-18 16:03:57.410  1078  1078 W Telephony: registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+10-18 16:03:57.572  1078  1078 W Telephony: registerMmTelCapabilityCallback: registration failed, no ImsService available. Exception: code: 1
+10-18 16:03:58.001  1027  1052 E SystemServiceRegistry: android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+10-18 16:03:58.373  4003  4003 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-18 16:03:58.508  4003  4003 I AndroidRuntime: Using default boot image
+10-18 16:03:58.508  4003  4003 I AndroidRuntime: Leaving lock profiling enabled
+10-18 16:03:59.262  4003  4003 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+10-18 16:03:59.676  1651  4097 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+10-18 16:04:00.133  1651  2916 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task
+10-18 16:04:00.285   552   638 E RoleControllerManager: java.util.concurrent.TimeoutException
+10-18 16:04:00.663  1651  2916 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task
+10-18 16:04:01.500   552   638 E RoleControllerManager: java.util.concurrent.TimeoutException
+10-18 16:04:01.695  4003  4003 D AndroidRuntime: Shutting down VM
+10-18 16:04:02.090   552   638 E RoleControllerManager: java.util.concurrent.TimeoutException
+10-18 16:04:02.544  1651  4097 W Conscrypt: Could not set socket write timeout: java.net.SocketException: Socket closed
+10-18 16:04:03.984  2344  4212 E TaskWorkerFactory: java.lang.NoSuchMethodException: com.android.devicelockcontroller.provision.worker.DeviceCheckInWorker.<init> [class android.content.Context, class androidx.work.WorkerParameters, interface com.google.common.util.concurrent.ListeningExecutorService]
+10-18 16:04:04.114   552   638 E RoleControllerManager: java.util.concurrent.TimeoutException
+10-18 16:04:05.129   552   638 E RoleControllerManager: java.util.concurrent.TimeoutException
+10-18 16:04:05.398  3702  3702 I AndroidRuntime: VM exiting with result code 0, cleanup skipped.
+10-18 16:04:06.335   868   955 E KeyguardUpdateMonitorLog: java.lang.Exception: Called by
+10-18 16:04:06.823   868   955 E KeyguardUpdateMonitorLog: java.lang.Exception: Called by
+10-18 16:04:07.436  3902  4147 W AsyncOperation: OperationException[Status{statusCode=unknown status code: 29503, resolution=null}]
+10-18 16:04:07.838  1651  2871 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task
+10-18 16:04:08.339  1651  2871 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task
+10-18 16:04:08.650  2033  2033 W SnapshotHandler: java.io.FileNotFoundException: /data/user/0/com.google.android.googlequicksearchbox/files/phenotype/shared/com.google.android.libraries.notifications#com.google.android.googlequicksearchbox.pb: open failed: ENOENT (No such file or directory)
+10-18 16:04:08.650  2033  2033 W SnapshotHandler: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+10-18 16:04:08.727   552   638 E RoleControllerManager: java.util.concurrent.TimeoutException
+10-18 16:04:08.809  2033  2730 W SnapshotHandler: java.io.FileNotFoundException: /data/user/0/com.google.android.googlequicksearchbox/files/phenotype/shared/com.google.android.libraries.notifications.platform#com.google.android.googlequicksearchbox.pb: open failed: ENOENT (No such file or directory)
+10-18 16:04:08.809  2033  2730 W SnapshotHandler: Caused by: android.system.ErrnoException: open failed: ENOENT (No such file or directory)
+10-18 16:04:09.123  4474  4474 D AndroidRuntime: >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-18 16:04:09.146  4474  4474 I AndroidRuntime: Using default boot image
+10-18 16:04:09.146  4474  4474 I AndroidRuntime: Leaving lock profiling enabled
+10-18 16:04:09.884  4474  4474 D AndroidRuntime: Calling main entry com.android.commands.uiautomator.Launcher
+10-18 16:04:10.019   552   638 E RoleControllerManager: java.util.concurrent.TimeoutException
+10-18 16:04:10.230  1651  2871 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task
+10-18 16:04:10.730  1651  2871 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task
+10-18 16:04:11.655  4474  4474 D AndroidRuntime: Shutting down VM
+10-18 16:04:12.210  1651  2871 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task
+10-18 16:04:12.718  1651  2871 W Icing   : Failed to get Lockbox signed-in status: java.util.concurrent.TimeoutException: Timed out waiting for Task
