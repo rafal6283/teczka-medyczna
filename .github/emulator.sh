@@ -8,7 +8,27 @@ AM=$SDK/cmdline-tools/latest/bin/avdmanager
 IMG="system-images;android-34;google_apis;x86_64"
 yes | $SM --licenses > /dev/null 2>&1
 $SM "$IMG" "emulator" "platform-tools" > sdk.log 2>&1 || { echo "sdkmanager failed"; tail -20 sdk.log; }
-echo no | $AM create avd -n smoke -k "$IMG" --force
+export ANDROID_AVD_HOME=$HOME/.android/avd
+mkdir -p $ANDROID_AVD_HOME/smoke.avd
+cat > $ANDROID_AVD_HOME/smoke.ini <<INI
+avd.ini.encoding=UTF-8
+path=$ANDROID_AVD_HOME/smoke.avd
+target=android-34
+INI
+cat > $ANDROID_AVD_HOME/smoke.avd/config.ini <<INI
+image.sysdir.1=system-images/android-34/google_apis/x86_64/
+abi.type=x86_64
+hw.cpu.arch=x86_64
+tag.id=google_apis
+hw.ramSize=3072
+disk.dataPartition.size=4G
+hw.lcd.width=1080
+hw.lcd.height=2400
+hw.lcd.density=420
+hw.keyboard=yes
+hw.gpu.enabled=yes
+INI
+ls $SDK/system-images/android-34/google_apis/x86_64/ | head
 export PATH=$SDK/platform-tools:$SDK/emulator:$PATH
 nohup emulator -avd smoke -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -no-snapshot -memory 3072 > emu.log 2>&1 &
 timeout 300 adb wait-for-device || { echo 'EMULATOR NIE WYSTARTOWAŁ'; tail -50 emu.log; exit 3; }
