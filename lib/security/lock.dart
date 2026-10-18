@@ -37,7 +37,7 @@ class Lock {
   }
 
   static String _hash(String secret, String salt) {
-    var h = utf8.encode('$salt|$secret');
+    List<int> h = utf8.encode('$salt|$secret');
     for (var i = 0; i < _iterations; i++) {
       h = sha256.convert([...h, ...utf8.encode(salt)]).bytes;
     }
