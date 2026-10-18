@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../data/db.dart';
 import '../data/models.dart';
@@ -270,6 +271,9 @@ class DocumentScreen extends StatelessWidget {
                   if (v == 'edit') await _editMeta(context, doc);
                   if (v == 'reparse' && context.mounted) await _reanalyze(context, d);
                   if (v == 'add' && context.mounted) await _addFiles(context, doc);
+                  if (v == 'text' && context.mounted) {
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => RecognizedTextScreen(text: doc.extractedText ?? '')));
+                  }
                   if (v == 'delete' && context.mounted) {
                     if (await confirm(context, 'Usunąć dokument?', 'Usunięte zostaną pliki i ${d.results.length} wyników z tego dokumentu.')) {
                       await AppDb.I.deleteDocument(doc.id!);
@@ -281,6 +285,7 @@ class DocumentScreen extends StatelessWidget {
                   PopupMenuItem(value: 'edit', child: Text('Edytuj dane i wyniki')),
                   PopupMenuItem(value: 'reparse', child: Text('Odczytaj wyniki ponownie')),
                   PopupMenuItem(value: 'add', child: Text('Dołącz plik')),
+                  PopupMenuItem(value: 'text', child: Text('Rozpoznany tekst')),
                   PopupMenuItem(value: 'delete', child: Text('Usuń dokument')),
                 ],
               ),
@@ -491,4 +496,32 @@ class _ReportCardState extends State<ReportCard> {
       ]),
     );
   }
+}
+
+
+class RecognizedTextScreen extends StatelessWidget {
+  final String text;
+  const RecognizedTextScreen({super.key, required this.text});
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(
+          title: const Text('Rozpoznany tekst'),
+          actions: [
+            IconButton(
+              tooltip: 'Kopiuj',
+              icon: const Icon(Icons.copy),
+              onPressed: () {
+                Clipboard.setData(ClipboardData(text: text));
+                toast(context, 'Skopiowano tekst');
+              },
+            ),
+          ],
+        ),
+        body: text.trim().isEmpty
+            ? const EmptyState(icon: Icons.text_snippet_outlined, title: 'Brak tekstu', text: 'Użyj „Odczytaj wyniki ponownie”, aby rozpoznać tekst z pliku.')
+            : SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: SelectableText(text, style: const TextStyle(fontFamily: 'monospace', fontSize: 12)),
+              ),
+      );
 }
