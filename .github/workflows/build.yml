@@ -113,6 +113,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
+      - name: Zwolnij miejsce na dysku
+        run: |
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL /usr/local/share/boost /usr/local/lib/node_modules /usr/share/swift || true
+          sudo docker image prune -af > /dev/null 2>&1 || true
+          df -h / | tail -1
       - uses: actions/checkout@v5
         with:
           ref: ${{ github.ref_name }}
@@ -128,6 +133,9 @@ jobs:
         run: |
           flutter pub get
           flutter build apk --release --target-platform android-x64
+          cp build/app/outputs/flutter-apk/app-release.apk /tmp/smoke.apk
+          rm -rf build android/.gradle ~/.gradle/caches
+          df -h / | tail -1
       - name: KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -135,7 +143,7 @@ jobs:
           sudo udevadm trigger --name-match=kvm
       - name: Test na emulatorze
         run: |
-          timeout 1500 bash .github/emulator.sh build/app/outputs/flutter-apk/app-release.apk > smoke.log 2>&1; echo $? > smoke.rc
+          timeout 1500 bash .github/emulator.sh /tmp/smoke.apk > smoke.log 2>&1; echo $? > smoke.rc
           tail -80 smoke.log
       - name: Zapisz logi testu (gałąź ci-logs)
         if: always()
