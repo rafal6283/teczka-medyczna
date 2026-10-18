@@ -4,6 +4,15 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      ios:
+        description: 'Zbuduj też wersję na iPhone (macOS – zużywa 10× więcej minut)'
+        type: boolean
+        default: true
+      smoke:
+        description: 'Uruchom test na emulatorze Androida'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -78,7 +87,9 @@ jobs:
           path: teczka-zdrowia.apk
 
   ios:
+    # iOS tylko na żądanie (Actions → Run workflow) albo gdy opis commita zawiera [ios]
     needs: bootstrap
+    if: (github.event_name == 'workflow_dispatch' && inputs.ios) || contains(github.event.head_commit.message, '[ios]')
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v5
@@ -108,8 +119,9 @@ jobs:
           path: teczka-zdrowia.ipa
 
   smoke:
-    # Uruchamia zbudowaną wersję release na emulatorze Androida i sprawdza start aplikacji.
+    # Uruchamia zbudowaną wersję release na emulatorze Androida i sprawdza start aplikacji (na żądanie lub [smoke] w commicie).
     needs: bootstrap
+    if: (github.event_name == 'workflow_dispatch' && inputs.smoke) || contains(github.event.head_commit.message, '[smoke]')
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -184,7 +196,7 @@ jobs:
 
   release:
     needs: [android, ios]
-    if: always() && needs.android.result == 'success'
+    if: always() && needs.android.result == 'success' && needs.ios.result != 'failure'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
