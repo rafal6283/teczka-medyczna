@@ -40,7 +40,7 @@ class _StartupGateState extends State<StartupGate> {
                 const SizedBox(height: 12),
                 const Text('Nie udało się uruchomić aplikacji', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
                 const SizedBox(height: 12),
-                SelectableText('${snap.error}\n\n${snap.stackTrace ?? ''}', style: const TextStyle(fontFamily: 'monospace', fontSize: 11)),
+                SelectableText('Etap: ${AppDb.I.initStage}\n${snap.error}\n\n${snap.stackTrace ?? ''}', style: const TextStyle(fontFamily: 'monospace', fontSize: 11)),
                 const SizedBox(height: 16),
                 FilledButton(onPressed: () => setState(() => _init = _start()), child: const Text('Spróbuj ponownie')),
               ]),

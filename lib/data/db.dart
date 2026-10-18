@@ -22,11 +22,18 @@ class AppDb extends ChangeNotifier {
   Directory get filesDir => Directory(p.join(root.path, 'pliki'));
   String get dbPath => p.join(root.path, 'teczka.db');
 
+  String initStage = '';
+
   Future<void> init() async {
+    initStage = 'katalog dokumentów';
     root = await getApplicationDocumentsDirectory();
+    initStage = 'folder plików';
     await filesDir.create(recursive: true);
+    initStage = 'baza danych';
     await _open();
+    initStage = 'ustawienia';
     final prefs = await SharedPreferences.getInstance();
+    initStage = 'profile';
     currentProfileId = prefs.getInt('profile');
     final profiles = await getProfiles();
     if (profiles.isEmpty) {
@@ -34,6 +41,7 @@ class AppDb extends ChangeNotifier {
     } else if (currentProfileId == null || !profiles.any((x) => x.id == currentProfileId)) {
       currentProfileId = profiles.first.id;
     }
+    initStage = 'gotowe';
   }
 
   Future<void> _open() async {
