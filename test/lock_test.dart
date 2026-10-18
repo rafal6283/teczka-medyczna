@@ -31,4 +31,11 @@ void main() {
     await Lock.setMethod(LockMethod.none);
     expect((await Lock.load()).method, LockMethod.none);
   });
+
+  test('Długość PIN-u zapamiętana do odblokowania bez zatwierdzania', () async {
+    await Lock.setSecret(LockMethod.pin, '123456');
+    expect(await Lock.pinLength(), 6);
+    await Lock.setSecret(LockMethod.pattern, patternToSecret([0, 4, 8, 7]));
+    expect(await Lock.pinLength(), isNull);
+  });
 }

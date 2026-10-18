@@ -25,6 +25,7 @@ class Lock {
   static const _kTimeout = 'lock_timeout';
   static const _kFails = 'lock_fails';
   static const _kUntil = 'lock_until';
+  static const _kPinLen = 'lock_pin_len';
   static const _iterations = 20000;
 
   static Future<LockConfig> load() async {
@@ -52,8 +53,17 @@ class Lock {
     await p.setString(_kHash, _hash(secret, salt));
     await p.setString(_kMethod, method.name);
     await p.remove('lock');
+    if (method == LockMethod.pin) {
+      await p.setInt(_kPinLen, secret.length);
+    } else {
+      await p.remove(_kPinLen);
+    }
     await resetFailures();
   }
+
+  /// Długość PIN-u – pozwala odblokować bez zatwierdzania (null dla PIN-ów ustawionych w wersji 1.0.22).
+  static Future<int?> pinLength() async => (await SharedPreferences.getInstance()).getInt(_kPinLen);
+  static Future<void> rememberPinLength(int n) async => (await SharedPreferences.getInstance()).setInt(_kPinLen, n);
 
   static Future<void> setMethod(LockMethod method) async {
     final p = await SharedPreferences.getInstance();

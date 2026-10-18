@@ -200,11 +200,15 @@ class _LockScreenState extends State<LockScreen> {
   int wait = 0;
   Timer? timer;
   String? message;
+  int? pinLen;
 
   @override
   void initState() {
     super.initState();
     _refreshWait();
+    Lock.pinLength().then((n) {
+      if (mounted) setState(() => pinLen = n);
+    });
     if (widget.config.method == LockMethod.device || widget.config.biometric) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _system());
     }
@@ -242,6 +246,7 @@ class _LockScreenState extends State<LockScreen> {
     final ok = await Lock.verify(secret);
     if (!mounted) return;
     if (ok) {
+      if (widget.config.method == LockMethod.pin && pinLen == null) await Lock.rememberPinLength(secret.length);
       widget.onUnlocked();
       return;
     }
@@ -300,7 +305,7 @@ class _LockScreenState extends State<LockScreen> {
               ),
               const SizedBox(height: 24),
               if (m == LockMethod.pin) ...[
-                PinDots(filled: pin.length, count: max(4, pin.length), error: error),
+                PinDots(filled: pin.length, count: pinLen ?? max(4, pin.length), error: error),
                 const SizedBox(height: 24),
                 IgnorePointer(
                   ignoring: waiting || busy,
@@ -309,19 +314,21 @@ class _LockScreenState extends State<LockScreen> {
                     child: PinPad(
                       length: pin.length,
                       onDigit: (d) {
-                        if (pin.length >= 8) return;
+                        if (pin.length >= (pinLen ?? 8)) return;
                         setState(() {
                           pin += d;
                           message = null;
                         });
+                        // po wpisaniu ostatniej cyfry sprawdzamy od razu – bez zatwierdzania
+                        if (pinLen != null && pin.length == pinLen) _check(pin);
                       },
                       onDelete: () => setState(() => pin = pin.substring(0, pin.length - 1)),
                       onBiometric: widget.config.biometric ? _system : null,
-                      onOk: () => _check(pin),
+                      onOk: pinLen == null ? () => _check(pin) : null,
                     ),
                   ),
                 ),
-                if (widget.config.biometric)
+                if (widget.config.biometric && pinLen == null)
                   TextButton(onPressed: pin.length >= 4 ? () => _check(pin) : null, child: const Text('Zatwierdź PIN')),
               ],
               if (m == LockMethod.pattern) ...[
@@ -400,22 +407,24 @@ class _LockSetupScreenState extends State<LockSetupScreen> {
             Text(error ?? ' ', style: TextStyle(color: cs.error)),
             const SizedBox(height: 18),
             if (isPin) ...[
-              PinDots(filled: pin.length, count: max(4, pin.length)),
+              PinDots(filled: pin.length, count: first?.length ?? max(4, pin.length)),
               const SizedBox(height: 24),
               PinPad(
                 length: pin.length,
                 onDigit: (d) {
-                  if (pin.length >= 8) return;
+                  if (pin.length >= (first?.length ?? 8)) return;
                   setState(() {
                     pin += d;
                     error = null;
                   });
+                  if (first != null && pin.length == first!.length) _submit(pin);
                 },
                 onDelete: () => setState(() => pin = pin.substring(0, pin.length - 1)),
-                onOk: () => _submit(pin),
+                onOk: first == null ? () => _submit(pin) : null,
               ),
               const SizedBox(height: 8),
-              Text('Zatwierdź przyciskiem ✓', style: Theme.of(context).textTheme.bodySmall),
+              Text(first == null ? 'Wpisz 4–8 cyfr i zatwierdź ✓ – później PIN będzie sprawdzany sam, bez zatwierdzania' : ' ',
+                  textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall),
             ] else
               PatternPad(onComplete: (p) => _submit(patternToSecret(p), points: p.length)),
           ]),
