@@ -1,0 +1,99 @@
+Diagnostykat
+*904932104 2 *
+Diagnostyka S.A.
+ul. prof. Michata Zyczkowskiego 16, 31-864 Krakow
+Nr ksiegi rejestrowej Podmiotu Leczniczego 000000005831
+MEDYCZNE LABORATORIUM DIAGNOSTYKA
+Jutrzenki 100, 02-230 Warszawa, Zaktad Diagnostyki Laboratoryjnej (1918)
+SPRAWOZDANIE Z BADANIA
+Zlecajacy:   "LEX COMPLEX" SPOLKA Z OGRANICZONA ODPOWIEDZIALNOSCIA,   Kod kontrahenta: 34424
+ul. Przykladowa 2, 00-001 Warszawa
+Oddziat: Punkt pobran   Kod oddziatu: 344240002
+Lekarz kierujacy: -   Data rejestracji: 2025-04-09
+Odbiorca wyniku: _ZLECAJACY   Data/godz. pobrania: 2025-04-09 09:00
+Pagjent: KOWALSKI JAN PESEL: 80010112345
+Adres: PRZYKLADOWA 1 , 00-001 WARSZAWA Data urodzenia: 1980-01-01
+Plec: Meska
+Badanie Wynik Jedn. Zakres referencyjny LIW ™
+Morfologia krwi (ICD-9: C55) '
+Leukocyty 6,26 tys/pl* 4,00 - 10,00
+Neutrofile 3,03 tys/ul* 1,90 - 7,00
+Limfocyty 2,6 tys/p1* 1,5 - 4,5
+Monocyty 0,34 tys/p1* 0,10 - 0,90
+Eozynofile 0,17 tys/p1* 0,05 - 0,50
+Bazofile 0,05 tys/p1* 0,00 - 0,10
+Niedojrzate granulocyty IG 0,02 tys/p1* 0,00 - 0,07
+Neutrofile 48,5 %* 45,0 - 70,0
+Limfocyty 42,3 %* 25,0 - 45,0
+Monocyty 5,4 %* 2,0 - 9,0
+Eozynofile 2,7 %* 0,0 - 5,0
+Bazofile 0,8 %* 0,0 - 1,1
+Niedojrzate granulocyty IG 0,30 %* 0,00 - 1,00
+Erytrocyty 6,05 min/pl* 4,60 - 6,50
+Hemoglobina 17,2 g/dl* 13,5 - 18,0
+Hematokryt 52,8 %* 40,0 - 52,0 H
+MCV 87,3 fl* 80,0 - 98,0
+MCH 28,4 pg* 27,0 - 32,0
+MCHC 32,6 g/dl* 31,0 - 37,0
+RDW-SD 43,8 fl* 36,0 - 47,0
+RDW-CV 13,6 %* 11,5 - 14,5
+NRBC 0,00 tys/ul* 0,00 - 0,01
+NRBC 0,00 %* 0,00 - 0,20
+Ptytki krwi 318 tys/pl* 150 - 400
+MPV 9,9 fl* 7,0 - 12,0
+PCT 0,3 %* 0,1 - 0,4
+PDW 12,8 fl* 10,0 - 17,4
+P-LCR 25,3 %* 19,3 - 47,1
+Strona: 122   Pal
+Lae mgr   TASLASKA
+SORATORYINY
+aad
+rine}
+o diagaBstyki medycznej
+Data wygenerowania pdf/wydruku: 2025-04-09 20:01:49
+Wersja: $Rev: 1920 $/$Rev: 1756 $
+* Oznacza, ze zastosowano normy przynalezne do przedziatu wiekowego. Normy podane na wyniku odnosza sie do osdéb dorostych, jezeli nie wyszczegdlniono inaczej. Szczegdtowe informacje metodyki
+oznaczen dostepne sa w laboratorium.
+** LIW - Laboratoryjna Interpretacja wyniku; H - powyzej zakresu referencyjnego; L - ponizej zakresu referencyjnego;
+Dowiedz sie wiecej na www.diag.pl
+
+Diagnostyka* ICN
+Diagnostyka S.A.
+ul. prof. Michata Zyczkowskiego 16, 31-864 Krakow
+Nr ksiegi rejestrowej Podmiotu Leczniczego 000000005831
+Pacjent: KOWALSKI JAN PESEL: 80010112345
+Adres: PRZYKLADOWA 1 , 00-001 WARSZAWA
+Badanie Wynik Jedn. Zakres referencyjny LIW ™
+Morfologia krwi (ICD-9: C55) ' kontynuacja z poprzedniej strony
+Badanie wykonano metoda automatyczna na aparacie Sysmex XN 10.
+Badanie ogolne moczu (ICD-9: A01) 2
+Przejrzystosé przejrzysty przejrzysty
+Barwa jasnozolty -
+Ciezar wlasciwy 1,026 g/ml 1,005 - 1,030
+pH 5,5 5,0 - 7,5
+Glukoza nie wykryto mg/dl nie wykryto
+Ketony nie wykryto mg/dl nie wykryto
+Urobilinogen <1 mg/dl 0,0 - 1,0
+Bilirubina nie wykryto nie wykryto
+Biatko nie wykryto mg/dl nie wykryto
+Leukocyty nie wykryto nie wykryto
+Krew nie wykryto nie wykryto
+Azotyny nie wykryto nie wykryto
+Badanie wykonano na aparacie Sysmex UC-3500.
+Informacje dodatkowe
+Badanie Daty Materiat Autoryzowat / Nr PWZD*** Wykonano
+1 Data/godz. przyjecia prob.: 2025-04-09 14:42 KREW ZYLNA M.SLASKA, 13877 DIAGNOSTYKA S.A., MEDYCZNE LABORATORIUM
+Data wykonania: 2025-04-09 (EDTA) DIAGNOSTYKA, Jutrzenki 100, 02-230 Warszawa
+Data/godz. wydania: 2025-04-09 20:01:48
+2 Data/godz. przyjecia prob.: 2025-04-09 14:50 MOCZ K.POLKOWSKI, 04014 DIAGNOSTYKA S.A., MEDYCZNE LABORATORIUM
+Data wykonania: 2025-04-09 DIAGNOSTYKA, Jutrzenki 100, 02-230 Warszawa
+Data/godz. wydania: 2025-04-09 16:51:49
+Informacje dotyczace prdobki/zlecenia
+Brak uwag
+** Dokument zawiera badania opatrzone bezpiecznym podpisem elektronicznym weryfikowanym certyfikatem kwalifikowanym KIR S.A.
+Strona: 2z2 ae.
+Data wygenerowania pdf/wydruku: 2025-04-09 20:01:49
+* Oznacza, ze zastosowano normy przynalezne do przedziatu wiekowego. Normy podane na wyniku odnosza sie do osdéb dorostych, jezeli nie wyszczegdlniono inaczej. Szczegdtowe informacje metodyki
+oznaczen dostepne sa w laboratorium.
+** LIW - Laboratoryjna Interpretacja wyniku; H - powyzej zakresu referencyjnego; L - ponizej zakresu referencyjnego;
+Dowiedz sie wiecej na www.diag.pl

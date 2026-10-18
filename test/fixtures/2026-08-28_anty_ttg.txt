@@ -1,0 +1,49 @@
+Diagnostyka* ET
+Diagnostyka S.A.
+ul. prof. Michata Zyczkowskiego 16, 31-864 Krakow
+Nr ksiegi rejestrowej Podmiotu Leczniczego 000000005831
+MEDYCZNE LABORATORIUM DIAGNOSTYKA
+Jutrzenki 100, 02-230 Warszawa, Zaktad Diagnostyki Laboratoryjnej (1918)
+SPRAWOZDANIE Z BADANIA LABORATORYJNEGO
+Zlecajacy: PZU ZDROWIE S.A. /PZU ZDROWIE S.A. ODDZIAL CENTRA MEDYCZNE W WARSZAWIE _ Kod kontrahenta: 17063
+IDWEW 5272663852-80408 CENTRUM MEDYCZNE WARSZAWA PULAWSKA
+Rondo Daszynskiego 4, 00-843 Warszawa
+Odadziat: - Kod oddziatu: -
+Lekarz kierujacy: - Data rejestracji: 2026-08-27
+Odbiorca wyniku: | ZLECAJACY Data/godz. pobrania: 2026-08-27 08:42
+Pagjent: KOWALSKI JAN PESEL: 80010112345
+Adres: PRZYKLADOWA 1 , 00-001 WARSZAWA Data urodzenia: 1980-01-01
+Pec: Meska
+Badanie Wynik Jedn. Zakres referencyjny LIW
+Pic. p. transglutaminazie tkankowej (anty-tTG) w kl. IgG i IgA met. CLIA (ICD-9: N79) 1
+P/c. anty-tTG IgA: <2 AU/ml -
+< 20 AU/ml wynik negatywny
+2 20 AU/ml wynik pozytywny
+Badanie wykonano testem MAGLUMI Anti-tissue transglutaminase IgA firmy Snibe, metoda CLIA na aparade Maglumi X8.
+Uwaga! Zmiana metody wykonywania badania. Zmiana zakresow referencyjnych.
+Wynik badah nalezy interpretowacé w oparau o obraz kliniczny pacjenta
+P/c. anty-tTG IgG: <2 AU/ml -
+< 20 AU/ml wynik negatywny
+2 20 AU/ml wynik pozytywny
+Badanie wykonano testem MAGLUMI Anti-tissue transglutaminase IgG firmy Snibe, metoda CLIA na aparade Maglumi X8.
+Uwaga! Zmiana metody wykonywania badania. Zmiana zakresow referencyjnych.
+Wynik badah nalezy interpretowac w opardu o obraz kliniczny pacjenta.
+Informacje dodatkowe
+Badanie Daty Materiat Autoryzowat / Nr PWZD*** Wykonano
+1 Data/godz. przyjecia prob.: 2026-08-27 16:50 SUROWICA M.FILIPOWSKA, 14366 DIAGNOSTYKA S.A., MEDYCZNE LABORATORIUM
+Data/godz wykonania: 2026-08-28 13:01:00 DIAGNOSTYKA, Zyczkowskiego 16, 31-864 Krakow
+Data/godz. wydania: 2026-08-28 14:24:26
+Informacje dotyczace prdobki/zlecenia
+Brak uwag
+** Dokument jest opatrzony bezpiecznym podpisem elektronicznym.
+Strona: 1z 1
+mgr go Niedziétka
+x Diaghosta
+ae Laborato hy
+Data wystawienia pdf/wydruku: 2026-08-28 14:24:26
+Wersja: $Rev: 1968 $/$Rev: 1973 $
+* Oznacza, ze zastosowano normy przynalezne do przedziatu wiekowego. Normy podane na wyniku odnosza sie do osdb dorostych, jezeli nie wyszczegdlniono inaczej. Szczegdtowe informacje metodyki oznaczen
+dostepne sa w laboratorium.
+** LIW - Laboratoryjna Interpretacja wyniku; H - powyzej zakresu referencyjnego; L - ponizej zakresu referencyjnego;
+Dowiedz sie wiecej na www.diag.pl
+Dokument podpisany elektronicznie 2026.08.28 14:25 przez MILENA NIEDZIOLKA NPWZ 17671 Rodzaj podpisu: Certyfikat ZUS

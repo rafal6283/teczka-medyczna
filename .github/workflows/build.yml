@@ -62,7 +62,7 @@ jobs:
       - name: Testy parsera
         run: |
           set -o pipefail
-          flutter test 2>&1 | tee test.log
+          flutter test test/parser_test.dart test/report_test.dart test/figures_test.dart test/quality_test.dart 2>&1 | tee test.log
       - name: Build APK
         run: |
           set -o pipefail
@@ -155,6 +155,32 @@ jobs:
           git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" ci-logs
       - name: Wynik
         run: '[ "$(cat smoke.rc)" = "0" ]'
+
+  parser-report:
+    # Odczyt prawdziwych (zanonimizowanych) wyników z test/fixtures – raport w gałęzi ci-report.
+    needs: bootstrap
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Testy na prawdziwych wynikach
+        run: |
+          flutter pub get > /dev/null
+          flutter test test/fixtures_test.dart > fixtures.log 2>&1; echo $? > fixtures.rc
+          tail -5 fixtures.log
+      - name: Zapisz raport (gałąź ci-report)
+        if: always()
+        run: |
+          mkdir -p /tmp/r && cp fixtures.log fixtures.rc /tmp/r/ 2>/dev/null; cp build/fixtures_report.txt /tmp/r/ 2>/dev/null || true
+          cd /tmp/r && git init -q && git checkout -q -b ci-report
+          git config user.name "github-actions"; git config user.email "github-actions@users.noreply.github.com"
+          git add -A && git commit -qm "raport ${{ github.run_number }}"
+          git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" ci-report
 
   release:
     needs: [android, ios]

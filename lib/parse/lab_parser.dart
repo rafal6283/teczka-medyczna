@@ -10,6 +10,7 @@ class ParsedResult {
   String? valueText;
   String unit;
   double? refLow, refHigh;
+  String? refText; // norma opisowa, np. "nie wykryto", "przejrzysty"
   String? flag; // 'H', 'L' lub null
   bool known;
   bool selected;
@@ -23,6 +24,7 @@ class ParsedResult {
     this.unit = '',
     this.refLow,
     this.refHigh,
+    this.refText,
     this.flag,
     required this.known,
     this.selected = true,
@@ -30,7 +32,7 @@ class ParsedResult {
   });
 
   @override
-  String toString() => '$key|$name|${value ?? valueText}|$unit|$refLow-$refHigh|$flag';
+  String toString() => '$key|$name|${valueText ?? value}|$unit|$refLow-$refHigh${refText == null ? '' : '|$refText'}|$flag';
 }
 
 class ParseOutput {
@@ -42,20 +44,25 @@ class ParseOutput {
   ParseOutput(this.results, this.date, this.facility, this.suggestedCategory, this.suggestedTitle);
 }
 
+/// Sekcja wyniku wpływająca na znaczenie nazw (np. "Glukoza" w badaniu moczu).
+enum Section { none, urine, sediment }
+
 class LabParser {
   static const _num = r'\d+(?:[.,]\d+)?';
 
   static final RegExp _numRe = RegExp(r'(?<![\p{L}\d.,/^])([<>≤≥]=?\s*)?(\d+(?:[.,]\d+)?)(?![\d])', unicode: true);
 
+  // Jednostki – z tolerancją na typowe błędy OCR: µ→u/p, l→1/I, mln→min, IU→lU/TU.
   static final RegExp _unitRe = RegExp(
     r'^(?:'
-    r'(?:x\s?10\s?\^?\s?\d{1,2}|10\s?\^\s?\d{1,2}|10[³⁶⁹]|10¹²|tys\.?|mln\.?|[gkmt])\s?/\s?(?:[uµμp]l|l|mm3|mm³)'
-    r'|ml\s?/\s?min(?:\s?/\s?1[,.]73\s?m(?:2|²|\^2)?)?'
+    r'(?:x\s?10\s?\^?\s?\d{1,2}|10\s?\^\s?\d{1,2}|10[³⁶⁹]|10¹²|tys\.?|mln\.?|min|[gkmt])\s?/\s?(?:[uµμp][l1i]|l|mm3|mm³)'
+    r'|m[l1]\s?/\s?min(?:\s?/\s?1[,.]73\s?m(?:2|²|\^2)?)?'
     r'|mm\s?/\s?(?:1\s?)?(?:h|godz\.?)'
-    r'|[munpµμ]?(?:g|mol|iu|ui|u|j|eq|kat)\s?/\s?(?:d?l|ml|l|g|dl)'
-    r'|[munpµμ]?(?:iu|ui|u|j)\s?/\s?(?:ml|l)'
+    r'|[uµμp][il1t|]u\s?/\s?m[l1]'
+    r'|[munpµμ]?(?:g|mol|iu|ui|u|j|eq|kat)\s?/\s?(?:d?[l1i]|m[l1]|g|mol)'
     r'|ud\.?\s?/\s?min|/\s?min|bpm|ms'
-    r'|(?:au|ru|eu|ai|k?iu|ku)\s?/\s?(?:ml|l)|s/co|coi'
+    r'|(?:au|ru|eu|ai|k?iu|ku)\s?/\s?(?:m[l1]|l)|s/co|coi'
+    r'|/\s?[uµμp][l1]'
     r'|g/ml|l/l|fl|pg|%|‰|sek\.?|s|wpw\.?|ratio|indeks'
     r')(?![\p{L}\d])',
     caseSensitive: false,
@@ -67,25 +74,95 @@ class LabParser {
   static final RegExp _rangeTwo = RegExp('($_num)\\s*(?:-|–|—|÷|\\.\\.\\.?|do)\\s*($_num)');
   static final RegExp _rangeHigh = RegExp('(?:<=|<|≤|poniżej|ponizej|do)\\s*($_num)', caseSensitive: false);
   static final RegExp _rangeLow = RegExp('(?:>=|>|≥|powyżej|powyzej|od|min\\.?)\\s*($_num)', caseSensitive: false);
+  static final RegExp _dashHigh = RegExp('^\\s*[-–]\\s+($_num)');
 
-  static const _qualitative = [
-    'ujemny', 'ujemne', 'ujemna', 'dodatni', 'dodatnie', 'dodatnia', 'nieobecne', 'nieobecny', 'obecne', 'obecny',
-    'nie wykryto', 'wykryto', 'w normie', 'prawidłowy', 'prawidłowe', 'brak', 'pojedyncze', 'liczne', 'słomkowy', 'żółty',
-    'przejrzysty', 'mętny', 'lekko mętny', 'reaktywny', 'niereaktywny',
-  ];
+  // nagłówek badania "(ICD-9: L43)" i ewentualny przypis po nim
+  static final RegExp _icd = RegExp(
+    r'\(\s*[I1l|]C[DO0]\s*-?\s*\d[^)]{0,12}\)?\s*(?:[^\p{L}\d\s<>≤≥]{1,3}(?=\s|$)|\d{1,2}(?=\s+[<>≤≥]?\d)|\d{1,2}\s*$)?',
+    caseSensitive: false,
+    unicode: true,
+  );
+
+  /// Wyniki opisowe (po normalizacji) i ich wyświetlana forma.
+  static const qualitative = <String, String>{
+    'bardzo liczne': 'bardzo liczne',
+    'nie wykryto': 'nie wykryto',
+    'niereaktywny': 'niereaktywny',
+    'nieobecne': 'nieobecne',
+    'nieobecny': 'nieobecny',
+    'nieobecna': 'nieobecna',
+    'nieliczne': 'nieliczne',
+    'lekko metny': 'lekko mętny',
+    'jasnozolty': 'jasnożółty',
+    'ciemnozolty': 'ciemnożółty',
+    'wynik ujemny': 'ujemny',
+    'wynik dodatni': 'dodatni',
+    'ujemny': 'ujemny',
+    'ujemne': 'ujemne',
+    'ujemna': 'ujemna',
+    'dodatni': 'dodatni',
+    'dodatnie': 'dodatnie',
+    'dodatnia': 'dodatnia',
+    'obecne': 'obecne',
+    'obecny': 'obecny',
+    'wykryto': 'wykryto',
+    'w normie': 'w normie',
+    'prawidlowy': 'prawidłowy',
+    'prawidlowe': 'prawidłowe',
+    'brak': 'brak',
+    'pojedyncze': 'pojedyncze',
+    'liczne': 'liczne',
+    'slomkowy': 'słomkowy',
+    'zolty': 'żółty',
+    'bursztynowy': 'bursztynowy',
+    'pomaranczowy': 'pomarańczowy',
+    'czerwony': 'czerwony',
+    'brunatny': 'brunatny',
+    'przejrzysty': 'przejrzysty',
+    'metny': 'mętny',
+    'reaktywny': 'reaktywny',
+    'graniczny': 'graniczny',
+    'sladowe': 'śladowe',
+    'slad': 'ślad',
+  };
 
   static const _unknownStop = [
     'data', 'wiek', 'pesel', 'tel', 'telefon', 'nr', 'numer', 'strona', 'str', 'godz', 'kod', 'ul', 'lat', 'zlecen',
     'pobran', 'urodzen', 'material', 'probk', 'adres', 'faks', 'fax', 'regon', 'nip', 'konto', 'cena', 'kwota', 'razem',
     'wydruk', 'lekarz', 'pacjent', 'ponizej', 'powyzej', 'stezenie', 'zalecane', 'dla', 'cukrzyca', 'prawidlowa', 'nieprawidlowa',
     'badanie', 'metoda', 'wartosc', 'wynik', 'id', 'zlecajacy', 'rejestr', 'autoryz', 'wykonan', 'przyjec', 'odbior', 'kod pocztowy',
+    'wersja', 'punkty', 'przewlekla', 'ostra', 'niewydolnosc', 'wzor', 'hba1c',
   ];
 
-  /// Zbiór dopasowań aliasów do zwiniętego tekstu linii.
-  static (LabParam, int, int)? _matchAlias(String line) {
+  static int _lev(String a, String b, int max) {
+    if ((a.length - b.length).abs() > max) return max + 1;
+    var prev = List<int>.generate(b.length + 1, (i) => i);
+    for (var i = 1; i <= a.length; i++) {
+      final cur = List<int>.filled(b.length + 1, 0);
+      cur[0] = i;
+      var rowMin = cur[0];
+      for (var j = 1; j <= b.length; j++) {
+        final c = a.codeUnitAt(i - 1) == b.codeUnitAt(j - 1) ? 0 : 1;
+        cur[j] = [prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + c].reduce((x, y) => x < y ? x : y);
+        if (cur[j] < rowMin) rowMin = cur[j];
+      }
+      if (rowMin > max) return max + 1;
+      prev = cur;
+    }
+    return prev[b.length];
+  }
+
+  static bool _tokOk(String lineTok, String aliasTok) {
+    if (lineTok == aliasTok) return true;
+    if (aliasTok.length >= 8) return _lev(lineTok, aliasTok, 2) <= 2;
+    if (aliasTok.length >= 5) return _lev(lineTok, aliasTok, 1) <= 1;
+    return false;
+  }
+
+  /// Dopasowanie nazwy parametru na początku linii: dokładne, a gdy brak – tolerancyjne na literówki OCR.
+  static (LabParam, int, int)? _matchAlias(String line, {Section section = Section.none}) {
     LabDictionary.ensure();
     final n = normSameLength(line);
-    // zwinięcie spacji z mapą indeksów do oryginału
     final collapsed = StringBuffer();
     final map = <int>[];
     var prevSpace = true;
@@ -106,23 +183,49 @@ class LabParser {
     final cs = collapsed.toString();
     if (cs.isEmpty) return null;
 
-    // możliwe początki: 0 oraz po numeracji typu "1. " / "12) "
     final starts = <int>[0];
     final numbering = RegExp(r'^(\d{1,2}) ').firstMatch(cs);
     if (numbering != null) starts.add(numbering.end);
-    // kody procedur ICD-9 na początku linii, np. "C55 Morfologia", "L43 TSH"
     final code = RegExp(r'^[a-z]\d{2,3} ').firstMatch(cs);
     if (code != null) starts.add(code.end);
 
-    for (final st in starts) {
-      for (final a in LabDictionary.aliases) {
-        final al = a.key;
-        if (cs.startsWith(al, st)) {
-          final end = st + al.length;
-          if (end == cs.length || cs[end] == ' ') {
-            final origEnd = map[end - 1] + 1;
-            return (a.value, origEnd, al.length);
+    final lists = <List<MapEntry<String, LabParam>>>[
+      if (section == Section.sediment) LabDictionary.sedimentAliases,
+      if (section == Section.urine || section == Section.sediment) LabDictionary.urineAliases,
+      LabDictionary.aliases,
+    ];
+
+    for (final list in lists) {
+      for (final st in starts) {
+        for (final a in list) {
+          final al = a.key;
+          if (cs.startsWith(al, st)) {
+            final end = st + al.length;
+            if (end == cs.length || cs[end] == ' ') {
+              return (a.value, map[end - 1] + 1, al.length);
+            }
           }
+        }
+      }
+      // tolerancyjnie (OCR: "Ptytki" → "Płytki", "catkowity" → "całkowity")
+      for (final st in starts) {
+        final toks = cs.substring(st).split(' ');
+        for (final a in list) {
+          final al = a.key;
+          if (al.length < 5) continue;
+          final at = al.split(' ');
+          if (at.length > toks.length) continue;
+          var ok = true;
+          for (var t = 0; t < at.length && ok; t++) {
+            ok = _tokOk(toks[t], at[t]);
+          }
+          if (!ok) continue;
+          // pozycja końca dopasowanych tokenów
+          var len = st;
+          for (var t = 0; t < at.length; t++) {
+            len += toks[t].length + (t > 0 ? 1 : 0);
+          }
+          return (a.value, map[len - 1] + 1, al.length);
         }
       }
     }
@@ -131,6 +234,22 @@ class LabParser {
 
   static String _clean(String s) =>
       s.replaceAll('\t', ' ').replaceAll(' ', ' ').replaceAll(RegExp(r'[ ]{2,}'), '  ').trimRight();
+
+  /// Pierwszy wynik opisowy w tekście (np. "nie wykryto"); zwraca (forma wyświetlana, koniec w znormalizowanym tekście).
+  static (String, int)? _firstQual(String n, {int from = 0, int maxStart = 40}) {
+    (String, int)? best;
+    var bestPos = 1 << 30;
+    for (final e in qualitative.entries) {
+      var i = (' $n ').indexOf(' ${e.key} ', from);
+      if (i < 0) continue;
+      if (i < bestPos || (i == bestPos && e.key.length > (best?.$1.length ?? 0))) {
+        bestPos = i;
+        best = (e.value, i + e.key.length);
+      }
+    }
+    if (best == null || bestPos > from + maxStart) return null;
+    return best;
+  }
 
   /// Wyszukuje wartość, jednostkę, flagę i normę w tekście po nazwie parametru.
   static ParsedResult? _parseRest(String rest, {required String key, required String name, required bool known, required String raw, LabParam? param, int minScore = 0}) {
@@ -170,7 +289,7 @@ class LabParser {
           }
         }
       }
-      if (_rangeTwo.firstMatch(tail) != null || _rangeHigh.hasMatch(tail) || _rangeLow.hasMatch(tail)) score += 1;
+      if (_rangeTwo.firstMatch(tail) != null || _rangeHigh.hasMatch(tail) || _rangeLow.hasMatch(tail) || _dashHigh.hasMatch(tail)) score += 1;
       if (score > bestScore) {
         bestScore = score;
         best = m;
@@ -183,7 +302,6 @@ class LabParser {
     if (best == null) return null;
     if (!known && bestScore < 2) return null;
     if (bestScore < minScore) return null;
-    // Za dużo tekstu między nazwą a liczbą = to raczej zdanie, nie wynik.
     final gapLetters = RegExp(r'\p{L}', unicode: true).allMatches(rest.substring(0, best.start).replaceAll(RegExp(r'\([^)]*\)'), '')).length;
     if (gapLetters > (bestScore == 0 ? 12 : 40)) return null;
 
@@ -193,6 +311,7 @@ class LabParser {
     final tail = rest.substring(afterIdx);
 
     double? lo, hi;
+    String? refText;
     final r2 = _rangeTwo.firstMatch(tail);
     if (r2 != null) {
       lo = parseNum(r2.group(1)!);
@@ -203,15 +322,21 @@ class LabParser {
         hi = t;
       }
     } else {
+      final dh = _dashHigh.firstMatch(tail);
       final rh = _rangeHigh.firstMatch(tail);
       final rl = _rangeLow.firstMatch(tail);
-      if (rh != null && (rl == null || rh.start <= rl.start)) {
+      if (dh != null) {
+        hi = parseNum(dh.group(1)!);
+      } else if (rh != null && (rl == null || rh.start <= rl.start)) {
         hi = parseNum(rh.group(1)!);
       } else if (rl != null) {
         lo = parseNum(rl.group(1)!);
+      } else {
+        // norma opisowa: "Białko 15,0 mg/dl nie wykryto"
+        final q = _firstQual(normText(tail), maxStart: 20);
+        if (q != null) refText = q.$1;
       }
     }
-    // Jednostka czasem stoi dopiero po normie: "14,2  13,5-18,0  g/dl"
     if (unit.isEmpty) {
       final afterRange = r2 != null ? tail.substring(r2.end) : '';
       final lead = RegExp(r'^\s*').firstMatch(afterRange)!.end;
@@ -240,40 +365,50 @@ class LabParser {
       if (flag == 'H' || flag == '↑') f = 'H';
       if (flag == 'L' || flag == '↓') f = 'L';
     }
-    if (cmp != null && cmp.isNotEmpty) {
-      // "<0,5" – wartość poniżej progu oznaczalności; zapisujemy tekstowo i liczbowo
-      return ParsedResult(
-          key: k, name: nm, value: value, valueText: '$cmp${best.group(2)}', unit: unit.trim(), refLow: lo, refHigh: hi, flag: f, known: known, rawLine: raw);
-    }
-    return ParsedResult(key: k, name: nm, value: value, unit: unit.trim(), refLow: lo, refHigh: hi, flag: f, known: known, rawLine: raw);
+    final vt = (cmp != null && cmp.isNotEmpty) ? '$cmp${best.group(2)}' : null;
+    return ParsedResult(
+        key: k, name: nm, value: value, valueText: vt, unit: unit.trim(), refLow: lo, refHigh: hi, refText: refText, flag: f, known: known, rawLine: raw);
   }
 
-  static ParsedResult? parseLine(String line, {String? next, void Function()? consumeNext}) {
-    final l = _clean(line);
+  static ParsedResult? parseLine(String line, {String? next, void Function()? consumeNext, Section section = Section.none}) {
+    var l = _clean(line);
+    l = l.replaceAll(_icd, '  ').trimRight();
     if (l.trim().length < 2) return null;
-    final m = _matchAlias(l);
+    final m = _matchAlias(l, section: section);
     if (m != null) {
       final (param, end, aliasLen) = m;
       final rest = l.substring(end);
       final minScore = aliasLen <= 3 ? 1 : 0;
+      // wynik opisowy przed liczbami: "Glukoza nie wykryto mg/dl nie wykryto"
+      final nr = normText(rest);
+      final q = _firstQual(nr, maxStart: 3);
+      if (q != null) {
+        final refQ = _firstQual(nr, from: q.$2, maxStart: 40);
+        final um = RegExp(r'\s((?:mg|g|mmol|µmol|umol)/d?l|/[uµp]l|mg/dl)\s', caseSensitive: false).firstMatch(' $rest ');
+        return ParsedResult(
+          key: param.key,
+          name: param.name,
+          valueText: q.$1,
+          unit: um?.group(1) ?? '',
+          refText: refQ?.$1,
+          known: true,
+          rawLine: l,
+        );
+      }
       var r = _parseRest(rest, key: param.key, name: param.name, known: true, raw: l, param: param, minScore: minScore);
       if (r != null) return r;
-      // tylko nazwa w linii – wartość w kolejnej
       final restLetters = RegExp(r'[\p{L}\d]', unicode: true).allMatches(rest).length;
       if (restLetters <= 12 && next != null) {
-        r = _parseRest('$rest  ${_clean(next)}', key: param.key, name: param.name, known: true, raw: '$l | $next', param: param, minScore: 1);
+        final nx = _clean(next).replaceAll(_icd, '  ');
+        r = _parseRest('$rest  $nx', key: param.key, name: param.name, known: true, raw: '$l | $nx', param: param, minScore: 1);
         if (r != null) {
           consumeNext?.call();
           return r;
         }
       }
-      // wynik jakościowy
-      final rn = rest.toLowerCase();
-      for (final q in _qualitative) {
-        final i = rn.indexOf(q);
-        if (i >= 0 && i < 40) {
-          return ParsedResult(key: param.key, name: param.name, valueText: q, known: true, rawLine: l, selected: false);
-        }
+      final q2 = _firstQual(nr, maxStart: 40);
+      if (q2 != null) {
+        return ParsedResult(key: param.key, name: param.name, valueText: q2.$1, refText: _firstQual(nr, from: q2.$2, maxStart: 40)?.$1, known: true, rawLine: l);
       }
       return null;
     }
@@ -295,9 +430,17 @@ class LabParser {
     final r = _parseRest(l.substring(m.end), key: 'X:$nn', name: name, known: false, raw: l);
     if (r == null) return null;
     if (r.unit.isEmpty) return null;
-    // bez normy to zwykle zdanie z opisu ("Poniżej 130 mg/dl dla osób…"), nie wynik
     if (r.refLow == null && r.refHigh == null) return null;
     return r;
+  }
+
+  static Section _sectionOf(String line, Section current) {
+    final n = normText(line);
+    final header = RegExp(r'\(\s*[i1l]c[do0]', caseSensitive: false).hasMatch(line) || n.contains('kontynuacja');
+    if (n.contains('osad moczu')) return Section.sediment;
+    if (n.contains('badanie ogolne moczu') || (header && n.contains(' moczu'))) return Section.urine;
+    if (header && !n.contains('kontynuacja')) return Section.none;
+    return current;
   }
 
   static ParseOutput parse(String text) {
@@ -305,10 +448,12 @@ class LabParser {
     final out = <ParsedResult>[];
     final seen = <String>{};
     final lineOf = Map<ParsedResult, int>.identity();
+    var section = Section.none;
     var i = 0;
     while (i < lines.length) {
+      section = _sectionOf(lines[i], section);
       var skip = false;
-      final r = parseLine(lines[i], next: i + 1 < lines.length ? lines[i + 1] : null, consumeNext: () => skip = true);
+      final r = parseLine(lines[i], next: i + 1 < lines.length ? lines[i + 1] : null, consumeNext: () => skip = true, section: section);
       if (r != null && !seen.contains(r.key)) {
         seen.add(r.key);
         out.add(r);
@@ -316,36 +461,42 @@ class LabParser {
       }
       i += skip ? 2 : 1;
     }
-    // Norma w kolejnych wierszach: "< 20 AU/ml wynik negatywny", "≥ 20 AU/ml wynik pozytywny"
+    // Norma w kolejnych wierszach: "< 20 AU/ml wynik negatywny", ">=90 prawidłowa wartość eGFR"
     final negRe = RegExp('(<|≤|<=|poniżej|ponizej|do)\\s*($_num)[^\\n]{0,25}(negatyw|ujemn|prawid|w normie|brak)', caseSensitive: false);
     final posRe = RegExp('(≥|>=|>|powyżej|powyzej|od)\\s*($_num)[^\\n]{0,25}(pozytyw|dodatn)', caseSensitive: false);
+    final lowRe = RegExp('(≥|>=|>|powyżej|powyzej)\\s*($_num)[^\\n]{0,30}prawid', caseSensitive: false);
     for (final r in out) {
-      if (r.refLow != null || r.refHigh != null) continue;
+      if (r.refLow != null || r.refHigh != null || r.refText != null) continue;
       final k = lineOf[r];
       if (k == null) continue;
-      for (var j = k + 1; j < lines.length && j <= k + 3; j++) {
+      for (var j = k + 1; j < lines.length && j <= k + 4; j++) {
         if (normText(lines[j]).isEmpty) continue;
+        final low = lowRe.firstMatch(lines[j]);
+        if (low != null) {
+          r.refLow = parseNum(low.group(2)!);
+          break;
+        }
         final neg = negRe.firstMatch(lines[j]);
-        final pos = posRe.firstMatch(lines[j]);
         if (neg != null) {
           r.refHigh = parseNum(neg.group(2)!);
           break;
         }
+        final pos = posRe.firstMatch(lines[j]);
         if (pos != null) {
           r.refHigh = parseNum(pos.group(2)!);
           break;
         }
-        // kolejny parametr – przestajemy szukać
         if (_matchAlias(lines[j]) != null) break;
       }
     }
     // Nazwy badań z nagłówków laboratorium: "Morfologia krwi (ICD-9: C55)"
     final headers = <String>[];
     for (final l in lines) {
-      final m = RegExp(r'^\s*(.{3,120}?)\s*\(\s*ICD-?\s*9\s*:?\s*[A-Z]\d{2}\s*\)', caseSensitive: false).firstMatch(l);
+      final m = RegExp(r'^\s*(.{3,120}?)\s*\(\s*[I1l]C[DO0]\s*-?\s*9\s*:?\s*[A-Z0-9]\d{2}\s*\)', caseSensitive: false).firstMatch(l);
       if (m == null) continue;
       var h = m.group(1)!.trim();
-      h = h.replaceAll(RegExp(r'\s+met\.?\s+\S+$', caseSensitive: false), '').trim();
+      if (normText(l).contains('kontynuacja')) continue;
+      h = h.replaceAll(RegExp(r',?\s+met\.?\s+.*$', caseSensitive: false), '').trim();
       if (h.length > 2 && !headers.contains(h)) headers.add(h);
     }
     final date = findDate(text);

@@ -15,6 +15,7 @@ class SeriesPoint {
 
   /// -1 poniżej normy, 0 w normie, 1 powyżej, null – brak normy
   int? get status {
+    if (low == null && high == null && src.refText != null && textStatus(src.refText, null) == 0) return value > 0 ? 1 : 0;
     if (low != null && value < low! - 1e-9) return -1;
     if (high != null && value > high! + 1e-9) return 1;
     if (low != null || high != null) return 0;
@@ -76,6 +77,23 @@ class ParamSeries {
       if (d == null || t.date.isAfter(d)) d = t.date;
     }
     return d;
+  }
+
+  /// Najnowszy wynik (liczbowy lub opisowy).
+  LabResult? get lastResult {
+    LabResult? r = latest?.src;
+    for (final t in textResults) {
+      if (r == null || !t.date.isBefore(r.date)) r = t;
+    }
+    return r;
+  }
+
+  /// Status najnowszego wyniku – również dla opisowych ("dodatni", "nie wykryto").
+  int? get lastStatus {
+    final r = lastResult;
+    if (r == null) return null;
+    if (r.value == null) return textStatus(r.valueText, r.refText);
+    return latest?.status;
   }
 
   double? get refLow => latest?.low;
@@ -247,6 +265,22 @@ class Insights {
     final out = <Insight>[];
     final now = DateTime.now();
     for (final s in series) {
+      // wyniki opisowe (np. H. pylori, krew utajona, mocz)
+      if (s.points.isEmpty && s.textResults.isNotEmpty) {
+        final tr = List.of(s.textResults)..sort((a, b) => a.date.compareTo(b.date));
+        final l = tr.last;
+        final ls = textStatus(l.valueText, l.refText);
+        final prev = tr.length >= 2 ? tr[tr.length - 2] : null;
+        final ps = prev == null ? null : textStatus(prev.valueText, prev.refText);
+        if (ls == 1) {
+          out.add(Insight(now.difference(l.date).inDays > 365 ? InsightKind.warning : InsightKind.alert, '${s.name}: wynik nieprawidłowy',
+              '${l.valueText} (${fmtDate(l.date)})${l.refText != null ? ', norma: ${l.refText}' : ''}.${ps == 0 ? ' Poprzednio prawidłowy.' : ''}',
+              paramKey: s.key));
+        } else if (ls == 0 && ps == 1) {
+          out.add(Insight(InsightKind.good, '${s.name}: obecnie prawidłowy', '${prev!.valueText} → ${l.valueText} (${fmtDate(l.date)}).', paramKey: s.key));
+        }
+        continue;
+      }
       final st = s.stats;
       final last = s.latest;
       if (st == null || last == null) continue;

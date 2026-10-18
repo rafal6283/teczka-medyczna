@@ -13,7 +13,13 @@ import 'documents.dart';
 import 'import_flow.dart';
 import 'viewer.dart';
 
-int? statusOf(double? v, double? lo, double? hi, String? flag) {
+int? statusOf(double? v, double? lo, double? hi, String? flag, {String? valueText, String? refText}) {
+  // wynik opisowy ("dodatni", "nie wykryto")
+  if (v == null && valueText != null) return textStatus(valueText, refText);
+  // liczba przy normie opisowej "nie wykryto" (np. białko w moczu 15 mg/dl)
+  if (v != null && lo == null && hi == null && refText != null && textStatus(refText, null) == 0) {
+    return v > 0 ? 1 : 0;
+  }
   if (v != null && (lo != null || hi != null)) {
     if (lo != null && v < lo - 1e-9) return -1;
     if (hi != null && v > hi + 1e-9) return 1;
@@ -129,6 +135,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
               unit: r.unit,
               refLow: r.refLow,
               refHigh: r.refHigh,
+              refText: r.refText,
               flag: r.flag,
             ))
         .toList();
@@ -350,7 +357,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
     final p = LabDictionary.get(r.key);
     final lo = r.refLow ?? (r.refHigh == null ? p?.lowFor(widget.profile.sex) : null);
     final hi = r.refHigh ?? (r.refLow == null ? p?.highFor(widget.profile.sex) : null);
-    final st = statusOf(r.value, lo, hi, r.flag);
+    final st = statusOf(r.value, lo, hi, r.flag, valueText: r.valueText, refText: r.refText);
     return CheckboxListTile(
       value: r.selected,
       onChanged: (v) => setState(() => r.selected = v ?? false),
@@ -364,7 +371,9 @@ class _ReviewScreenState extends State<ReviewScreen> {
             child: Text('nowy', style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.tertiary)),
           ),
       ]),
-      subtitle: Text('norma ${refText(lo, hi)}${r.refLow == null && r.refHigh == null && (lo != null || hi != null) ? ' (domyślna)' : ''}'),
+      subtitle: Text(r.refText != null && lo == null && hi == null
+          ? 'norma: ${r.refText}'
+          : 'norma ${refText(lo, hi)}${r.refLow == null && r.refHigh == null && (lo != null || hi != null) ? ' (domyślna)' : ''}'),
       secondary: InkWell(
         onTap: () => _edit(i),
         child: Row(mainAxisSize: MainAxisSize.min, children: [
@@ -447,6 +456,7 @@ class _ResultEditorState extends State<_ResultEditor> {
         unit: unit.text.trim(),
         refLow: parseNum(low.text),
         refHigh: parseNum(high.text),
+        refText: low.text.trim().isEmpty && high.text.trim().isEmpty ? widget.initial?.refText : null,
         flag: widget.initial?.flag,
         known: p != null,
         rawLine: widget.initial?.rawLine ?? '',
@@ -547,6 +557,7 @@ class ParsedResultX {
         unit: r.unit,
         refLow: r.refLow,
         refHigh: r.refHigh,
+        refText: r.refText,
         flag: r.flag,
         known: LabDictionary.get(r.key) != null,
       );

@@ -1,0 +1,153 @@
+Diagnostyka* AMIN
+Diagnostyka S.A.
+ul. prof. Michata Zyczkowskiego 16, 31-864 Krakow
+Nr ksiegi rejestrowej Podmiotu Leczniczego 000000005831
+MEDYCZNE LABORATORIUM DIAGNOSTYKA
+Jutrzenki 100, 02-230 Warszawa, Zaktad Diagnostyki Laboratoryjnej (1918)
+SPRAWOZDANIE Z BADANIA
+Zlecajacy: CENTRUM MEDYCZNE ENEL-MED SPOLKA AKCYJNA Kod kontrahenta: 18318
+SLOMINSKIEGO 19 lok.524, WARSZAWA
+Odadziat: Centrum Medyczne ENEL-MED S.A. Oddziat Putawska ul. Putawska 326 02-819 Kod oddziatu: 183180020
+Warszawa
+Lekarz kierujacy: - Data rejestracji: 2024-03-18
+Odbiorca wyniku: _ZLECAJACY Data/godz. pobrania: 2024-03-18 08:48
+Pagjent: KOWALSKI JAN PESEL: 80010112345
+Adres: PRZYKLADOWA 1 , 00-001 WARSZAWA Data urodzenia: 1980-01-01
+Plec: Meska
+Badanie Wynik Jedn. Zakres referencyjny LIW
+. 1
+Kreatynina (ICD-9: M37) 0,97 mg/d1* 0,70 - 1,20
+Badanie wykonano metoda spektrofotometryczna na aparacie Cobas 8000.
+eGFR (ICD-9: M37) | >60 ml/min/1,73m2* -
+Wzor wg MDRD (Modification of Diet in Renal Disease)
+>60 ml/min/1,73m2 — prawidtowa wartosé eGFR
+$60 mi/min/1,73m2 — obnizona wartosé eGFR, podwyzszone ryzyko niewydolnosci nerek
+Wynik wyliczono z danych uzyskanych w pomiarach bezposrednich.
+Kwas moczowy (ICD-9: M45) 7 4,9 mg/dl 3,4 - 7,0
+Wg aktualnych zalecen Polskiego Towarzystwa NadciSnienia Tetniczego (PTNT) z 2019 r. czynnikiem sktaniajacym do
+rozwazenia wdrozenia farmakoterapii przez lekarza u pacjentéw z nadcisnieniem tetniczym i wysokim ryzykiem sercowo-naczyniowym
+jest stezenie kwasu moczowego w surowicy > 5,0 - 6,0 mg/dl (297,5 - 351,1 umol/)).
+Badanie wykonano metoda spektrofotometryczna na aparacie Cobas 8000.
+Glukoza (ICD-9: L43) ° 98,1 mg/dl 70,0 - 99,0
+prawidtowa glikemia na czczo: 70-99 mg/dl
+nieprawidtowa glikemia na czczo: 100-125 mg/dl, wskazane wykonanie testu OGTT
+cukrzyca: = 126 mg/dl, wynik uzyskany w dwukrotnym badaniu na czczo,
+cukrzyca = 200 mg/dl, wynik uzyskany w prébce pobranej o dowolnej porze dnia, niezaleznie od pory ostatnio spozytego positku,
+wg aktualnych zalecenh PTD.
+Badanie wykonano metoda spektrofotometryczna na aparacie Cobas 8000
+Lipidogram (ICD-9: M71) 4
+Cholesterol catkowity 232,80 mg/dl 115,00 - 190,00 H
+Badanie wykonano metoda spektrofotometryczna na aparacie Cobas 8000.
+Cholesterol HDL 41,10 mg/dl -
+Stezenie zalecane: powyzej 40 mg/dl
+Badanie wykonano metoda spektrofotometryczna na aparacie Cobas 8000.
+Cholesterol nie-HDL 191,70 mg/dl -
+Stezenie zalecane:
+Ponizej 130 mg/dl - dla osob z umiarkowanym ryzykiem sercowo-naczyniowym
+Ponizej 100 mg/dl - dla osob z duzym ryzykiem sercowo-naczyniowym
+Ponizej 85 mg/dl - dla oséb z bardzo duzym ryzykiem sercowo-naczyniowym
+Ponizej 70 mg/dl - dla oséb z ekstremalnym ryzykiem sercowo-naczyniowym
+Strona: 1z3
+ca Mgt JAROSLA'
+=f
+N
+Se "
+specjalista analitykl klinicznel
+Data wygenerowania pdf/wydruku: 2024-03-18 15:16:25
+Wersja: $Rev: 1708 $/$Rev: 1756 $
+* Oznacza, ze zastosowano normy przynalezne do przedziatu wiekowego. Normy podane na wyniku odnosza sie do osdéb dorostych, jezeli nie wyszczegdlniono inaczej. Szczegdtowe informacje metodyki
+oznaczen dostepne sa w laboratorium.
+** LIW - Laboratoryjna Interpretacja wyniku; H - powyzej zakresu referencyjnego; L - ponizej zakresu referencyjnego;
+Dowiedz sie wiecej na www.diag.pl
+
+Diagnostyka* ION
+Diagnostyka S.A.
+ul. prof. Michata Zyczkowskiego 16, 31-864 Krakow
+Nr ksiegi rejestrowej Podmiotu Leczniczego 000000005831
+Pacjent: KOWALSKI JAN PESEL: 80010112345
+Adres: PRZYKLADOWA 1 , 00-001 WARSZAWA
+Badanie Wynik Jedn. Zakres referencyjny LIW ™
+Lipidogram (ICD-9: M71) 4. kontynuacja z poprzedniej strony
+Wynik wyliczono z danych uzyskanych w pomiarach bezposrednich.
+Cholesterol LDL 153,12 mg/dl -
+Stezenie zalecane:
+Ponizej 115 mg/dl — dla osob zdrowych z matym ryzykiem sercowo-naczyniowym
+Ponizej 100 mg/dl - dla osob z umiarkowanym ryzykiem sercowo-naczyniowym
+Ponizej 70 mg/dl - dla oséb z duzym ryzykiem sercowo-naczyniowym
+Ponizej 55 mg/dl - dla oséb z bardzo duzym ryzykiem sercowo-naczyniowym
+Ponizej 40 mg/dl - dla oséb z ekstremainym ryzykiem sercowo-naczyniowym
+Parametr wyliczany ze wzoru Friedewalda.
+Wynik wyliczono z danych uzyskanych w pomiarach bezposrednich.
+Triglicerydy 192,90 mg/dl - 150,00 H
+Stezenie zalecane:
+Ponizej 150 mg/dl
+W przypadku oznaczenia nie na czczo stezenie zalecane: ponizej 175 mg/dl.
+Stezenia zalecane poszczegolnych parametrow podane za wytycznymi PTL/KLRWP/PTK/PTDL/PTD/PTNT.
+Badanie wykonano metoda spektrofotometryczna na aparacie Cobas 8000.
+ALT (ICD-9: 117) ° 16 U/l 0-41
+Badanie wykonano metoda spektrofotometryczna na aparacie Cobas 8000.
+AST (ICD-9: 119) ° 12 U/l 0-40
+Badanie wykonano metoda spektrofotometryczna na aparacie Cobas 8000.
+GGTP (ICD-9: L31) ’ 22 U/l 10-71
+Badanie wykonano metoda spektrofotometryczna na aparacie Cobas 8000.
+PSA catkowity (ICD-9: 161) ° 0,780 ng/ml* 0,000 - 2,000
+Badanie wykonano metoda elektrochemiluminescencji na aparacie Cobas 8000.
+Informacje dodatkowe
+Badanie Daty Materiat Autoryzowat / Nr PWZD*** Wykonano
+1 Data/godz. przyjecia prob.: 2024-03-18 12:16 SUROWICA ALACZUK, 13166 DIAGNOSTYKA S.A., MEDYCZNE LABORATORIUM
+Data wykonania: 2024-03-18 DIAGNOSTYKA, Jutrzenki 100, 02-230 Warszawa
+Data/godz. wydania: 2024-03-18 14:42:04
+2 Data/godz. przyjecia prob.: 2024-03-18 12:16 SUROWICA ALACZUK, 13166 DIAGNOSTYKA S.A., MEDYCZNE LABORATORIUM
+Data wykonania: 2024-03-18 DIAGNOSTYKA, Jutrzenki 100, 02-230 Warszawa
+Data/godz. wydania: 2024-03-18 14:42:04
+3 Data/godz. przyjecia prob.: 2024-03-18 12:27 OSOCZE ALACZUK, 13166 DIAGNOSTYKA S.A., MEDYCZNE LABORATORIUM
+Data wykonania: 2024-03-18 (FLUOREk) DIAGNOSTYKA, Jutrzenki 100, 02-230 Warszawa
+Data/godz. wydania: 2024-03-18 14:42:04
+4 Data/godz. przyjecia prob.: 2024-03-18 12:16 SUROWICA J.KAMINSKI, 04243 DIAGNOSTYKA S.A., MEDYCZNE LABORATORIUM
+Data wykonania: 2024-03-18 DIAGNOSTYKA, Jutrzenki 100, 02-230 Warszawa
+Data/godz. wydania: 2024-03-18 15:13:28
+5 Data/godz. przyjecia prob.: 2024-03-18 12:16 SUROWICA ALACZUK, 13166 DIAGNOSTYKA S.A., MEDYCZNE LABORATORIUM
+Data wykonania: 2024-03-18 DIAGNOSTYKA, Jutrzenki 100, 02-230 Warszawa
+Data/godz. wydania: 2024-03-18 14:42:04
+6 Data/godz. przyjecia prob.: 2024-03-18 12:16 SUROWICA ALACZUK, 13166 DIAGNOSTYKA S.A., MEDYCZNE LABORATORIUM
+Strona: 2z3 : +
+cn mgr JAROSLAW KAMINSK]
+=f
+N
+~<a
+©
+spécjalista analitykl ktinicznel
+Data wygenerowania pdf/wydruku: 2024-03-18 15:16:25
+* Oznacza, ze zastosowano normy przynalezne do przedziatu wiekowego. Normy podane na wyniku odnosza sie do osdéb dorostych, jezeli nie wyszczegdlniono inaczej. Szczegdtowe informacje metodyki
+oznaczen dostepne sa w laboratorium.
+** LIW - Laboratoryjna Interpretacja wyniku; H - powyzej zakresu referencyjnego; L - ponizej zakresu referencyjnego;
+Dowiedz sie wiecej na www.diag.pl
+
+Diagnostyka* ION
+Diagnostyka S.A.
+ul. prof. Michata Zyczkowskiego 16, 31-864 Krakow
+Nr ksiegi rejestrowej Podmiotu Leczniczego 000000005831
+Pacjent: KOWALSKI JAN PESEL: 80010112345
+Adres: PRZYKLADOWA 1 , 00-001 WARSZAWA
+ke
+Badanie Wynik Jedn. Zakres referencyjny LIW
+Badanie Daty Materiat Autoryzowat / Nr PWZD*** Wykonano
+Data wykonania: 2024-03-18 DIAGNOSTYKA, Jutrzenki 100, 02-230 Warszawa
+Data/godz. wydania: 2024-03-18 14:42:04
+7 Data/godz. przyjecia prob.: 2024-03-18 12:16 SUROWICA ALACZUK, 13166 DIAGNOSTYKA S.A., MEDYCZNE LABORATORIUM
+Data wykonania: 2024-03-18 DIAGNOSTYKA, Jutrzenki 100, 02-230 Warszawa
+Data/godz. wydania: 2024-03-18 14:42:04
+8 Data/godz. przyjecia prob.: 2024-03-18 12:16 SUROWICA J.KAMINSKI, 04243 DIAGNOSTYKA S.A., MEDYCZNE LABORATORIUM
+Data wykonania: 2024-03-18 DIAGNOSTYKA, Jutrzenki 100, 02-230 Warszawa
+Data/godz. wydania: 2024-03-18 15:13:28
+Informacje dotyczace prdobki/zlecenia
+Brak uwag
+** Dokument zawiera badania opatrzone bezpiecznym podpisem elektronicznym weryfikowanym certyfikatem kwalifikowanym KIR S.A.
+Strona: 3z3
+ca mgr JAROSLAW KAMINSKI
+spéGalista analitykl kliniczna}
+Data wygenerowania pdf/wydruku: 2024-03-18 15:16:25
+* Oznacza, ze zastosowano normy przynalezne do przedziatu wiekowego. Normy podane na wyniku odnosza sie do osdéb dorostych, jezeli nie wyszczegdlniono inaczej. Szczegdtowe informacje metodyki
+oznaczen dostepne sa w laboratorium.
+** LIW - Laboratoryjna Interpretacja wyniku; H - powyzej zakresu referencyjnego; L - ponizej zakresu referencyjnego;
+Dowiedz sie wiecej na www.diag.pl

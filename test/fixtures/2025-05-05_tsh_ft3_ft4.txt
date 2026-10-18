@@ -1,0 +1,49 @@
+Diagnostyka* ANT
+Diagnostyka S.A.
+ul. prof. Michata Zyczkowskiego 16, 31-864 Krakow
+Nr ksiegi rejestrowej Podmiotu Leczniczego 000000005831
+MEDYCZNE LABORATORIUM DIAGNOSTYKA
+Jutrzenki 100, 02-230 Warszawa, Zaktad Diagnostyki Laboratoryjnej (1918)
+SPRAWOZDANIE Z BADANIA
+Zlecajacy: PZU ZDROWIE S.A./PZU ZDROWIE S.A. ODDZIAL WARSZAWA PULAWSKA Kod kontrahenta: 17063
+Rondo Daszynskiego 4, 00-843 Warszawa
+Odadziat: - Kod oddziatu: -
+Lekarz kierujacy: - Data rejestracji: 2025-05-05
+Odbiorca wyniku: _ZLECAJACY Data/godz. pobrania: 2025-05-05 09:48
+Pacjent: KOWALSKI JAN PESEL: 80010112345
+Adres: PRZYKLADOWA 1 , 00-001 WARSZAWA Data urodzenia: 1980-01-01
+Plec: Meska
+Badanie Wynik Jedn. Zakres referencyjny LIW
+1
+TSH (ICD-9: L69) 1,250 ulU/ml* 0,270 - 4,200
+Badanie wykonano metoda elektrochemiluminescencji na aparacie Cobas 8000.
+2
+FT3 (ICD-9: 055) 3,53 pg/ml* 2,00 - 4,40
+Badanie wykonano metoda elektrochemiluminescencji na aparacie Cobas 8000.
+3
+FT4 (ICD-9: O69) 1,51 ng/dl* 0,92 - 1,68
+Uwaga! Zmiana wartosci referencyjnych.
+Badanie wykonano metoda elektrochemiluminescencji na aparacie Cobas 8000.
+Informacje dodatkowe
+Badanie_ Daty Materiat Autoryzowat / Nr PWZD*** Wykonano
+1 Data/godz. przyjecia prob.: 2025-05-05 14:17 SUROWICA |.HORBACZ, 10749 DIAGNOSTYKA S.A., MEDYCZNE LABORATORIUM
+Data wykonania: 2025-05-05 DIAGNOSTYKA, Jutrzenki 100, 02-230 Warszawa
+Data/godz. wydania: 2025-05-05 16:35:43
+2 Data/godz. przyjecia prob.: 2025-05-05 14:17 SUROWICA |.HORBACZ, 10749 DIAGNOSTYKA S.A., MEDYCZNE LABORATORIUM
+Data wykonania: 2025-05-05 DIAGNOSTYKA, Jutrzenki 100, 02-230 Warszawa
+Data/godz. wydania: 2025-05-05 16:35:43
+3 Data/godz. przyjecia prob.: 2025-05-05 14:17 SUROWICA |.HORBACZ, 10749 DIAGNOSTYKA S.A., MEDYCZNE LABORATORIUM
+Data wykonania: 2025-05-05 DIAGNOSTYKA, Jutrzenki 100, 02-230 Warszawa
+Data/godz. wydania: 2025-05-05 16:35:43
+Informacje dotyczace prdobki/zlecenia
+Brak uwag
+** Dokument zawiera badania opatrzone bezpiecznym podpisem elektronicznym weryfikowanym certyfikatem kwalifikowanym KIR S.A.
+Strona: 1z 1
+Ps ; Luh rain   A mor it muugoresonnn   DIAGN ti) 89 TORY JNY
+- nostyki medyczne;   a
+Data wygenerowania pdf/wydruku: 2025-05-05 16:37:02
+Wersja: $Rev: 1920 $/$Rev: 1756 $
+* Oznacza, ze zastosowano normy przynalezne do przedziatu wiekowego. Normy podane na wyniku odnosza sie do osdéb dorostych, jezeli nie wyszczegdlniono inaczej. Szczegdtowe informacje metodyki
+oznaczen dostepne sa w laboratorium.
+** LIW - Laboratoryjna Interpretacja wyniku; H - powyzej zakresu referencyjnego; L - ponizej zakresu referencyjnego;
+Dowiedz sie wiecej na www.diag.pl

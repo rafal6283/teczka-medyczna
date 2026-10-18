@@ -47,12 +47,15 @@ class AppDb extends ChangeNotifier {
   Future<void> _open() async {
     _db = await openDatabase(
       dbPath,
-      version: 2,
+      version: 3,
       onConfigure: (d) async => d.execute('PRAGMA foreign_keys = ON'),
       onUpgrade: (d, from, to) async {
         if (from < 2) {
           await d.execute('ALTER TABLE documents ADD COLUMN report TEXT');
           await d.execute('ALTER TABLE documents ADD COLUMN follow_up INTEGER');
+        }
+        if (from < 3) {
+          await d.execute('ALTER TABLE results ADD COLUMN ref_text TEXT');
         }
       },
       onCreate: (d, v) async {
@@ -72,7 +75,7 @@ class AppDb extends ChangeNotifier {
         await d.execute('''CREATE TABLE results(
           id INTEGER PRIMARY KEY AUTOINCREMENT, profile_id INTEGER NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
           document_id INTEGER REFERENCES documents(id) ON DELETE CASCADE, date INTEGER NOT NULL, key TEXT NOT NULL,
-          name TEXT NOT NULL, value REAL, value_text TEXT, unit TEXT, ref_low REAL, ref_high REAL, flag TEXT)''');
+          name TEXT NOT NULL, value REAL, value_text TEXT, unit TEXT, ref_low REAL, ref_high REAL, flag TEXT, ref_text TEXT)''');
         await d.execute('CREATE INDEX idx_results_pk ON results(profile_id, key, date)');
         await d.execute('CREATE INDEX idx_docs_p ON documents(profile_id, date)');
         await d.execute('CREATE INDEX idx_meas_p ON measurements(profile_id, type, date)');

@@ -36,9 +36,9 @@ class SummaryTab extends StatelessWidget {
       builder: (context, d) {
         final insights = Insights.forSeries(d.series);
         final stale = Insights.stale(d.series);
-        final measured = d.series.where((s) => s.latest != null).toList();
-        final inRange = measured.where((s) => s.latest!.status == 0).length;
-        final outRange = measured.where((s) => (s.latest!.status ?? 0) != 0).length;
+        final measured = d.series.where((s) => s.lastResult != null).toList();
+        final inRange = measured.where((s) => s.lastStatus == 0).length;
+        final outRange = measured.where((s) => (s.lastStatus ?? 0) != 0).length;
         final weights = d.meas.where((m) => m.type == MType.weight.key).toList();
         final heights = d.meas.where((m) => m.type == MType.height.key).toList();
         final bmi = BmiInfo.of(weights.isEmpty ? null : weights.last.value, heights.isNotEmpty ? heights.last.value : profile.heightCm);

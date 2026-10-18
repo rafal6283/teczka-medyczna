@@ -1,0 +1,56 @@
+Diagnostyka* ET
+Diagnostyka S.A.
+ul. prof. Michata Zyczkowskiego 16, 31-864 Krakow
+Nr ksiegi rejestrowej Podmiotu Leczniczego 000000005831
+MEDYCZNE LABORATORIUM DIAGNOSTYKA
+Jutrzenki 100, 02-230 Warszawa, Zaktad Diagnostyki Laboratoryjnej (1918)
+SPRAWOZDANIE Z BADANIA LABORATORYJNEGO
+Zlecajacy: PZU ZDROWIE S.A. /PZU ZDROWIE S.A. ODDZIAt CENTRA MEDYCZNE W WARSZAWIE __ Kod kontrahenta: 17063
+IDWEW 5272663852-80408 CENTRUM MEDYCZNE WARSZAWA PULAWSKA
+Rondo Daszynskiego 4, 00-843 Warszawa
+Odadziat: - Kod oddziatu: -
+Lekarz kierujacy: - Data rejestracji: 2026-08-27
+Odbiorca wyniku: | ZLECAJACY Data/godz. pobrania: 2026-08-27 08:42
+Pagjent: KOWALSKI JAN PESEL: 80010112345
+Adres: PRZYKLADOWA 1 , 00-001 WARSZAWA Data urodzenia: 1980-01-01
+Plec: Meska
+Badanie Wynik Jedn. Zakres referencyjny LIW ™
+Kreatynina (ICD-9: M37) | 0,99 mg/dl* 0,70 - 1,20
+Badanie wykonano metoda spektrofotometryczna, zgodnie z instrukcja producenta testow diagnostycznych firmy Roche wersja 2023-11, V 17.0 i
+aparatu Cobas 8000.
+Laboratorium medyczne akredytowane przez PCA, Nr AM 003
+1 .
+eGFR (ICD-9: M37) >90 ml/min/1,73m2* -
+Wzor wg CKD-EPI (Chronic Kidney Disease Epidemiology Collaboration)
+>=90 prawidtowa wartos¢ eGFR
+60-89 niewiele obnizona wartos¢é eGFR
+45-59 umiarkowanie obnizona wartosé eGFR
+30-44 znamiennie obnizona wartos¢é eGFR
+15-29 niewydolnosé nerek
+<15 schytkowa niewydolnosé nerek
+Wynik wyliczono z danych uzyskanych w pomiarach bezposrednich.
+PSA catkowity (ICD-9: 161) * 0,878 ng/ml* 0,000 - 2,000
+Badanie wykonano metoda elektrochemiluminescencji (ECLIA), zgodnie z instrukcja producenta test6w diagnostycznych firmy Roche wersja
+2024-07, V 7.0 i aparatu Cobas 8000.
+Laboratorium medyczne akredytowane przez PCA, Nr AM 003
+Informacje dodatkowe
+Badanie_ Daty Materiat Autoryzowat / Nr PWZD*** Wykonano
+1 Data/godz. przyjecia prob.: 2026-08-27 16:14 SUROWICA A.CZESCIK, 15199 DIAGNOSTYKA SPOLKA AKCYJNA, MEDYCZNE
+Data/godz wykonania: 2026-08-27 17:15:27 LABORATORIUM DIAGNOSTYKA, Jutrzenki 100, 02-231
+Data/godz. wydania: 2026-08-27 17:24:21 Warszawa
+2 Data/godz. przyjecia prob.: 2026-08-27 16:14 SUROWICA A.CZESCIK, 15199 DIAGNOSTYKA SPOLKA AKCYJNA, MEDYCZNE
+Data/godz wykonania: 2026-08-27 17:43:59 LABORATORIUM DIAGNOSTYKA, Jutrzenki 100, 02-231
+Data/godz. wydania: 2026-08-27 19:38:05 Warszawa
+Informacje dotyczace prdobki/zlecenia
+Brak uwag
+** Dokument jest opatrzony bezpiecznym podpisem elektronicznym.
+Strona: 1z 1
+8 Ora_med. Agni
+& Kelis CM as Zi
+Data wystawienia pdf/wydruku: 2026-08-27 19:38:05
+Wersja: $Rev: 1968 $/$Rev: 1973 $
+* Oznacza, ze zastosowano normy przynalezne do przedziatu wiekowego. Normy podane na wyniku odnosza sie do osdb dorostych, jezeli nie wyszczegdlniono inaczej. Szczegdtowe informacje metodyki oznaczen
+dostepne sa w laboratorium.
+** LIW - Laboratoryjna Interpretacja wyniku; H - powyzej zakresu referencyjnego; L - ponizej zakresu referencyjnego;
+Dowiedz sie wiecej na www.diag.pl
+Dokument podpisany elektronicznie 2026.08.27 19:38 przez AGNIESZKA CZESCIK NPWZ 15199 Rodzaj podpisu: Certyfikat ZUS

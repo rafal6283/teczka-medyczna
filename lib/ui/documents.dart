@@ -219,6 +219,7 @@ class DocumentScreen extends StatelessWidget {
                     unit: r.unit,
                     refLow: r.refLow,
                     refHigh: r.refHigh,
+                    refText: r.refText,
                     flag: r.flag,
                     known: LabDictionary.get(r.key) != null))
                 .toList(),
@@ -387,13 +388,13 @@ class ResultTile extends StatelessWidget {
     final hasOwn = r.refLow != null || r.refHigh != null;
     final lo = hasOwn ? r.refLow : p?.lowFor(profile.sex);
     final hi = hasOwn ? r.refHigh : p?.highFor(profile.sex);
-    final st = statusOf(r.value, lo, hi, r.flag);
+    final st = statusOf(r.value, lo, hi, r.flag, valueText: r.valueText, refText: r.refText);
     return ListTile(
       dense: true,
       leading: StatusDot(st),
       minLeadingWidth: 12,
       title: Text(r.name),
-      subtitle: Text('norma ${refText(lo, hi)}'),
+      subtitle: Text(r.refText != null && lo == null && hi == null ? 'norma: ${r.refText}' : 'norma ${refText(lo, hi)}'),
       trailing: Text('${fmtValue(r.value, r.valueText)} ${r.unit}',
           style: TextStyle(fontWeight: FontWeight.w700, color: StatusColors.of(context, st), fontSize: 14)),
       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ParamDetailScreen(profile: profile, paramKey: r.key))),

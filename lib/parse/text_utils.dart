@@ -30,8 +30,14 @@ String normUnit(String u) {
   s = s.replaceAllMapped(RegExp(r'^10(\d)'), (m) => '10^${m[1]}');
   s = s.replaceAll('tys.', 'tys').replaceAll('mln.', 'mln');
   s = s.replaceAll('mm3', 'ul');
-  s = s.replaceAllMapped(RegExp(r'^(tys|mln|10\^\d+|k|m)/pl$'), (m) => '${m[1]}/ul');
   s = s.replaceAll('*', '');
+  // typowe błędy OCR
+  s = s.replaceAll(RegExp(r'^min/'), 'mln/');
+  s = s.replaceAll(RegExp(r'/[upi][l1i]$'), '/ul');
+  s = s.replaceAll(RegExp(r'/d[1i]$'), '/dl');
+  s = s.replaceAll(RegExp(r'/m1$'), '/ml');
+  s = s.replaceAllMapped(RegExp(r'(mol|g|u)/[1i]$'), (m) => '${m[1]}/l');
+  if (RegExp(r'^[upm][il1t|]u/m[l1]$').hasMatch(s)) s = s.startsWith('m') ? 'miu/ml' : 'uiu/ml';
   if (s.endsWith('.')) s = s.substring(0, s.length - 1);
   return s;
 }
@@ -72,4 +78,23 @@ int ageOn(DateTime birth, DateTime on) {
   var a = on.year - birth.year;
   if (on.month < birth.month || (on.month == birth.month && on.day < birth.day)) a--;
   return a;
+}
+
+
+const _negWords = ['ujemn', 'nie wykryto', 'nieobecn', 'brak', 'niereaktywn', 'prawidlow', 'w normie'];
+const _posWords = ['dodatn', 'wykryto', 'obecn', 'reaktywn', 'liczne', 'slad', 'graniczn'];
+
+/// Ocena wyniku opisowego: 0 w normie, 1 nieprawidłowy, null – nie wiadomo.
+int? textStatus(String? value, String? ref) {
+  if (value == null || value.trim().isEmpty) return null;
+  final v = normText(value);
+  final r = ref == null ? '' : normText(ref);
+  if (r.isNotEmpty && v == r) return 0;
+  bool any(String s, List<String> w) => w.any((x) => s.startsWith(x) || s.contains(' $x'));
+  final vNeg = any(v, _negWords);
+  if (vNeg) return 0;
+  if (any(v, _posWords)) return 1;
+  // np. barwa/przejrzystość: inna niż w normie
+  if (r.isNotEmpty && r != '-') return 1;
+  return null;
 }

@@ -44,11 +44,11 @@ class _ParamsTabState extends State<ParamsTab> {
         }
         final nq = normText(q);
         final list = all.where((s) {
-          if (onlyOut && (s.latest?.status ?? 0) == 0) return false;
+          if (onlyOut && (s.lastStatus ?? 0) == 0) return false;
           if (nq.isNotEmpty && !normText(s.name).contains(nq)) return false;
           return true;
         }).toList();
-        final outCount = all.where((s) => (s.latest?.status ?? 0) != 0).length;
+        final outCount = all.where((s) => (s.lastStatus ?? 0) != 0).length;
         final items = <Widget>[];
         String? lastCat;
         for (final s in list) {
@@ -106,7 +106,7 @@ class _ParamsTabState extends State<ParamsTab> {
   Widget _tile(BuildContext context, ParamSeries s) {
     final last = s.latest;
     final st = s.stats;
-    final status = last?.status;
+    final status = s.lastStatus;
     final c = StatusColors.of(context, status);
     return ListTile(
       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ParamDetailScreen(profile: widget.profile, paramKey: s.key))),
@@ -298,13 +298,13 @@ class _ParamDetailScreenState extends State<ParamDetailScreen> {
     final hasOwn = r.refLow != null || r.refHigh != null;
     final lo = hasOwn ? r.refLow : p?.lowFor(widget.profile.sex);
     final hi = hasOwn ? r.refHigh : p?.highFor(widget.profile.sex);
-    final st = statusOf(r.value, lo, hi, r.flag);
+    final st = statusOf(r.value, lo, hi, r.flag, valueText: r.valueText, refText: r.refText);
     return ListTile(
       dense: true,
       leading: StatusDot(st),
       minLeadingWidth: 12,
       title: Text(fmtDate(r.date)),
-      subtitle: Text('norma ${refText(lo, hi)}${r.documentId == null ? ' • wpis ręczny' : ''}'),
+      subtitle: Text('${r.refText != null && lo == null && hi == null ? 'norma: ${r.refText}' : 'norma ${refText(lo, hi)}'}${r.documentId == null ? ' • wpis ręczny' : ''}'),
       trailing: Text('${fmtValue(r.value, r.valueText)} ${r.unit}', style: TextStyle(fontWeight: FontWeight.w700, color: StatusColors.of(context, st))),
       onTap: () => _resultActions(context, r),
     );
@@ -349,6 +349,7 @@ class _ParamDetailScreenState extends State<ParamDetailScreen> {
         unit: out.unit,
         refLow: out.refLow,
         refHigh: out.refHigh,
+        refText: out.refText,
         flag: r.flag,
       ));
     }

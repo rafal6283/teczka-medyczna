@@ -95,14 +95,20 @@ class LabDictionary {
   static const moc = 'Mocz';
   static const ekg = 'EKG i Holter';
   static const imm = 'Immunologia i serologia';
+  static const kal = 'Kał';
+  static const serce = 'Serce';
   static const inne = 'Inne';
 
-  static const categoryOrder = [morf, bio, lip, wat, ner, tar, hor, zel, zap, imm, krz, moc, ekg, inne];
+  static const categoryOrder = [morf, bio, lip, wat, ner, tar, hor, zel, zap, imm, serce, krz, moc, kal, ekg, inne];
 
   static final Map<String, LabParam> byKey = {};
 
   /// (alias, parametr) od najdłuższego aliasu.
   static final List<MapEntry<String, LabParam>> aliases = [];
+
+  /// Nazwy obowiązujące tylko w sekcji badania ogólnego moczu / osadu moczu.
+  static final List<MapEntry<String, LabParam>> urineAliases = [];
+  static final List<MapEntry<String, LabParam>> sedimentAliases = [];
 
   static bool _ready = false;
 
@@ -184,7 +190,7 @@ class LabDictionary {
     _p('RDW', 'RDW-CV', morf, '%', 11.5, 14.5).a(['rdw', 'rdw cv', 'wskaźnik anizocytozy', 'rozkład objętości erytrocytów']);
     _p('RDWSD', 'RDW-SD', morf, 'fl', 37.0, 54.0).a(['rdw sd']);
     cells(_p('PLT', 'Płytki krwi (PLT)', morf, 'tys/µl', 150.0, 400.0)
-        .a(['płytki krwi', 'plt', 'trombocyty', 'płytki krwi plt', 'plt płytki krwi', 'trombocyty plt', 'plt trombocyty']));
+        .a(['płytki krwi', 'płytki', 'plt', 'trombocyty', 'płytki krwi plt', 'plt płytki krwi', 'trombocyty plt', 'plt trombocyty']));
     _p('MPV', 'MPV', morf, 'fl', 7.5, 11.5).a(['mpv', 'średnia objętość płytki', 'średnia objętość płytek krwi']);
     _p('PDW', 'PDW', morf, 'fl', 9.0, 17.0).a(['pdw', 'wskaźnik zmienności objętości płytek']);
     _p('PCT', 'Płytkokryt (PCT)', morf, '%', 0.15, 0.40).a(['pct', 'płytkokryt', 'plateletkryt', 'płytkokryt pct']);
@@ -222,7 +228,7 @@ class LabDictionary {
     _p('TP', 'Białko całkowite', bio, 'g/dl', 6.4, 8.3).a(['białko całkowite', 'białko całkowite w surowicy']).c('g/l', 0.1);
     _p('ALB', 'Albumina', bio, 'g/dl', 3.5, 5.2).a(['albumina', 'albuminy', 'albumina w surowicy']).c('g/l', 0.1);
     _p('UA', 'Kwas moczowy', bio, 'mg/dl', 2.6, 7.0).m(3.4, 7.0).f(2.4, 5.7).a(['kwas moczowy', 'kwas moczowy w surowicy']).c('umol/l', 0.01681);
-    enz(_p('CK', 'Kinaza kreatynowa (CK)', bio, 'U/l', null, 190.0).a(['kinaza kreatynowa', 'ck', 'cpk', 'kinaza kreatynowa ck']));
+    enz(_p('CK', 'Kinaza kreatynowa (CK)', bio, 'U/l', null, 190.0).a(['kinaza kreatynowa', 'ck', 'cpk', 'kinaza kreatynowa ck', 'kinaza fosfokreatynowa', 'kinaza fosfokreatynowa ck']));
     enz(_p('LDH', 'LDH', bio, 'U/l', 135.0, 225.0).a(['ldh', 'dehydrogenaza mleczanowa', 'dehydrogenaza mleczanowa ldh']));
     _p('HCY', 'Homocysteina', bio, 'µmol/l', 5.0, 15.0).a(['homocysteina']);
 
@@ -391,14 +397,6 @@ class LabDictionary {
     _p('FIB', 'Fibrynogen', krz, 'mg/dl', 200.0, 400.0).a(['fibrynogen']).c('g/l', 100);
     _p('DDIM', 'D-dimery', krz, 'ng/ml', null, 500.0).a(['d dimery', 'd dimer', 'dimery d']).c('ug/l', 1).c('mg/l', 1000).c('ug/ml', 1000);
 
-    // ---------- Mocz ----------
-    _p('U_SG', 'Mocz: ciężar właściwy', moc, 'g/ml', 1.010, 1.030).a(['ciężar właściwy', 'ciężar właściwy moczu', 'gęstość względna']);
-    _p('U_PH', 'Mocz: pH', moc, '', 4.5, 8.0).a(['odczyn ph', 'ph moczu', 'odczyn moczu', 'odczyn']);
-    _p('U_LEU', 'Mocz: leukocyty w osadzie', moc, 'wpw', null, 5.0).a(['leukocyty w osadzie', 'leukocyty wpw', 'leukocyty w polu widzenia']);
-    _p('U_ERY', 'Mocz: erytrocyty w osadzie', moc, 'wpw', null, 2.0).a(['erytrocyty w osadzie', 'erytrocyty wpw', 'erytrocyty świeże', 'erytrocyty wyługowane']);
-    _p('U_NAB', 'Mocz: nabłonki płaskie', moc, 'wpw', null, 5.0).a(['nabłonki płaskie', 'komórki nabłonka płaskiego']);
-    _p('UACR', 'Albumina/kreatynina w moczu (ACR)', moc, 'mg/g', null, 30.0).a(['acr', 'wskaźnik albumina kreatynina', 'albumina kreatynina w moczu', 'uacr']);
-
     // ---------- Immunologia / celiakia / immunoglobuliny ----------
     LabParam ab(LabParam p) => p.c('u/ml', 1).c('ru/ml', 1).c('eu/ml', 1).c('j/ml', 1);
     ab(_p('TTG_IGA', 'Anty-tTG IgA (celiakia)', imm, 'AU/ml', null, 20.0).a([
@@ -430,6 +428,50 @@ class LabDictionary {
     _p('IGE', 'IgE całkowite', imm, 'IU/ml', null, 100.0).a(['ige calkowite', 'ige total', 'immunoglobulina e', 'ige w surowicy']).c('kiu/l', 1).c('ku/l', 1);
     ab(_p('CCP', 'Anty-CCP', imm, 'U/ml', null, 17.0).a(['anty ccp', 'przeciwciala przeciw cyklicznemu cytrulinowanemu peptydowi', 'acpa']));
 
+    // ---------- Serce ----------
+    _p('NTBNP', 'NT-proBNP', serce, 'pg/ml', null, 125.0).a(['nt pro bnp', 'nt probnp', 'ntprobnp', 'n terminalny propeptyd natriuretyczny typu b']).c('ng/l', 1);
+    _p('TROP', 'Troponina', serce, 'ng/l', null, null).a(['troponina', 'troponina t', 'troponina i', 'hs troponina', 'troponina hs']).c('pg/ml', 1);
+    _p('HBA1C_IFCC', 'HbA1c (IFCC)', bio, 'mmol/mol', 20.0, 42.0).a(['hemoglobina glikowana ifcc', 'hba1c ifcc']);
+
+    // ---------- Kał ----------
+    _p('FOBT', 'Krew utajona w kale', kal, '', null, null).a(['krew utajona w kale', 'krew utajona', 'fobt', 'test na krew utajona']);
+    _p('HP_AG', 'Helicobacter pylori – antygen w kale', kal, '', null, null)
+        .a(['helicobacter pylori antygen', 'antygen helicobacter pylori', 'helicobacter pylori antygen w kale', 'h pylori antygen']);
+    _p('GIARDIA', 'Giardia lamblia w kale', kal, '', null, null).a(['giardia lamblia', 'lamblie', 'giardia lamblia antygen']);
+    _p('CALPRO', 'Kalprotektyna w kale', kal, 'µg/g', null, 50.0).a(['kalprotektyna', 'kalprotektyna w kale']).c('mg/kg', 1);
+    _p('HP_IGG', 'Helicobacter pylori IgG', imm, '', null, null).a(['helicobacter pylori igg', 'przeciwciala helicobacter pylori igg', 'anty helicobacter pylori igg']);
+
+    // ---------- Mocz – badanie ogólne (tylko w sekcji moczu) ----------
+    void u(String key, String name, String unit, double? lo, double? hi, List<String> al, {bool sediment = false}) {
+      final x = _p(key, name, moc, unit, lo, hi);
+      for (final a in al) {
+        (sediment ? sedimentAliases : urineAliases).add(MapEntry(normText(a), x));
+      }
+    }
+
+    u('U_CLAR', 'Mocz: przejrzystość', '', null, null, ['przejrzystosc', 'klarownosc']);
+    u('U_COLOR', 'Mocz: barwa', '', null, null, ['barwa', 'kolor']);
+    u('U_SG', 'Mocz: ciężar właściwy', 'g/ml', 1.005, 1.030, ['ciezar wlasciwy', 'gestosc wzgledna', 'ciezar wlasciwy moczu']);
+    u('U_PH', 'Mocz: pH', '', 5.0, 7.5, ['ph', 'odczyn', 'odczyn ph']);
+    u('U_GLU', 'Mocz: glukoza', 'mg/dl', null, null, ['glukoza', 'cukier']);
+    u('U_KET', 'Mocz: ketony', 'mg/dl', null, null, ['ketony', 'ciala ketonowe']);
+    u('U_UBG', 'Mocz: urobilinogen', 'mg/dl', 0.0, 1.0, ['urobilinogen']);
+    u('U_BIL', 'Mocz: bilirubina', 'mg/dl', null, null, ['bilirubina']);
+    u('U_PROT', 'Mocz: białko', 'mg/dl', null, null, ['bialko']);
+    u('U_LEU_T', 'Mocz: leukocyty (test paskowy)', '', null, null, ['leukocyty', 'esteraza leukocytarna']);
+    u('U_BLOOD', 'Mocz: krew (test paskowy)', '', null, null, ['krew', 'hemoglobina', 'erytrocyty']);
+    u('U_NIT', 'Mocz: azotyny', '', null, null, ['azotyny']);
+    u('U_ERY_S', 'Osad: erytrocyty', '/µl', null, null, ['erytrocyty', 'erytrocyty swieze', 'erytrocyty wylugowane'], sediment: true);
+    u('U_LEU_S', 'Osad: leukocyty', '/µl', null, null, ['leukocyty'], sediment: true);
+    u('U_CAST', 'Osad: wałeczki', '/µl', null, null, ['waleczki', 'waleczki szkliste'], sediment: true);
+    u('U_BACT', 'Osad: bakterie', '/µl', null, null, ['bakterie', 'bakterie liczne'], sediment: true);
+    u('U_NAB', 'Osad: nabłonki płaskie', '/µl', null, null, ['nablonki plaskie', 'komorki nablonka plaskiego'], sediment: true);
+    u('U_NAB_O', 'Osad: nabłonki okrągłe', '/µl', null, null, ['nablonki okragle'], sediment: true);
+    u('U_YEAST', 'Osad: komórki grzybów', '/µl', null, null, ['komorki grzybow', 'grzyby', 'drozdzaki'], sediment: true);
+    u('U_MUC', 'Osad: pasma śluzu', '', null, null, ['pasma sluzu', 'sluz'], sediment: true);
+    u('U_CRYST', 'Osad: kryształy', '', null, null, ['krysztaly'], sediment: true);
+    _p('UACR', 'Albumina/kreatynina w moczu (ACR)', moc, 'mg/g', null, 30.0).a(['acr', 'wskaznik albumina kreatynina', 'albumina kreatynina w moczu', 'uacr']);
+
     // ---------- Holter EKG ----------
     _p('HR_MIN', 'Holter: tętno minimalne', ekg, '/min', null, null)
         .a(['minimalna czestosc rytmu', 'czestosc minimalna', 'hr min', 'min hr', 'minimalne tetno', 'tetno minimalne', 'najnizsza czestosc rytmu', 'czestosc rytmu minimalna', 'minimalna czestosc akcji serca'])
@@ -456,5 +498,7 @@ class LabDictionary {
       }
     }
     aliases.sort((a, b) => b.key.length.compareTo(a.key.length));
+    urineAliases.sort((a, b) => b.key.length.compareTo(a.key.length));
+    sedimentAliases.sort((a, b) => b.key.length.compareTo(a.key.length));
   }
 }

@@ -1,0 +1,138 @@
+Diagnostyka* AMIN
+Diagnostyka S.A.
+ul. prof. Michata Zyczkowskiego 16, 31-864 Krakow
+Nr ksiegi rejestrowej Podmiotu Leczniczego 000000005831
+MEDYCZNE LABORATORIUM DIAGNOSTYKA
+Jutrzenki 100, 02-230 Warszawa, Zaktad Diagnostyki Laboratoryjnej (1918)
+SPRAWOZDANIE Z BADANIA
+Zlecajacy: CENTRUM MEDYCZNE ENEL-MED SPOLKA AKCYJNA Kod kontrahenta: 18318
+SLOMINSKIEGO 19 1ok.524, WARSZAWA
+Odadziat: Centrum Medyczne ENEL-MED S.A. Oddziat Putawska ul. Putawska 326 02-819 Kod oddziatu: 183180020
+Warszawa
+Lekarz kierujacy: - Data rejestracji: 2024-03-18
+Odbiorca wyniku: _ZLECAJACY Data/godz. pobrania: 2024-03-18 08:48
+Pagjent: KOWALSKI JAN PESEL: 80010112345
+Adres: PRZYKLADOWA 1 , 00-001 WARSZAWA Data urodzenia: 1980-01-01
+Plec: Meska
+Badanie Wynik Jedn. Zakres referencyjny LIW
+Morfologia krwi (ICD-9: C55) '
+Leukocyty 6,08 tys/ul* 4,23 - 9,07
+Erytrocyty 5,81 min/pl* 4,63 - 6,08
+Hemoglobina 17,2 g/dl* 13,7 - 17,5
+Hematokryt 49,6 %* 40,1 - 51,0
+MCV 85,4 fl* 79,0 - 92,2
+MCH 29,6 pg* 25,7 - 32,2
+MCHC 34,7 g/dl 32,3 - 36,5
+RDW-CV 12,9 % 11,6 - 14,4
+RDW-SD 40,0 fl 35,1 - 43,9
+Ptytki krwi 311 tys/p1* 150 - 400
+PDW 12,0 fl 9,8 - 16,1
+MPV 10,3 fl 9,4 - 12,6
+P-LCR 27,7 % 19,2 - 47,0
+PCT 0,3 % 0,2 - 0,4
+Neutrofile 3,71 tys/ul* 2,00 - 7,00
+Limfocyty 2,0 tys/p1* 1,0 - 3,0
+Monocyty 0,27 tys/p1* 0,20 - 1,00
+Eozynofile 0,05 tys/p1* 0,02 - 0,50
+Bazofile 0,04 tys/ul* 0,02 - 0,10
+Niedojrzate granulocyty IG 0,02 tys/ul 0,00 - 0,03
+NRBC 0,00 tys/ul* 0,00 - 0,03
+Neutrofile 61,1 %* 40,0 - 80,0
+Limfocyty 32,7 %* 20,0 - 40,0
+Monocyty 4,4 %* 2,0 - 10,0
+Eozynofile 0,8 %* 1,0 - 6,0 L
+Bazofile 0,7 % 0,0 - 2,0
+Niedojrzate granulocyty IG 0,30 % 0,00 - 0,50
+NRBC 0,00 % 0,00 - 0,01
+Strona: 1z3 ‘
+Siar A LA
+DAG date
+Data wygenerowania pdf/wydruku: 2024-03-18 14:42:13
+Wersja: $Rev: 1708 $/$Rev: 1756 $
+* Oznacza, ze zastosowano normy przynalezne do przedziatu wiekowego. Normy podane na wyniku odnosza sie do osdéb dorostych, jezeli nie wyszczegdlniono inaczej. Szczegdtowe informacje metodyki
+oznaczen dostepne sa w laboratorium.
+** LIW - Laboratoryjna Interpretacja wyniku; H - powyzej zakresu referencyjnego; L - ponizej zakresu referencyjnego;
+Dowiedz sie wiecej na www.diag.pl
+
+Diagnostykat
+*861897363M *
+Diagnostyka S.A.
+ul. prof. Michata Zyczkowskiego 16, 31-864 Krakow
+Nr ksiegi rejestrowej Podmiotu Leczniczego 000000005831
+Pacjent: KOWALSKI JAN PESEL: 80010112345
+Adres: PRZYKLADOWA 1 , 00-001 WARSZAWA
+Badanie Wynik Jedn. Zakres referencyjny LIW ™
+Morfologia krwi (ICD-9: C55) ' kontynuacja z poprzedniej strony
+Badanie wykonano na aparacie Sysmex XN10.
+Ptytki krwi (ICD-9: C66) 2
+Plytki 274,00 tys/ul* 140,00 - 440,00
+Badanie wykonano na aparacie Sysmex XN10.
+Badanie ogolne moczu (ICD-9: A01) 8
+Przejrzystosé metny przejrzysty
+Barwa zolty -
+Ciezar wlasciwy 1,026 g/ml 1,005 - 1,030
+pH 5,5 5,0 - 7,5
+Glukoza nie wykryto mg/dl nie wykryto
+Ketony 0,0 mg/dl nie wykryto
+Urobilinogen <1 mg/dl 0,0 - 1,0
+Bilirubina nie wykryto nie wykryto
+Biatko 15,0 mg/dl nie wykryto
+Leukocyty nie wykryto nie wykryto
+Krew nie wykryto nie wykryto
+Azotyny nie wykryto nie wykryto
+Badanie wykonano na aparacie Sysmex UC-3500.
+Osad moczu met. cytometrii przeptywowej (ICD-9: A19) 4
+Erytrocyty 3,4 /ul 0,0 - 13,1
+Leukocyty 3,1 /ul 0,0 - 9,2
+Wateczki 0,00 /ul 0,00 - 2,25
+Bakterie 3,4 /ul 0,0 - 11,4
+Nabtonki ptaskie 0,6 /ul 0,0 - 5,7
+Nabtonki okragte 0,0 /ul 0,0 - 0,9
+Komorki grzybow 0,0 /ul -
+Pasma sluzu nieobecne -
+Krysztaly liczne -
+moczany bezpostaciowe
+Badanie wykonano na aparacie Sysmex UF-5000.
+Informacje dodatkowe
+Badanie Daty Materiat Autoryzowat / Nr PWZD*** Wykonano
+1 Data/godz. przyjecia prob.: 2024-03-18 12:30 KREW ZYLNA ALACZUK, 13166 DIAGNOSTYKA S.A., MEDYCZNE LABORATORIUM
+Data wykonania: 2024-03-18 (EDTA) DIAGNOSTYKA, Jutrzenki 100, 02-230 Warszawa
+Data/godz. wydania: 2024-03-18 13:27:52
+2 Data/godz. przyjecia prob.: 2024-03-18 12:31   THROMBOEXACT A.LACZUK, 13166   DIAGNOSTYKA S.A., MEDYCZNE LABORATORIUM
+Data wykonania: 2024-03-18   DIAGNOSTYKA, Jutrzenki 100, 02-230 Warszawa
+Data/godz. wydania: 2024-03-18 14:13:34
+3 Data/godz. przyjecia prob.: 2024-03-18 12:36 MOCZ   ALACZUK, 13166   DIAGNOSTYKA S.A., MEDYCZNE LABORATORIUM
+Strona: 2z3
+ger LA
+iy) Sf f
+“DIAGN arora =
+Data wygenerowania pdf/wydruku: 2024-03-18 14:42:13
+* Oznacza, ze zastosowano normy przynalezne do przedziatu wiekowego. Normy podane na wyniku odnosza sie do osdéb dorostych, jezeli nie wyszczegdlniono inaczej. Szczegdtowe informacje metodyki
+oznaczen dostepne sa w laboratorium.
+** LIW - Laboratoryjna Interpretacja wyniku; H - powyzej zakresu referencyjnego; L - ponizej zakresu referencyjnego;
+Dowiedz sie wiecej na www.diag.pl
+
+Diagnostyka* ION
+Diagnostyka S.A.
+ul. prof. Michata Zyczkowskiego 16, 31-864 Krakow
+Nr ksiegi rejestrowej Podmiotu Leczniczego 000000005831
+Pacjent: KOWALSKI JAN   PESEL: 80010112345
+Adres: PRZYKLADOWA 1 , 00-001 WARSZAWA
+Badanie Wynik Jedn. Zakres referencyjny LIW
+Badanie Daty Materiat Autoryzowat / Nr PWZD*** Wykonano
+Data wykonania: 2024-03-18   DIAGNOSTYKA, Jutrzenki 100, 02-230 Warszawa
+Data/godz. wydania: 2024-03-18 14:42:04
+4 Data/godz. przyjecia prob.: 2024-03-18 12:36 MOCZ   ALACZUK, 13166 DIAGNOSTYKA S.A., MEDYCZNE LABORATORIUM
+Data wykonania: 2024-03-18   DIAGNOSTYKA, Jutrzenki 100, 02-230 Warszawa
+Data/godz. wydania: 2024-03-18 14:42:04
+Informacje dotyczace prdobki/zlecenia
+Brak uwag
+** Dokument zawiera badania opatrzone bezpiecznym podpisem elektronicznym weryfikowanym certyfikatem kwalifikowanym KIR S.A.
+Strona: 3z3
+me AGNESTKA Lay
+Dit hater
+Data wygenerowania pdf/wydruku: 2024-03-18 14:42:13
+* Oznacza, ze zastosowano normy przynalezne do przedziatu wiekowego. Normy podane na wyniku odnosza sie do osdéb dorostych, jezeli nie wyszczegdlniono inaczej. Szczegdtowe informacje metodyki
+oznaczen dostepne sa w laboratorium.
+** LIW - Laboratoryjna Interpretacja wyniku; H - powyzej zakresu referencyjnego; L - ponizej zakresu referencyjnego;
+Dowiedz sie wiecej na www.diag.pl

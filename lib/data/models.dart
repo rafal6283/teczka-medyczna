@@ -248,6 +248,7 @@ class LabResult {
   final String? valueText;
   final String unit;
   final double? refLow, refHigh;
+  final String? refText;
   final String? flag;
 
   const LabResult({
@@ -262,6 +263,7 @@ class LabResult {
     this.unit = '',
     this.refLow,
     this.refHigh,
+    this.refText,
     this.flag,
   });
 
@@ -277,6 +279,7 @@ class LabResult {
         'unit': unit,
         'ref_low': refLow,
         'ref_high': refHigh,
+        'ref_text': refText,
         'flag': flag,
       };
 
@@ -292,6 +295,7 @@ class LabResult {
         unit: (m['unit'] as String?) ?? '',
         refLow: _dbl(m['ref_low']),
         refHigh: _dbl(m['ref_high']),
+        refText: m['ref_text'] as String?,
         flag: m['flag'] as String?,
       );
 }
