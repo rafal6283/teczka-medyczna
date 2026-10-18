@@ -13,7 +13,7 @@ jobs:
     # Jednorazowo generuje foldery android/ i ios/ (flutter create) i zapisuje je w repo.
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Czy brakuje platform?
         id: check
         run: |
@@ -39,10 +39,10 @@ jobs:
     needs: bootstrap
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           ref: ${{ github.ref_name }}
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
@@ -51,7 +51,10 @@ jobs:
           channel: stable
           cache: true
       - name: Zależności
-        run: flutter pub get
+        run: |
+          flutter --version | head -1 | sed 's/^/::notice::/'
+          set -o pipefail
+          flutter pub get 2>&1 | tee build.log
       - name: Analiza kodu
         run: |
           set -o pipefail
@@ -68,9 +71,7 @@ jobs:
       - name: Zgłoś błędy
         if: failure()
         run: |
-          cat analyze.log test.log build.log 2>/dev/null | grep -E "error •|Error:|error:|FAILURE|What went wrong|\[E\]|Expected|Actual|Some tests failed" -A3 | head -80 | while IFS= read -r line; do
-            echo "::error::${line}"
-          done
+          bash .github/report.sh analyze.log test.log build.log
       - uses: actions/upload-artifact@v4
         with:
           name: apk
@@ -80,7 +81,7 @@ jobs:
     needs: bootstrap
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           ref: ${{ github.ref_name }}
       - uses: subosito/flutter-action@v2
@@ -98,9 +99,7 @@ jobs:
       - name: Zgłoś błędy
         if: failure()
         run: |
-          grep -E "error:|Error:|Error \(Xcode\)|ERROR|could not find|requires a higher minimum" -A2 build.log | head -60 | while IFS= read -r line; do
-            echo "::error::${line}"
-          done
+          bash .github/report.sh build.log
       - uses: actions/upload-artifact@v4
         with:
           name: ipa

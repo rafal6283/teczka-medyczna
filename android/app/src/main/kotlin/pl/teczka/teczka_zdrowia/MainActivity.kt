@@ -1,5 +1,6 @@
 package pl.teczka.teczka_zdrowia
 
-import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.android.FlutterFragmentActivity
 
-class MainActivity : FlutterActivity()
+// FlutterFragmentActivity jest wymagane przez local_auth (odblokowanie odciskiem/twarzą).
+class MainActivity : FlutterFragmentActivity()
