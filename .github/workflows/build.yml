@@ -1,0 +1,127 @@
+name: Zbuduj aplikację
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bootstrap:
+    # Jednorazowo generuje foldery android/ i ios/ (flutter create) i zapisuje je w repo.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Czy brakuje platform?
+        id: check
+        run: |
+          if [ -d android ] && [ -d ios ]; then echo "need=false" >> $GITHUB_OUTPUT; else echo "need=true" >> $GITHUB_OUTPUT; fi
+      - uses: subosito/flutter-action@v2
+        if: steps.check.outputs.need == 'true'
+        with:
+          channel: stable
+          cache: true
+      - name: flutter create
+        if: steps.check.outputs.need == 'true'
+        run: |
+          flutter --version
+          flutter create --org pl.teczka --project-name teczka_zdrowia --platforms android,ios .
+          rm -f test/widget_test.dart
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add -A
+          git commit -m "Wygenerowane platformy Android i iOS (flutter create)"
+          git push
+
+  android:
+    needs: bootstrap
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Zależności
+        run: flutter pub get
+      - name: Analiza kodu
+        run: |
+          set -o pipefail
+          flutter analyze --no-fatal-infos --no-fatal-warnings 2>&1 | tee analyze.log
+      - name: Testy parsera
+        run: |
+          set -o pipefail
+          flutter test 2>&1 | tee test.log
+      - name: Build APK
+        run: |
+          set -o pipefail
+          flutter build apk --release --build-name=1.0.${{ github.run_number }} --build-number=${{ github.run_number }} 2>&1 | tee build.log
+          cp build/app/outputs/flutter-apk/app-release.apk teczka-zdrowia.apk
+      - name: Zgłoś błędy
+        if: failure()
+        run: |
+          cat analyze.log test.log build.log 2>/dev/null | grep -E "error •|Error:|error:|FAILURE|What went wrong|\[E\]|Expected|Actual|Some tests failed" -A3 | head -80 | while IFS= read -r line; do
+            echo "::error::${line}"
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: apk
+          path: teczka-zdrowia.apk
+
+  ios:
+    needs: bootstrap
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Build iOS (bez podpisu)
+        run: |
+          set -o pipefail
+          flutter pub get
+          flutter build ios --release --no-codesign --build-name=1.0.${{ github.run_number }} --build-number=${{ github.run_number }} 2>&1 | tee build.log
+          mkdir -p Payload
+          cp -R build/ios/iphoneos/Runner.app Payload/
+          zip -qr teczka-zdrowia.ipa Payload
+      - name: Zgłoś błędy
+        if: failure()
+        run: |
+          grep -E "error:|Error:|Error \(Xcode\)|ERROR|could not find|requires a higher minimum" -A2 build.log | head -60 | while IFS= read -r line; do
+            echo "::error::${line}"
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ipa
+          path: teczka-zdrowia.ipa
+
+  release:
+    needs: [android, ios]
+    if: always() && needs.android.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: out
+      - name: Opublikuj w Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: Teczka Zdrowia 1.0.${{ github.run_number }}
+          body: |
+            **Android:** pobierz `teczka-zdrowia.apk` na telefonie i zainstaluj (aktualizuje poprzednią wersję, dane zostają).
+            **iPhone:** pobierz `teczka-zdrowia.ipa` na komputer i zainstaluj przez Sideloadly lub AltStore swoim Apple ID (odnawianie co 7 dni).
+          files: out/**/*
+          fail_on_unmatched_files: false
+          make_latest: true
