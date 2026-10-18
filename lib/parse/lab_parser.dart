@@ -49,7 +49,7 @@ class LabParser {
 
   static final RegExp _unitRe = RegExp(
     r'^(?:'
-    r'(?:x\s?10\s?\^?\s?\d{1,2}|10\s?\^\s?\d{1,2}|10[³⁶⁹]|10¹²|tys\.?|mln\.?|[gkmt])\s?/\s?(?:[uµμ]l|l|mm3|mm³)'
+    r'(?:x\s?10\s?\^?\s?\d{1,2}|10\s?\^\s?\d{1,2}|10[³⁶⁹]|10¹²|tys\.?|mln\.?|[gkmt])\s?/\s?(?:[uµμp]l|l|mm3|mm³)'
     r'|ml\s?/\s?min(?:\s?/\s?1[,.]73\s?m(?:2|²|\^2)?)?'
     r'|mm\s?/\s?(?:1\s?)?(?:h|godz\.?)'
     r'|[munpµμ]?(?:g|mol|iu|ui|u|j|eq|kat)\s?/\s?(?:d?l|ml|l|g|dl)'
@@ -75,7 +75,8 @@ class LabParser {
   static const _unknownStop = [
     'data', 'wiek', 'pesel', 'tel', 'telefon', 'nr', 'numer', 'strona', 'str', 'godz', 'kod', 'ul', 'lat', 'zlecen',
     'pobran', 'urodzen', 'material', 'probk', 'adres', 'faks', 'fax', 'regon', 'nip', 'konto', 'cena', 'kwota', 'razem',
-    'wydruk', 'lekarz', 'pacjent', 'id', 'zlecajacy', 'rejestr', 'autoryz', 'wykonan', 'przyjec', 'odbior', 'kod pocztowy',
+    'wydruk', 'lekarz', 'pacjent', 'ponizej', 'powyzej', 'stezenie', 'zalecane', 'dla', 'cukrzyca', 'prawidlowa', 'nieprawidlowa',
+    'badanie', 'metoda', 'wartosc', 'wynik', 'id', 'zlecajacy', 'rejestr', 'autoryz', 'wykonan', 'przyjec', 'odbior', 'kod pocztowy',
   ];
 
   /// Zbiór dopasowań aliasów do zwiniętego tekstu linii.
@@ -228,6 +229,10 @@ class LabParser {
       p = r;
     }
 
+    if (flag == null || flag.startsWith('*')) {
+      final end = RegExp(r'(?:^|\s)(H|L|↑|↓)\s*\**\s*$').firstMatch(tail);
+      if (end != null) flag = end.group(1);
+    }
     String? f;
     if (flag != null) {
       if (flag == 'H' || flag == '↑') f = 'H';
@@ -288,8 +293,8 @@ class LabParser {
     final r = _parseRest(l.substring(m.end), key: 'X:$nn', name: name, known: false, raw: l);
     if (r == null) return null;
     if (r.unit.isEmpty) return null;
-    if (r.refLow == null && r.refHigh == null && r.unit == '%') return null;
-    if (r.refLow == null && r.refHigh == null) r.selected = false;
+    // bez normy to zwykle zdanie z opisu ("Poniżej 130 mg/dl dla osób…"), nie wynik
+    if (r.refLow == null && r.refHigh == null) return null;
     return r;
   }
 

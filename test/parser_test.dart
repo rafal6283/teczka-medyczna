@@ -145,4 +145,68 @@ Cholesterol całkowity 6,1 mmol/l <5,0
     expect(chol.refHigh, 5.0);
     expect(LabDictionary.get('CHOL')!.toBase(chol.value!, chol.unit)!, closeTo(235.9, 0.5));
   });
+
+  test('Diagnostyka (OCR) – morfologia z jednostkami z gwiazdką i flagą na końcu', () {
+    const t = """
+Data rejestracji: 2025-04-09
+Data/godz. pobrania: 2025-04-09 09:00
+Data urodzenia: 1983-10-21
+Morfologia krwi (ICD-9: C55) 1
+Leukocyty   6,26   tys/µl*   4,00 - 10,00
+Neutrofile   3,03   tys/pl*   1,90 - 7,00
+Limfocyty   2,6   tys/µl*   1,5 - 4,5
+Niedojrzałe granulocyty IG   0,02   tys/µl*   0,00 - 0,07
+Neutrofile   48,5   %*   45,0 - 70,0
+Niedojrzałe granulocyty IG   0,30   %*   0,00 - 1,00
+Erytrocyty   6,05   mln/µl*   4,60 - 6,50
+Hemoglobina   17,2   g/dl*   13,5 - 18,0
+Hematokryt   52,8   %*   40,0 - 52,0   H
+MCV   87,3   fl*   80,0 - 98,0
+RDW-SD   43,8   fl*   36,0 - 47,0
+RDW-CV   13,6   %*   11,5 - 14,5
+NRBC   0,00   tys/µl*   0,00 - 0,01
+NRBC   0,00   %*   0,00 - 0,20
+Płytki krwi   318   tys/µl*   150 - 400
+PCT   0,3   %*   0,1 - 0,4
+P-LCR   25,3   %*   19,3 - 47,1
+Glukoza (ICD-9: L43) 1   91,5   mg/dl   70,0 - 99,0
+prawidłowa glikemia na czczo: 70-99 mg/dl
+cukrzyca ≥ 200 mg/dl, wynik uzyskany w próbce pobranej o dowolnej porze dnia
+Cholesterol całkowity   216,20   mg/dl   115,00 - 190,00   H
+Cholesterol HDL   35,40   mg/dl   -
+Stężenie zalecane: powyżej 40 mg/dl
+Poniżej 130 mg/dl - dla osób z umiarkowanym ryzykiem sercowo-naczyniowym
+Cholesterol LDL   139,70   mg/dl   -
+Cholesterol LDL wyliczony ze wzoru Sampson-NIH
+Triglicerydy   226,80   mg/dl   -
+""";
+    final out = LabParser.parse(t);
+    final r = out.results;
+    expect(out.date, DateTime(2025, 4, 9));
+    expect(find(r, 'WBC')!.value, 6.26);
+    expect(find(r, 'WBC')!.refHigh, 10);
+    expect(find(r, 'NEU')!.value, 3.03);
+    expect(LabDictionary.get('NEU')!.toBase(3.03, find(r, 'NEU')!.unit), 3.03);
+    expect(find(r, 'NEU_P')!.value, 48.5);
+    expect(find(r, 'IG')!.value, 0.02);
+    expect(find(r, 'IG_P')!.value, 0.30);
+    expect(find(r, 'RBC')!.value, 6.05);
+    expect(find(r, 'HGB')!.value, 17.2);
+    expect(find(r, 'HCT')!.flag, 'H');
+    expect(find(r, 'HCT')!.refHigh, 52);
+    expect(find(r, 'RDWSD')!.value, 43.8);
+    expect(find(r, 'RDW')!.value, 13.6);
+    expect(find(r, 'NRBC')!.value, 0);
+    expect(find(r, 'NRBC_P')!.refHigh, 0.2);
+    expect(find(r, 'PLT')!.value, 318);
+    expect(find(r, 'PCT')!.value, 0.3);
+    expect(find(r, 'PLCR')!.value, 25.3);
+    expect(find(r, 'GLU')!.value, 91.5);
+    expect(find(r, 'GLU')!.refLow, 70);
+    expect(find(r, 'CHOL')!.flag, 'H');
+    expect(find(r, 'HDL')!.value, 35.4);
+    expect(find(r, 'LDL')!.value, 139.7);
+    expect(find(r, 'TG')!.value, 226.8);
+    expect(r.where((x) => !x.known), isEmpty, reason: r.where((x) => !x.known).map((e) => e.rawLine).join(' / '));
+  });
 }

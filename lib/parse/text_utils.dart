@@ -27,9 +27,11 @@ String normUnit(String u) {
   s = s.replaceAll('³', '^3').replaceAll('⁶', '^6').replaceAll('⁹', '^9').replaceAll('¹²', '^12').replaceAll('²', '2');
   s = s.replaceAll(' ', '');
   s = s.replaceAll(RegExp(r'^(x|\*)10'), '10');
-  s = s.replaceAll(RegExp(r'^10(\d)'), r'10^$1');
+  s = s.replaceAllMapped(RegExp(r'^10(\d)'), (m) => '10^${m[1]}');
   s = s.replaceAll('tys.', 'tys').replaceAll('mln.', 'mln');
   s = s.replaceAll('mm3', 'ul');
+  s = s.replaceAllMapped(RegExp(r'^(tys|mln|10\^\d+|k|m)/pl$'), (m) => '${m[1]}/ul');
+  s = s.replaceAll('*', '');
   if (s.endsWith('.')) s = s.substring(0, s.length - 1);
   return s;
 }

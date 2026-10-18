@@ -62,6 +62,22 @@ class Extractor {
 
   static int _letters(String s) => RegExp(r'\p{L}', unicode: true).allMatches(s).length;
 
+  static final _word = RegExp(r'^[\p{L}]{3,}$', unicode: true);
+  static final _vowel = RegExp(r'[aeiouyąęóAEIOUYĄĘÓ]');
+
+  /// Udział "prawdziwych słów" w tekście. PDF-y z czcionkami bez mapy znaków (np. część wyników
+  /// Diagnostyki) mają warstwę tekstu złożoną z przypadkowych znaków – wtedy wynik ~0.
+  static double textQuality(String t) {
+    final nonSpace = t.replaceAll(RegExp(r'\s'), '').length;
+    if (nonSpace == 0) return 0;
+    var good = 0;
+    for (final w in t.split(RegExp(r'\s+'))) {
+      final w2 = w.replaceAll(RegExp(r'^[.,:;()]+|[.,:;()]+$'), '');
+      if (_word.hasMatch(w2) && _vowel.hasMatch(w2)) good += w2.length;
+    }
+    return good / nonSpace;
+  }
+
   static Future<(String, List<BoxF>)> _ocrFile(String path, int page) async {
     final recognizer = TextRecognizer(script: TextRecognitionScript.latin);
     try {
@@ -105,7 +121,7 @@ class Extractor {
     } catch (_) {
       text = '';
     }
-    final needOcr = _letters(text) < 40 * pages.clamp(1, 3);
+    final needOcr = _letters(text) < 40 * pages.clamp(1, 3) || textQuality(text) < 0.2;
     if (!needOcr && !findFigures) return ExtractResult(text, false, pages, []);
 
     // 2) render stron: OCR (gdy skan) i wykrywanie grafik
@@ -153,7 +169,8 @@ class Extractor {
     }
     if (needOcr) {
       final o = ocrText.toString();
-      return ExtractResult(_letters(o) > _letters(text) ? o : text, true, pages, figures);
+      final better = textQuality(o) >= textQuality(text) || _letters(o) > _letters(text);
+      return ExtractResult(better ? o : text, true, pages, figures);
     }
     return ExtractResult(text, false, pages, figures);
   }
