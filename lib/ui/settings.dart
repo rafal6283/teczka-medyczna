@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:koofr_backup_ui/koofr_backup_ui.dart';
 
 import '../data/db.dart';
 import '../data/models.dart';
@@ -107,10 +108,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           const ListTile(
             leading: Icon(Icons.phonelink_lock_outlined),
-            title: Text('Dane tylko na tym urządzeniu'),
-            subtitle: Text('Pliki, wyniki i OCR nie są nigdzie wysyłane. Rób kopie zapasowe, by ich nie stracić.'),
+            title: Text('Dane na tym urządzeniu'),
+            subtitle: Text('Pliki, wyniki i OCR nie są nigdzie wysyłane — chyba że włączysz kopię na Koofr (szyfrowaną na telefonie).'),
           ),
           const SectionTitle('Kopia zapasowa'),
+          const KoofrBackupTile(),
           ListTile(
             leading: const Icon(Icons.save_alt),
             title: const Text('Zapisz kopię zapasową'),

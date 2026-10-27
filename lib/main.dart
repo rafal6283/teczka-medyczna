@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import 'package:koofr_backup_ui/koofr_backup_ui.dart';
+
 import 'data/db.dart';
+import 'data/koofr_backup.dart';
 import 'security/lock.dart';
 import 'ui/lock_screen.dart';
 import 'ui/common.dart';
@@ -22,7 +25,13 @@ class StartupGate extends StatefulWidget {
 class _StartupGateState extends State<StartupGate> {
   late Future<void> _init = _start();
 
-  Future<void> _start() => AppDb.I.init().timeout(const Duration(seconds: 25));
+  Future<void> _start() async {
+    await AppDb.I.init().timeout(const Duration(seconds: 25));
+    // kopia na Koofr — konfiguracja i ewentualna kopia w tle, bez wpływu na start
+    try {
+      await KoofrBackup.setup(TeczkaBackup()).timeout(const Duration(seconds: 5));
+    } catch (_) {}
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -26,6 +26,10 @@ dependencies:
   open_filex: ^4.6.0
   shared_preferences: ^2.3.3
   crypto: ^3.0.6
+  koofr_backup_ui:
+    git:
+      url: https://github.com/rafal6283/nocny-licznik
+      path: packages/koofr_backup_ui
 
 dev_dependencies:
   flutter_test:
