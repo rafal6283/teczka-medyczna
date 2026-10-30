@@ -10,6 +10,13 @@ import 'ui/lock_screen.dart';
 import 'ui/common.dart';
 import 'ui/home.dart';
 
+/// Kopia na Koofr w tle (Android) — także przy zamkniętej aplikacji.
+@pragma('vm:entry-point')
+void koofrCallback() => KoofrBackground.dispatch(() async {
+      await AppDb.I.init();
+      return TeczkaBackup();
+    });
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const TeczkaApp());
@@ -30,6 +37,7 @@ class _StartupGateState extends State<StartupGate> {
     // kopia na Koofr — konfiguracja i ewentualna kopia w tle, bez wpływu na start
     try {
       await KoofrBackup.setup(TeczkaBackup()).timeout(const Duration(seconds: 5));
+      KoofrBackground.start(koofrCallback).ignore();
     } catch (_) {}
   }
 
