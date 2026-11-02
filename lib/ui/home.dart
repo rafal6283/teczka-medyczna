@@ -6,6 +6,7 @@ import 'common.dart';
 import 'documents.dart';
 import 'import_flow.dart';
 import 'measurements.dart';
+import 'meds.dart';
 import 'params.dart';
 import 'profile_edit.dart';
 import 'settings.dart';
@@ -50,6 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
       DocumentsTab(profile: cur),
       ParamsTab(profile: cur),
       MeasurementsTab(profile: cur),
+      MedsTab(profile: cur),
     ];
     return Scaffold(
       appBar: AppBar(
@@ -79,6 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
           NavigationDestination(icon: Icon(Icons.folder_outlined), selectedIcon: Icon(Icons.folder), label: 'Dokumenty'),
           NavigationDestination(icon: Icon(Icons.show_chart), selectedIcon: Icon(Icons.insights), label: 'Parametry'),
           NavigationDestination(icon: Icon(Icons.monitor_heart_outlined), selectedIcon: Icon(Icons.monitor_heart), label: 'Pomiary'),
+          NavigationDestination(icon: Icon(Icons.medication_outlined), selectedIcon: Icon(Icons.medication), label: 'Leki'),
         ],
       ),
     );

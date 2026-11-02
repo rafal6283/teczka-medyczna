@@ -25,6 +25,9 @@ dependencies:
   cunning_document_scanner: ^1.2.3
   open_filex: ^4.6.0
   shared_preferences: ^2.3.3
+  flutter_local_notifications: ^19.4.0
+  timezone: ^0.10.1
+  flutter_timezone: ^4.1.1
   crypto: ^3.0.6
   koofr_backup_ui:
     git:

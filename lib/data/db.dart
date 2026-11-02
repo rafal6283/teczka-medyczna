@@ -47,7 +47,7 @@ class AppDb extends ChangeNotifier {
   Future<void> _open() async {
     _db = await openDatabase(
       dbPath,
-      version: 3,
+      version: 4,
       onConfigure: (d) async => d.execute('PRAGMA foreign_keys = ON'),
       onUpgrade: (d, from, to) async {
         if (from < 2) {
@@ -57,6 +57,7 @@ class AppDb extends ChangeNotifier {
         if (from < 3) {
           await d.execute('ALTER TABLE results ADD COLUMN ref_text TEXT');
         }
+        if (from < 4) await _createMeds(d);
       },
       onCreate: (d, v) async {
         await d.execute('''CREATE TABLE profiles(
@@ -79,8 +80,20 @@ class AppDb extends ChangeNotifier {
         await d.execute('CREATE INDEX idx_results_pk ON results(profile_id, key, date)');
         await d.execute('CREATE INDEX idx_docs_p ON documents(profile_id, date)');
         await d.execute('CREATE INDEX idx_meas_p ON measurements(profile_id, type, date)');
+        await _createMeds(d);
       },
     );
+  }
+
+  /// Leki: lista (godziny dawek „08:00,20:00”) i dziennik przyjęć (dzień RRRR-MM-DD, godzina dawki).
+  static Future<void> _createMeds(Database d) async {
+    await d.execute('''CREATE TABLE meds(
+      id INTEGER PRIMARY KEY AUTOINCREMENT, profile_id INTEGER NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+      name TEXT NOT NULL, dose TEXT, times TEXT NOT NULL, active INTEGER DEFAULT 1, remind INTEGER DEFAULT 1,
+      notes TEXT, created INTEGER NOT NULL)''');
+    await d.execute('''CREATE TABLE med_log(
+      id INTEGER PRIMARY KEY AUTOINCREMENT, med_id INTEGER NOT NULL REFERENCES meds(id) ON DELETE CASCADE,
+      day TEXT NOT NULL, time TEXT NOT NULL, taken INTEGER NOT NULL, at INTEGER NOT NULL, UNIQUE(med_id, day, time))''');
   }
 
   /// Zamknięcie i ponowne otwarcie (po przywróceniu kopii zapasowej).

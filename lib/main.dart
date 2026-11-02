@@ -5,6 +5,7 @@ import 'package:koofr_backup_ui/koofr_backup_ui.dart';
 
 import 'data/db.dart';
 import 'data/koofr_backup.dart';
+import 'data/med_notify.dart';
 import 'security/lock.dart';
 import 'ui/lock_screen.dart';
 import 'ui/common.dart';
@@ -39,6 +40,7 @@ class _StartupGateState extends State<StartupGate> {
       await KoofrBackup.setup(TeczkaBackup()).timeout(const Duration(seconds: 5));
       KoofrBackground.start(koofrCallback).ignore();
     } catch (_) {}
+    MedNotify.reschedule().ignore();
   }
 
   @override
