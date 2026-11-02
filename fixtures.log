@@ -1,0 +1,22 @@
+
+::group::✅ Passing tests
+✅ fixture 2024-03-18_kreatynina_lipidogram_alt_psa
+✅ fixture 2024-03-18_krew_utajona
+✅ fixture 2024-03-18_morfologia_mocz_osad
+✅ fixture 2024-09-25_bilirubina_alt_crp_tsh
+✅ fixture 2024-09-25_morfologia
+✅ fixture 2025-04-09_glukoza_lipidogram
+✅ fixture 2025-04-09_glukoza_lipidogram_morfologia_mocz
+✅ fixture 2025-04-09_morfologia_mocz
+✅ fixture 2025-04-29_lipidogram_alt
+✅ fixture 2025-04-30_helicobacter
+✅ fixture 2025-05-05_tsh_ft3_ft4
+✅ fixture 2025-12-22_biochemia_ntprobnp_hba1c
+✅ fixture 2025-12-22_morfologia
+✅ fixture 2026-08-27_kreatynina_psa
+✅ fixture 2026-08-28_anty_ttg
+✅ fixture 2026-08-28_giardia
+✅ fixture 2026-08-28_helicobacter
+::endgroup::
+
+🎉 17 tests passed.
