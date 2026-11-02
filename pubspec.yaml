@@ -39,6 +39,7 @@ dependencies:
       path: packages/rodzina_wykresy
 
 dev_dependencies:
+  sqflite_common_ffi: ^2.3.4
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
