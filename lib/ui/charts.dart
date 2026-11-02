@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../parse/text_utils.dart';
 import 'common.dart';
@@ -27,13 +28,22 @@ class TimeChart extends StatefulWidget {
   State<TimeChart> createState() => _TimeChartState();
 }
 
-class _TimeChartState extends State<TimeChart> {
+class _TimeChartState extends State<TimeChart> with SingleTickerProviderStateMixin {
   int? selected;
+  // wykres „rysuje się” od lewej przy pokazaniu i po zmianie danych
+  late final AnimationController _reveal = AnimationController(vsync: this, duration: const Duration(milliseconds: 850))..forward();
 
   @override
   void didUpdateWidget(covariant TimeChart oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (selected != null && selected! >= widget.points.length) selected = null;
+    if (!identical(oldWidget.points, widget.points) && oldWidget.points.length != widget.points.length) _reveal.forward(from: 0);
+  }
+
+  @override
+  void dispose() {
+    _reveal.dispose();
+    super.dispose();
   }
 
   @override
@@ -65,7 +75,11 @@ class _TimeChartState extends State<TimeChart> {
           height: widget.height,
           width: c.maxWidth,
           child: Stack(children: [
-            CustomPaint(size: Size(c.maxWidth, widget.height), painter: painter),
+            AnimatedBuilder(
+              animation: _reveal,
+              builder: (context, child) => ClipRect(clipper: _RevealClipper(Curves.easeOutCubic.transform(_reveal.value)), child: child),
+              child: CustomPaint(size: Size(c.maxWidth, widget.height), painter: painter),
+            ),
             if (selected != null && selected! < widget.points.length) _tooltip(context, painter, Size(c.maxWidth, widget.height)),
           ]),
         ),
@@ -86,6 +100,7 @@ class _TimeChartState extends State<TimeChart> {
       }
     }
     if (best != selected) {
+      HapticFeedback.selectionClick();
       setState(() => selected = best);
       widget.onSelect?.call(best);
     }
@@ -117,6 +132,15 @@ class _TimeChartState extends State<TimeChart> {
       ),
     );
   }
+}
+
+class _RevealClipper extends CustomClipper<Rect> {
+  final double t;
+  _RevealClipper(this.t);
+  @override
+  Rect getClip(Size size) => Rect.fromLTWH(0, 0, size.width * (0.04 + 0.96 * t), size.height);
+  @override
+  bool shouldReclip(covariant _RevealClipper old) => old.t != t;
 }
 
 class _Layout {

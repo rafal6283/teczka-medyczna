@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rodzina_wykresy/rodzina_wykresy.dart' show staggered;
 
 import '../analysis/stats.dart';
 import '../data/db.dart';
@@ -79,7 +80,7 @@ class _ParamsTabState extends State<ParamsTab> {
             ]),
           ),
           if (items.isEmpty) const Padding(padding: EdgeInsets.all(32), child: Center(child: Text('Brak pasujących parametrów'))),
-          ...items,
+          ...staggered(items, from: 2),
         ]);
       },
     );
@@ -183,7 +184,7 @@ class _ParamDetailScreenState extends State<ParamDetailScreen> {
             onPressed: () => _add(context, s),
             child: const Icon(Icons.add),
           ),
-          body: ListView(padding: const EdgeInsets.only(bottom: 96), children: [
+          body: ListView(padding: const EdgeInsets.only(bottom: 96), children: staggered([
             if (last != null)
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
@@ -254,7 +255,7 @@ class _ParamDetailScreenState extends State<ParamDetailScreen> {
                 ),
               ),
             ],
-          ]),
+          ])),
         );
       },
     );

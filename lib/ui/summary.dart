@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rodzina_wykresy/rodzina_wykresy.dart' show staggered, AnimatedSplitBar, AnimatedNumber;
 
 import '../analysis/stats.dart';
 import '../data/db.dart';
@@ -46,7 +47,7 @@ class SummaryTab extends StatelessWidget {
         final cs = Theme.of(context).colorScheme;
         final lastDoc = d.docs.isEmpty ? null : d.docs.first;
 
-        return ListView(padding: const EdgeInsets.only(bottom: 96, top: 4), children: [
+        return ListView(padding: const EdgeInsets.only(bottom: 96, top: 4), children: staggered([
           _profileCard(context, bmi, weights.isEmpty ? null : weights.last),
           if (d.docs.isEmpty)
             const Padding(
@@ -70,15 +71,11 @@ class SummaryTab extends StatelessWidget {
             if (measured.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
-                  child: Row(children: [
-                    if (inRange > 0) Expanded(flex: inRange, child: Container(height: 8, color: StatusColors.ok(context))),
-                    if (outRange > 0) Expanded(flex: outRange, child: Container(height: 8, color: StatusColors.high(context))),
-                    if (measured.length - inRange - outRange > 0)
-                      Expanded(flex: measured.length - inRange - outRange, child: Container(height: 8, color: cs.outlineVariant)),
-                  ]),
-                ),
+                child: AnimatedSplitBar(parts: [
+                  (inRange.toDouble(), StatusColors.ok(context)),
+                  (outRange.toDouble(), StatusColors.high(context)),
+                  ((measured.length - inRange - outRange).toDouble(), cs.outlineVariant),
+                ]),
               ),
             if (measured.isNotEmpty)
               Padding(
@@ -157,7 +154,7 @@ class SummaryTab extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
           ),
-        ]);
+        ]));
       },
     );
   }
