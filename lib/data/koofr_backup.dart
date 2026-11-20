@@ -84,17 +84,20 @@ class _TeczkaExchange extends ExchangeAdapter {
       }
     }
     if (pid == null) return {'czynniki-leki': null};
-    final adh = await db.adherence(pid, days: 120);
-    return {
-      'czynniki-leki': utf8.encode(jsonEncode({
-        'format': 'czynniki-dnia',
-        'version': 1,
-        'source': 'teczka',
-        'exported_at': DateTime.now().millisecondsSinceEpoch,
-        'days': [
-          for (final e in adh.entries) {'date': e.key, 'doses': e.value.planned, 'taken': e.value.taken, 'missed': e.value.missed}
-        ],
-      })),
-    };
+    return {'czynniki-leki': lekiFactors(await db.adherence(pid, days: 120), DateTime.now())};
   }
+}
+
+/// Plik „czynniki-leki” (czynniki-dnia v1, kontrakt w WYMIANA.md Rytmu Snu) — bez nazw leków.
+List<int> lekiFactors(Map<String, Adherence> adh, DateTime now) {
+  final keys = adh.keys.toList()..sort();
+  return utf8.encode(jsonEncode({
+    'format': 'czynniki-dnia',
+    'version': 1,
+    'source': 'teczka',
+    'exported_at': now.millisecondsSinceEpoch,
+    'days': [
+      for (final k in keys) {'date': k, 'doses': adh[k]!.planned, 'taken': adh[k]!.taken, 'missed': adh[k]!.missed}
+    ],
+  }));
 }
