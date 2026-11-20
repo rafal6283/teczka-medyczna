@@ -355,8 +355,8 @@ class _ReviewScreenState extends State<ReviewScreen> {
   Widget _row(int i) {
     final r = results[i];
     final p = LabDictionary.get(r.key);
-    final lo = r.refLow ?? (r.refHigh == null ? p?.lowFor(widget.profile.sex) : null);
-    final hi = r.refHigh ?? (r.refLow == null ? p?.highFor(widget.profile.sex) : null);
+    final lo = r.refLow ?? (r.refHigh == null ? p?.lowFor(widget.profile.sex, age: ageAt(widget.profile.birthDate, date)) : null);
+    final hi = r.refHigh ?? (r.refLow == null ? p?.highFor(widget.profile.sex, age: ageAt(widget.profile.birthDate, date)) : null);
     final st = statusOf(r.value, lo, hi, r.flag, valueText: r.valueText, refText: r.refText);
     return CheckboxListTile(
       value: r.selected,

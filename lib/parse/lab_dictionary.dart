@@ -1,6 +1,8 @@
 // Słownik najczęstszych parametrów badań w polskich wynikach laboratoryjnych.
 // Zakresy są orientacyjne – używane tylko wtedy, gdy wynik nie podaje własnej normy.
 
+import 'dart:math';
+
 import 'text_utils.dart';
 
 class LabParam {
@@ -60,13 +62,38 @@ class LabParam {
   bool _hasM() => mLow != null || mHigh != null;
   bool _hasF() => fLow != null || fHigh != null;
 
-  double? lowFor(String? sex) {
+  /// Normy zależne od wieku: (od, do włącznie, płeć lub null, dolna, górna). Pierwsza pasująca wygrywa.
+  final List<(int, int?, String?, double?, double?)> ageBands = [];
+
+  /// Górna granica liczona z wieku (np. D-dimery: wiek × 10); null = brak reguły dla tego wieku.
+  double? Function(int age, String? sex)? highByAge;
+
+  LabParam ages(int from, int? to, double? l, double? h, {String? sex}) {
+    ageBands.add((from, to, sex, l, h));
+    return this;
+  }
+
+  (int, int?, String?, double?, double?)? _band(String? sex, int? age) {
+    if (age == null) return null;
+    for (final b in ageBands) {
+      if (age >= b.$1 && (b.$2 == null || age <= b.$2!) && (b.$3 == null || b.$3 == sex)) return b;
+    }
+    return null;
+  }
+
+  double? lowFor(String? sex, {int? age}) {
+    final b = _band(sex, age);
+    if (b != null) return b.$4;
     if (sex == 'M' && _hasM()) return mLow;
     if (sex == 'K' && _hasF()) return fLow;
     return low;
   }
 
-  double? highFor(String? sex) {
+  double? highFor(String? sex, {int? age}) {
+    final b = _band(sex, age);
+    if (b != null) return b.$5;
+    final byAge = age == null ? null : highByAge?.call(age, sex);
+    if (byAge != null) return byAge;
     if (sex == 'M' && _hasM()) return mHigh;
     if (sex == 'K' && _hasF()) return fHigh;
     return high;
@@ -79,6 +106,14 @@ class LabParam {
     final f = conv[u];
     return f == null ? null : v * f;
   }
+}
+
+/// Wiek w pełnych latach w dniu badania; null bez daty urodzenia.
+int? ageAt(DateTime? birth, DateTime at) {
+  if (birth == null) return null;
+  var a = at.year - birth.year;
+  if (at.month < birth.month || (at.month == birth.month && at.day < birth.day)) a--;
+  return a < 0 ? null : a;
 }
 
 class LabDictionary {
@@ -348,7 +383,13 @@ class LabDictionary {
     _p('SHBG', 'SHBG', hor, 'nmol/l', null, null).a(['shbg']);
     _p('AMH', 'AMH', hor, 'ng/ml', null, null).a(['amh', 'hormon antymullerowski']);
     _p('PTH', 'Parathormon (PTH)', hor, 'pg/ml', 15.0, 65.0).a(['parathormon', 'pth', 'parathormon pth']);
-    _p('PSA', 'PSA całkowity', hor, 'ng/ml', null, 4.0).a(['psa', 'psa całkowity', 'psa całkowite', 'tpsa', 'antygen swoisty dla stercza']);
+    _p('PSA', 'PSA całkowity', hor, 'ng/ml', null, 4.0)
+        .a(['psa', 'psa całkowity', 'psa całkowite', 'tpsa', 'antygen swoisty dla stercza'])
+        // normy zależne od wieku (Oesterling 1993) — gdy laboratorium nie podało własnej
+        .ages(40, 49, null, 2.5)
+        .ages(50, 59, null, 3.5)
+        .ages(60, 69, null, 4.5)
+        .ages(70, null, null, 6.5);
     _p('FPSA', 'PSA wolny', hor, 'ng/ml', null, null).a(['psa wolny', 'psa wolne', 'fpsa']);
 
     // ---------- Żelazo / witaminy ----------
@@ -387,7 +428,9 @@ class LabDictionary {
         .c('mm/godz', 1)
         .c('mm/1h', 1)
         .c('mm/godz.', 1)
-        .c('mm/1godz', 1);
+        .c('mm/1godz', 1)
+        // po 50. roku życia: mężczyźni wiek/2, kobiety (wiek+10)/2 (reguła Millera), nie mniej niż zwykła norma
+        .highByAge = (age, sex) => age < 50 || sex == null ? null : max(sex == 'K' ? 20.0 : 15.0, sex == 'K' ? (age + 10) / 2 : age / 2);
     _p('CRP', 'CRP', zap, 'mg/l', null, 5.0)
         .a(['crp', 'białko c reaktywne', 'białko crp', 'crp ilościowo', 'crp białko c reaktywne', 'hs crp', 'crp hs', 'białko c reaktywne crp'])
         .c('mg/dl', 10);
@@ -400,7 +443,9 @@ class LabDictionary {
     _p('PT', 'Czas protrombinowy (PT)', krz, 's', 9.0, 13.0).a(['czas protrombinowy', 'pt', 'czas protrombinowy pt']).c('sek', 1).c('sek.', 1);
     _p('APTT', 'APTT', krz, 's', 25.0, 37.0).a(['aptt', 'czas kaolinowo kefalinowy', 'czas częściowej tromboplastyny po aktywacji']).c('sek', 1).c('sek.', 1);
     _p('FIB', 'Fibrynogen', krz, 'mg/dl', 200.0, 400.0).a(['fibrynogen']).c('g/l', 100);
-    _p('DDIM', 'D-dimery', krz, 'ng/ml', null, 500.0).a(['d dimery', 'd dimer', 'dimery d']).c('ug/l', 1).c('mg/l', 1000).c('ug/ml', 1000);
+    _p('DDIM', 'D-dimery', krz, 'ng/ml', null, 500.0).a(['d dimery', 'd dimer', 'dimery d']).c('ug/l', 1).c('mg/l', 1000).c('ug/ml', 1000)
+        // po 50. roku życia próg zależny od wieku: wiek × 10 ng/ml FEU
+        .highByAge = (age, _) => age > 50 ? age * 10.0 : null;
 
     // ---------- Immunologia / celiakia / immunoglobuliny ----------
     LabParam ab(LabParam p) => p.c('u/ml', 1).c('ru/ml', 1).c('eu/ml', 1).c('j/ml', 1);

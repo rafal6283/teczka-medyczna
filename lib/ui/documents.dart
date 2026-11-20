@@ -393,8 +393,8 @@ class ResultTile extends StatelessWidget {
     final r = result;
     final p = LabDictionary.get(r.key);
     final hasOwn = r.refLow != null || r.refHigh != null;
-    final lo = hasOwn ? r.refLow : p?.lowFor(profile.sex);
-    final hi = hasOwn ? r.refHigh : p?.highFor(profile.sex);
+    final lo = hasOwn ? r.refLow : p?.lowFor(profile.sex, age: ageAt(profile.birthDate, r.date));
+    final hi = hasOwn ? r.refHigh : p?.highFor(profile.sex, age: ageAt(profile.birthDate, r.date));
     final st = statusOf(r.value, lo, hi, r.flag, valueText: r.valueText, refText: r.refText);
     return ListTile(
       dense: true,

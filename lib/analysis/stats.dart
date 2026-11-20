@@ -169,7 +169,7 @@ ParamStats? _computeStats(List<SeriesPoint> pts) {
 
 class Analysis {
   /// Grupuje wyniki profilu w serie parametrów, ujednolicając jednostki.
-  static List<ParamSeries> build(List<LabResult> results, {String? sex}) {
+  static List<ParamSeries> build(List<LabResult> results, {String? sex, DateTime? birthDate}) {
     final byKey = <String, List<LabResult>>{};
     for (final r in results) {
       byKey.putIfAbsent(r.key, () => []).add(r);
@@ -196,8 +196,9 @@ class Analysis {
             continue;
           }
           final hasOwn = r.refLow != null || r.refHigh != null;
-          final lo = hasOwn ? (r.refLow == null ? null : param.toBase(r.refLow!, r.unit)) : dLow;
-          final hi = hasOwn ? (r.refHigh == null ? null : param.toBase(r.refHigh!, r.unit)) : dHigh;
+          final age = ageAt(birthDate, r.date);
+          final lo = hasOwn ? (r.refLow == null ? null : param.toBase(r.refLow!, r.unit)) : (age == null ? dLow : param.lowFor(sex, age: age));
+          final hi = hasOwn ? (r.refHigh == null ? null : param.toBase(r.refHigh!, r.unit)) : (age == null ? dHigh : param.highFor(sex, age: age));
           pts.add(SeriesPoint(r.date, v, lo, hi, r));
         }
         // jeśli nic nie dało się przeliczyć, pokaż w jednostce najczęstszej

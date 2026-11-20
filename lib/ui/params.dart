@@ -12,7 +12,7 @@ import 'common.dart';
 import 'documents.dart';
 import 'review.dart';
 
-Future<List<ParamSeries>> loadSeries(Profile p) async => Analysis.build(await AppDb.I.getResults(p.id!), sex: p.sex);
+Future<List<ParamSeries>> loadSeries(Profile p) async => Analysis.build(await AppDb.I.getResults(p.id!), sex: p.sex, birthDate: p.birthDate);
 
 class ParamsTab extends StatefulWidget {
   final Profile profile;
@@ -149,7 +149,7 @@ class _ParamDetailScreenState extends State<ParamDetailScreen> {
   Future<ParamSeries?> _load() async {
     final r = await AppDb.I.getResults(widget.profile.id!, key: widget.paramKey);
     if (r.isEmpty) return null;
-    final s = Analysis.build(r, sex: widget.profile.sex);
+    final s = Analysis.build(r, sex: widget.profile.sex, birthDate: widget.profile.birthDate);
     return s.isEmpty ? null : s.first;
   }
 
@@ -297,8 +297,8 @@ class _ParamDetailScreenState extends State<ParamDetailScreen> {
   Widget _historyTile(BuildContext context, ParamSeries s, LabResult r) {
     final p = LabDictionary.get(r.key);
     final hasOwn = r.refLow != null || r.refHigh != null;
-    final lo = hasOwn ? r.refLow : p?.lowFor(widget.profile.sex);
-    final hi = hasOwn ? r.refHigh : p?.highFor(widget.profile.sex);
+    final lo = hasOwn ? r.refLow : p?.lowFor(widget.profile.sex, age: ageAt(widget.profile.birthDate, r.date));
+    final hi = hasOwn ? r.refHigh : p?.highFor(widget.profile.sex, age: ageAt(widget.profile.birthDate, r.date));
     final st = statusOf(r.value, lo, hi, r.flag, valueText: r.valueText, refText: r.refText);
     return ListTile(
       dense: true,
