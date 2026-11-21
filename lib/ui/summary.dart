@@ -9,6 +9,7 @@ import '../parse/text_utils.dart';
 import 'common.dart';
 import 'documents.dart';
 import 'measurements.dart';
+import 'norm_gauges.dart';
 import 'params.dart';
 import 'profile_edit.dart';
 
@@ -84,6 +85,15 @@ class SummaryTab extends StatelessWidget {
                     '${lastDoc != null ? ' • ostatnie badanie ${fmtDate(lastDoc.date)}' : ''}',
                     style: Theme.of(context).textTheme.bodySmall),
               ),
+            if (d.series.any(NormGauges.usable)) ...[
+              SectionTitle('Wyniki na tle normy', trailing: TextButton(onPressed: () => goTo(2), child: const Text('Wszystkie'))),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
+                child: Text('Zielone – zakres normy, kropka – ostatni wynik, krążek – poprzedni. Dotknij, by zobaczyć historię.',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: cs.onSurfaceVariant)),
+              ),
+              NormGauges(profile: profile, series: d.series),
+            ],
           ],
           if (insights.isNotEmpty) ...[
             SectionTitle('Na co zwrócić uwagę (${insights.length})'),
